@@ -1,6 +1,6 @@
 Para Completar por grupo
 
-🌐 Nombre del Proyecto
+EstuFin
 
 Escribe aquí una descripción corta del proyecto.
 
