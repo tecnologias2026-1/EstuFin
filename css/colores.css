@@ -1,0 +1,14 @@
+/* Variables extraídas de tu código de estilos */
+:root {
+  --primary: #030213;
+  --background: #ffffff;
+  --radius: 0.625rem;
+  --blue-estufin: #2563eb;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--background);
+}
+
+/* Puedes agregar aquí estilos personalizados que no cubra Tailwind */
