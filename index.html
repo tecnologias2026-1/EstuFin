@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstuFin - Perfil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 p-6">
+
+    <div class="max-w-3xl mx-auto">
+        <button class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-6 font-medium">
+            <span>← Volver al inicio</span>
+        </button>
+
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-lg p-8 mb-6 text-white">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-6">
+                    <div class="relative">
+                        <div class="w-24 h-24 rounded-full bg-white/20 border-4 border-white shadow-lg flex items-center justify-center">
+                            <span class="text-4xl">👤</span>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
+                    </div>
+                    
+                    <div>
+                        <h1 class="text-3xl font-bold mb-1">Usuario EstuFin</h1>
+                        <p class="text-blue-100">usuario@ejemplo.com</p>
+                        <p class="text-xs mt-2 opacity-80">Miembro desde Marzo 2026</p>
+                    </div>
+                </div>
+                <button class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl font-medium transition-all">
+                    Editar perfil
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-6">Información Personal</h2>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo</label>
+                    <input type="text" value="Usuario EstuFin" disabled class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 text-gray-600 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Correo Electrónico</label>
+                    <input type="email" value="usuario@ejemplo.com" disabled class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 text-gray-600 rounded-xl">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
