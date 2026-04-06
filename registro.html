@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstuFin - Registro</title>
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/auth.css"> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="landing-container"> <div class="auth-card">
+        <div class="logo-area-small">
+            <div class="logo-icon-placeholder-small"><span>$</span></div>
+            <h2>EstuFin</h2>
+            <p>Tu dinero bajo control. Simple, claro y organizado.</p>
+        </div>
+
+        <form class="auth-form" id="registerForm">
+            <h3>Crear cuenta</h3>
+            
+            <div class="input-group">
+                <label for="name">Nombre completo</label>
+                <input type="text" id="name" placeholder="user name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" placeholder="username@email.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="********" required>
+                    <span class="toggle-password">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Crear cuenta</button>
+            
+            <p class="auth-footer">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+            <a href="index.html" class="btn-back">← Volver</a>
+        </form>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
