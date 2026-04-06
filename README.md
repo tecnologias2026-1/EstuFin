@@ -63,7 +63,7 @@ Explicar qué proceso representa.
 
 Colocar aquí el enlace público de Figma:
 
-https://figma.com/xxxxx
+[https://figma.com/xxxxx](https://www.figma.com/design/c5Y0iHB1nBUDQI8uG2pwmC/EstuFin-Mockup?node-id=0-1&p=f&t=mCh34iPsyZrXsziL-0)
 
 
 🗄️ 6. Diseño de Base de Datos
