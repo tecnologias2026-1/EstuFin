@@ -1,0 +1,120 @@
+/* =============================================
+   css/proximos-pagos.css
+   Solo estilos propios de esta página.
+   El layout base (sidebar, main, header) viene
+   de dashboard.css que ya se carga primero.
+   ============================================= */
+
+/* ── Header de esta página ── */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.page-heading h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.page-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-gray);
+    margin: 4px 0 0;
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+/* Botón Agregar Pago */
+.btn-agregar-pago {
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+}
+
+.btn-agregar-pago:hover {
+    background-color: #4338ca;
+    transform: translateY(-1px);
+}
+
+/* ── Grid de dos columnas ── */
+.pagos-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.col-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 12px 0;
+}
+
+/* Tarjeta Pagos Pendientes (blanca, con sombra) */
+.pagos-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    padding: 2.5rem 1.5rem;
+}
+
+.empty-pagos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-height: 200px;
+}
+
+.empty-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-label {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #6b6b9a;
+    text-align: center;
+    margin: 0;
+}
+
+/* Tarjeta Historial Pagado (fondo gris punteado) */
+.historial-card {
+    background: #f8f8fc;
+    border-radius: 16px;
+    border: 1.5px dashed #d1d1e0;
+    padding: 2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 110px;
+}
+
+.historial-empty {
+    font-size: 0.82rem;
+    color: #aaaacc;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+}
