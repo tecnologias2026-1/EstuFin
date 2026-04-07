@@ -6,6 +6,67 @@
     <title>EstuFin - Inicio</title>
     <link rel="stylesheet" href="css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos adicionales para la sección de métodos de pago */
+        .payment-methods-section {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .payment-methods-section h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .payment-methods-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .payment-method-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 12px;
+        }
+        .payment-method-info {
+            display: flex;
+            gap: 20px;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+        .method-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .method-amount {
+            color: #2e7d32;
+            font-weight: 500;
+        }
+        .empty-methods {
+            text-align: center;
+            color: #777;
+            padding: 20px;
+        }
+        .btn-add-payment {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .btn-add-payment:hover {
+            background: #1565c0;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -37,7 +98,7 @@
                 <h2>Inicio</h2>
                 <div class="user-profile">
                     <span class="notifications">🔔</span>
-                    <span class="user-name">Juanito Pérez</span>
+                    <span class="user-name" id="userNameDisplay">Usuario</span>
                     <div class="user-avatar">👤</div>
                 </div>
             </header>
@@ -45,10 +106,10 @@
             <section class="dashboard-grid">
                 <div class="balance-card">
                     <p>Saldo Diario Disponible</p>
-                    <h2 class="amount">$0</h2>
+                    <h2 class="amount" id="totalBalance">$0</h2>
                     <span class="currency">COP</span>
-                    <div class="balance-badge">
-                        💵 Total: $0
+                    <div class="balance-badge" id="totalMethodsBadge">
+                        💵 Total métodos: $0
                     </div>
                     <div class="balance-icon">📈</div>
                 </div>
@@ -70,6 +131,15 @@
                         <p>No tienes pagos pendientes</p>
                         <button class="btn-outline">Agregar pago</button>
                     </div>
+                </div>
+
+                <!-- NUEVA SECCIÓN: Métodos de pago agregados -->
+                <div class="payment-methods-section">
+                    <h3>💰 Mis Métodos de Pago</h3>
+                    <div id="paymentMethodsList" class="payment-methods-list">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                    <button id="addMoreMethodsBtn" class="btn-add-payment">+ Agregar otro método</button>
                 </div>
             </section>
         </main>
