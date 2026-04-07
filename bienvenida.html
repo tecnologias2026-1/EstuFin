@@ -37,9 +37,11 @@
             <form id="form-method">
                 <label>Tipo de método</label>
                 <select id="method-type" required>
+                    <option value="choose">Elige una Opción</option>
                     <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta_deb">Tarjeta Débito</option>
+                    <option value="tarjeta_cre">Tarjeta Crédito</option>
                     <option value="bancario">Cuenta Bancaria</option>
-                    <option value="tarjeta">Tarjeta de Crédito</option>
                 </select>
                 <label>Nombre del método</label>
                 <input type="text" id="method-name" placeholder="Ej: Efectivo, Bancolombia" required>
