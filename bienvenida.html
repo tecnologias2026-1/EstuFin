@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="css/bienvenida.css">
 </head>
 <body>
-
     <main class="welcome-container">
-        <h1>¡Bienvenido, <span id="user-name">Usuario</span>! 👋</h1>
+        <h1>¡Bienvenido! 👋</h1>
         <p>Antes de comenzar, configura tus métodos de pago</p>
 
         <div class="info-box">
@@ -26,14 +25,15 @@
             </div>
         </div>
 
-        <button id="btn-continue" class="btn-secondary" disabled>Agrega al menos un método para continuar</button>
+        <button id="btn-continue" class="btn-secondary" disabled onclick="window.location.href='dashboard.html'">
+            Agrega al menos un método para continuar
+        </button>
     </main>
 
     <div id="modal-method" class="modal hidden">
         <div class="modal-content">
             <span class="close-btn" id="close-modal">&times;</span>
             <h2>Nuevo método de pago</h2>
-            
             <form id="form-method">
                 <label>Tipo de método</label>
                 <select id="method-type" required>
@@ -41,13 +41,10 @@
                     <option value="bancario">Cuenta Bancaria</option>
                     <option value="tarjeta">Tarjeta de Crédito</option>
                 </select>
-
                 <label>Nombre del método</label>
-                <input type="text" id="method-name" placeholder="Ej: Efectivo, Bancolombia, Visa Oro" required>
-
+                <input type="text" id="method-name" placeholder="Ej: Efectivo, Bancolombia" required>
                 <label>Saldo inicial</label>
                 <input type="number" id="method-balance" value="0" step="0.01" required>
-
                 <div class="modal-actions">
                     <button type="button" id="btn-cancel" class="btn-cancel">Cancelar</button>
                     <button type="submit" id="btn-save" class="btn-save">Guardar</button>
@@ -55,7 +52,6 @@
             </form>
         </div>
     </div>
-
     <script src="js/setup-saldos.js"></script>
 </body>
 </html>
