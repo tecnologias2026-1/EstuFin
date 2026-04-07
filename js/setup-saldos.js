@@ -82,11 +82,33 @@ function actualizarVistaMetodos() {
         btnContinue.innerText = "Continuar al Dashboard";
         btnContinue.classList.add('active');
     }
-}
 
-// Navegación al Dashboard
-btnContinue.onclick = () => {
-    // Guardamos en LocalStorage para que el dashboard lo use
-    localStorage.setItem('metodosPago', JSON.stringify(misMetodos));
-    window.location.href = 'dashboard.html'; // O index.html según tu estructura
-};
+    // Eventos de botones
+    btnOpenModal.onclick = toggleModal;
+    btnCloseX.onclick = toggleModal;
+    btnCancel.onclick = toggleModal;
+
+    formMethod.onsubmit = (e) => {
+        e.preventDefault();
+        
+        const nuevoMetodo = {
+            tipo: document.getElementById('method-type').value,
+            nombre: document.getElementById('method-name').value,
+            saldo: parseFloat(document.getElementById('method-balance').value)
+        };
+
+        misMetodos.push(nuevoMetodo);
+        localStorage.setItem('metodosPago', JSON.stringify(misMetodos)); // Guardamos en memoria
+
+        actualizarInterfaz();
+        toggleModal();
+        formMethod.reset();
+    };
+
+    btnContinue.onclick = () => {
+        window.location.href = 'dashboard.html'; // Nos vamos al dashboard real
+    };
+
+    // Al cargar la página, verificamos si ya había algo
+    actualizarInterfaz();
+});
