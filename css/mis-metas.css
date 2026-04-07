@@ -1,0 +1,143 @@
+/* =============================================
+   css/mis-metas.css
+   ============================================= */
+
+/* ── Header de la página ── */
+.metas-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.metas-page-heading h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.metas-page-heading p {
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin: 0;
+}
+
+.metas-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+/* Botón Nueva Meta */
+.btn-nueva-meta {
+    background-color: #2563EB;
+    color: #ffffff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-nueva-meta:hover {
+    background-color: #1D4ED8;
+    transform: translateY(-1px);
+}
+
+/* ── Título sección ── */
+.metas-section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 16px 0;
+}
+
+/* ── Tarjeta vacía ── */
+.metas-empty-card {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    padding: 4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+    min-height: 320px;
+}
+
+.metas-target-icon {
+    margin-bottom: 8px;
+}
+
+.metas-empty-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+.metas-empty-desc {
+    font-size: 0.83rem;
+    color: #9CA3AF;
+    max-width: 400px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* Botón Crear mi primera meta */
+.btn-crear-meta {
+    background-color: #2563EB;
+    color: #ffffff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-crear-meta:hover {
+    background-color: #1D4ED8;
+    transform: translateY(-1px);
+}
+
+/* ── FAB ── */
+.metas-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background-color: #2563EB;
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 300;
+    border: none;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.metas-fab:hover {
+    background-color: #1D4ED8;
+    transform: scale(1.08);
+}
