@@ -1,28 +1,20 @@
-// js/auth.js
+// js/main.js
 document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.getElementById('registerForm');
-    if (!registerForm) return;
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
 
-    registerForm.addEventListener('submit', (event) => {
+    loginForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
-        // Obtener valores
-        const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        // Limpiar mensajes de error previos
+        // Limpiar errores previos
         const existingError = document.querySelector('.error-message');
         if (existingError) existingError.remove();
 
-        // Validaciones
-        if (!name || !email || !password) {
+        if (!email || !password) {
             mostrarError('Por favor, completa todos los campos.');
-            return;
-        }
-
-        if (name.length < 3) {
-            mostrarError('El nombre debe tener al menos 3 caracteres.');
             return;
         }
 
@@ -31,38 +23,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (password.length < 6) {
-            mostrarError('La contraseña debe tener al menos 6 caracteres.');
-            return;
-        }
-
-        // Verificar si el usuario ya existe (por email)
+        // Obtener usuarios guardados
         const usuarios = JSON.parse(localStorage.getItem('estuFinUsers')) || [];
-        const usuarioExistente = usuarios.find(u => u.email === email);
-        if (usuarioExistente) {
-            mostrarError('Ya existe una cuenta con ese correo. Inicia sesión.');
+
+        // Buscar usuario por email y contraseña (simulada)
+        const usuario = usuarios.find(u => u.email === email && btoa(password) === u.password);
+
+        if (!usuario) {
+            mostrarError('Correo o contraseña incorrectos.');
             return;
         }
 
-        // Guardar nuevo usuario
-        const nuevoUsuario = {
-            name: name,
-            email: email,
-            // NUNCA guardes contraseñas reales en localStorage en producción.
-            // Aquí solo es para simular la demo.
-            password: btoa(password) // simulación simple (base64)
-        };
-        usuarios.push(nuevoUsuario);
-        localStorage.setItem('estuFinUsers', JSON.stringify(usuarios));
-
-        // Marcar sesión iniciada
-        localStorage.setItem('estuFinCurrentUser', JSON.stringify({ name, email }));
+        // Guardar sesión actual
+        localStorage.setItem('estuFinCurrentUser', JSON.stringify({
+            name: usuario.name,
+            email: usuario.email
+        }));
 
         // Redirigir a bienvenida
         window.location.href = 'bienvenida.html';
     });
 
-    // Función para mostrar mensajes de error
     function mostrarError(mensaje) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
@@ -71,9 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorDiv.style.marginTop = '10px';
         errorDiv.style.textAlign = 'center';
         errorDiv.textContent = mensaje;
-        registerForm.appendChild(errorDiv);
-
-        // Eliminar después de 3 segundos
+        loginForm.appendChild(errorDiv);
         setTimeout(() => {
             if (errorDiv) errorDiv.remove();
         }, 3000);
