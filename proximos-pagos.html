@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstuFin - Próximos Pagos</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/proximos-pagos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR (igual que dashboard.html) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-small">$</div>
+                <div>
+                    <h1>EstuFin</h1>
+                    <p>Tu dinero bajo control</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">🏠 Inicio</a>
+                <a href="#">📈 Gastos e Ingresos</a>
+                <a href="#">➕ Registrar Movimiento</a>
+                <a href="#">💰 Gastos Fijos</a>
+                <a href="#">⚡ Gastos Rápidos</a>
+                <a href="proximos-pagos.html" class="active">💳 Próximos Pagos</a>
+                <a href="#">🎯 Mis Metas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p><strong>EstuFin</strong></p>
+                <p>Controla tu dinero con facilidad</p>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- HEADER -->
+            <header class="top-header">
+                <div class="page-heading">
+                    <h2>Próximos Pagos</h2>
+                    <p class="page-subtitle">Administra tus pagos pendientes</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <span class="notifications">🔔</span>
+                        <span class="user-name">User Name</span>
+                        <div class="user-avatar">👤</div>
+                    </div>
+                    <button class="btn-agregar-pago">+ Agregar Pago</button>
+                </div>
+            </header>
+
+            <!-- GRID PAGOS -->
+            <section class="pagos-grid">
+
+                <!-- Columna izquierda: Pagos Pendientes -->
+                <div class="pagos-pendientes-col">
+                    <h3 class="col-title">Pagos Pendientes</h3>
+                    <div class="pagos-card empty-pagos">
+                        <div class="empty-icon-wrap">
+                            <!-- Party popper SVG -->
+                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 34L9 47" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
+                                <path d="M9 47l11-2.5-8.5-8.5L9 47z" fill="#22c55e"/>
+                                <path d="M22 34c4-9 15-19 23-21" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
+                                <path d="M45 13c-2 8-13 19-21 23" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
+                                <circle cx="41" cy="15" r="2.5" fill="#4ade80"/>
+                                <circle cx="32" cy="10" r="1.8" fill="#86efac"/>
+                                <circle cx="47" cy="24" r="1.8" fill="#86efac"/>
+                                <path d="M36 22l2-5 2 5-5-2 5-2-5 2z" stroke="#4ade80" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="26" cy="12" r="1.2" fill="#bbf7d0"/>
+                                <circle cx="47" cy="32" r="1.2" fill="#bbf7d0"/>
+                            </svg>
+                        </div>
+                        <p class="empty-label">¡No tienes pagos pendientes!</p>
+                    </div>
+                </div>
+
+                <!-- Columna derecha: Historial Pagado -->
+                <div class="historial-col">
+                    <h3 class="col-title">Historial Pagado</h3>
+                    <div class="historial-card">
+                        <p class="historial-empty">No hay pagos completados aún</p>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>

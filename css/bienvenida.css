@@ -111,6 +111,8 @@ p { color: var(--text-gray); margin-bottom: 24px; }
     backdrop-filter: blur(4px);
 }
 
+.hidden { display: none !important; }
+
 .modal.hidden { display: none; }
 
 /* Asegura que el modal se oculte de verdad */
