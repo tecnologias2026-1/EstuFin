@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstuFin - Registrar Movimiento</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/movimiento.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-small">$</div>
+                <div>
+                    <h1>EstuFin</h1>
+                    <p>Tu dinero bajo control</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">🏠 Inicio</a>
+                <a href="gatos-ingresos.html">📈 Gastos e Ingresos</a>
+                <a href="movimiento.html" class="active">➕ Registrar Movimiento</a>
+                <a href="gastos-fijos.html">💰 Gastos Fijos</a>
+                <a href="gatos-rapidos.html">⚡ Gastos Rápidos</a>
+                <a href="proximos-pagos.html">💳 Próximos Pagos</a>
+                <a href="mis-metas.htm">🎯 Mis Metas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p><strong>EstuFin</strong></p>
+                <p>Controla tu dinero con facilidad</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h2>Registrar Movimiento</h2>
+                <div class="user-profile">
+                    <span class="notifications">🔔</span>
+                    <span class="user-name">Usuario</span>
+                    <div class="user-avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="register-card">
+                <h2>Registrar Movimiento</h2>
+                <div class="transaction-type">
+                    <button class="income">+ Ingreso</button>
+                    <button class="expense">- Gasto</button>
+                </div>
+                <div class="field-group">
+                    <div class="field">
+                        <label for="amount">Monto (COP)</label>
+                        <input id="amount" type="number" placeholder="0" min="0">
+                    </div>
+                    <div class="field">
+                        <label>Método de Pago</label>
+                        <select id="payment-method" class="payment-select">
+                            <option value="">Selecciona un método</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="date">Fecha</label>
+                        <input id="date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="description">Descripción</label>
+                        <textarea id="description" placeholder="Ej: Mesada, Trabajo freelance, etc."></textarea>
+                    </div>
+                </div>
+
+                <div class="actions-row">
+                    <button type="button" class="cancel-btn">Cancelar</button>
+                    <button type="button" class="submit-btn">Registrar Ingreso</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/dashboard.js"></script>
+    <script src="js/movimiento.js"></script>
+</body>
+</html>
