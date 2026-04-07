@@ -3,61 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a EstuFin</title>
-    <link rel="stylesheet" href="css/style.css"> 
-    <link rel="stylesheet" href="css/bienvenida.css">
+    <title>EstuFin - Bienvenida</title>
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .payment-methods-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .payment-info {
+            display: flex;
+            gap: 15px;
+            align-items: baseline;
+        }
+        .payment-name {
+            font-weight: 600;
+        }
+        .payment-amount {
+            color: #2e7d32;
+        }
+        .delete-payment {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #d32f2f;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 15px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
-<body>
-    <main class="welcome-container">
-        <h1>¡Bienvenido! 👋</h1>
-        <p>Antes de comenzar, configura tus métodos de pago</p>
-
-        <div class="info-box">
-            💡 Necesitas al menos un método de pago para registrar gastos
+<body class="landing-container">
+    <div class="auth-card" style="max-width: 500px;">
+        <div class="logo-area-small">
+            <div class="logo-icon-placeholder-small"><span>$</span></div>
+            <h2>¡Bienvenido a EstuFin!</h2>
+            <p>Antes de empezar, agrega tus métodos de pago (Nequi, Daviplata, efectivo, etc.)</p>
         </div>
 
-        <button id="btn-add-method" class="btn-primary">+ Añadir método de pago</button>
+        <form id="paymentForm" class="auth-form">
+            <h3>Agregar método de pago</h3>
+            <div class="input-group">
+                <label for="paymentName">Nombre del método</label>
+                <input type="text" id="paymentName" placeholder="Ej: Nequi, Daviplata, Efectivo" required>
+            </div>
+            <div class="input-group">
+                <label for="paymentAmount">Monto disponible (COP)</label>
+                <input type="number" id="paymentAmount" placeholder="Ej: 50000" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Agregar método</button>
+        </form>
 
-        <div id="methods-list" class="methods-container">
-            <div class="empty-state">
-                <img src="assets/wallet-icon.png" alt="Wallet" class="welcome-icon">
-                <p>No has agregado ningún método de pago</p>
+        <div class="payment-methods-list" id="paymentMethodsList">
+            <h4>Métodos agregados:</h4>
+            <div id="methodsContainer">
+                <!-- Aquí se listarán dinámicamente -->
             </div>
         </div>
 
-        <button id="btn-continue" class="btn-secondary" disabled onclick="window.location.href='dashboard.html'">
-            Agrega al menos un método para continuar
-        </button>
-    </main>
-
-    <div id="modal-method" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-btn" id="close-modal">&times;</span>
-            <h2>Nuevo método de pago</h2>
-            <form id="form-method">
-                <label>Tipo de método</label>
-                <select id="method-type" required>
-                    <option value="choose">Elige una Opción</option>
-                    <option value="efectivo">Efectivo</option>
-                    <option value="tarjeta_deb">Tarjeta Débito</option>
-                    <option value="tarjeta_cre">Tarjeta Crédito</option>
-                    <option value="bancario">Cuenta Bancaria</option>
-                </select>
-                <label>Nombre del método</label>
-                <input type="text" id="method-name" placeholder="Ej: Efectivo, Bancolombia" required>
-                <div id="bank-name-group" class="hidden">
-                    <label>Nombre del banco</label>
-                    <input type="text" id="method-bank" placeholder="Ej: Bancolombia, Davivienda">
-                </div>
-                <label>Saldo inicial</label>
-                <input type="number" id="method-balance" value="0" step="0.01" required>
-                <div class="modal-actions">
-                    <button type="button" id="btn-cancel" class="btn-cancel">Cancelar</button>
-                    <button type="submit" id="btn-save" class="btn-save">Guardar</button>
-                </div>
-            </form>
-        </div>
+        <button id="goToDashboardBtn" class="btn btn-primary btn-full" style="background-color: #2e7d32; margin-top: 20px;">Continuar al Dashboard</button>
+        <a href="login.html" class="btn-back" style="display: block; text-align: center; margin-top: 15px;">← Cerrar sesión</a>
     </div>
-    <script src="js/setup-saldos.js"></script>
+
+    <script src="js/bienvenida.js"></script>
 </body>
 </html>
