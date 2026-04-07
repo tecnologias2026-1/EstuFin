@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstuFin - Gastos Fijos</title>
+    <link rel="stylesheet" href="css/gastos-rapidos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-small">$</div>
+                <div>
+                    <h1>EstuFin</h1>
+                    <p>Tu dinero bajo control</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">🏠 Inicio</a>
+                <a href="gatos-ingresos.html">📈 Gastos e Ingresos</a>
+                <a href="movimiento.html">➕ Registrar Movimiento</a>
+                <a href="gastos-fijos.html">💰 Gastos Fijos</a>
+                <a href="gatos-rapidos.html" class="active">⚡ Gastos Rápidos</a>
+                <a href="proximos-pagos.html">💳 Próximos Pagos</a>
+                <a href="mis-metas.htm">🎯 Mis Metas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p><strong>EstuFin</strong></p>
+                <p>Controla tu dinero con facilidad</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h2>Gastos Rapidos</h2>
+                <div class="user-profile">
+                    <button class="btn-add-top" id="add-fixed-expense-top">+ Añadir</button>
+                    <span class="notifications">🔔</span>
+                    <span class="user-name">Usuario</span>
+                    <div class="user-avatar">👤</div>
+                </div>
+            </header>
+
+            <section class="dashboard-grid centered-grid">
+                <div class="payments-section">
+
+                    <!-- Tarjeta total -->
+                    <div class="total-card" id="total-card" style="display:none;">
+                    <div>
+                        <p class="total-label">Total Gastos Rapidos Mensuales</p>
+                        <p class="total-amount" id="total-amount">$0</p>
+                    </div>
+                    <div class="total-icon">$</div>
+                    </div>
+
+                    <!-- Lista de gastos -->
+                    <div id="fixed-expenses-list"></div>
+
+                    <!-- Estado vacío -->
+                    <div class="empty-state" id="empty-state">
+                     <h3>No has configurado gastos rapidos</h3>
+                    <p>Los gastos rápidos son accesos directos. Al hacer clic en uno, se registra automáticamente el movimiento.</p>
+                    <button class="btn-primary-dash" id="add-fixed-expense">Añadir tu primer gasto rapido</button>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="fixed-expense-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Nuevo gasto rapido</h2>
+                <button class="modal-close" aria-label="Cerrar modal">×</button>
+            </div>
+            <form id="fixed-expense-form">
+                <div class="form-group">
+                    <label for="expense-name">Nombre del gasto</label>
+                    <input type="text" id="expense-name" placeholder="Ej: Café, Transporte," required>
+                </div>
+                <div class="form-group">
+                    <label for="expense-amount">Monto</label>
+                    <input type="number" id="expense-amount" placeholder="0" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="expense-method">Método de pago</label>
+                    <select id="expense-method" required>
+                        <option value="">Selecciona un método</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-save">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('fixed-expense-modal');
+        const closeBtn = document.querySelector('.modal-close');
+        const cancelBtn = document.getElementById('modal-cancel');
+        const form = document.getElementById('fixed-expense-form');
+        const expenseMethodSelect = document.getElementById('expense-method');
+        const emptyState = document.getElementById('empty-state');
+        const list = document.getElementById('fixed-expenses-list');
+        const totalCard = document.getElementById('total-card');
+        const totalAmountEl = document.getElementById('total-amount');
+
+        // Cargar métodos de pago
+        const methods = JSON.parse(localStorage.getItem('metodosPago') || '[]');
+        methods.forEach((method, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = method.nombre;
+            expenseMethodSelect.appendChild(option);
+        });
+
+        // Abrir modal (botón header)
+        document.getElementById('add-fixed-expense-top').addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        // Abrir modal (botón empty state)
+        document.getElementById('add-fixed-expense').addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        // Cerrar modal
+        closeBtn.addEventListener('click', () => { modal.classList.remove('active'); form.reset(); });
+        cancelBtn.addEventListener('click', () => { modal.classList.remove('active'); form.reset(); });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) { modal.classList.remove('active'); form.reset(); }
+        });
+
+        // Renderizar lista
+        function renderList() {
+            const expenses = JSON.parse(localStorage.getItem('gastosRapidos') || '[]'); // ← cambiado
+            list.innerHTML = '';
+
+            if (expenses.length === 0) {
+                emptyState.style.display = 'block';
+                totalCard.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            totalCard.style.display = 'flex';
+
+            const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+            totalAmountEl.textContent = '$' + total.toLocaleString('es-CO');
+
+            expenses.forEach((expense) => {
+                const methodName = methods[expense.methodIndex]?.nombre || 'Sin método';
+                const card = document.createElement('div');
+                card.className = 'expense-item-card';
+                card.innerHTML = `
+                    <div class="expense-info">
+                        <p class="expense-name">${expense.name}</p>
+                        <p class="expense-method">${methodName}</p>
+                    </div>
+                    <div class="expense-actions">
+                        <span class="expense-amount">$${expense.amount.toLocaleString('es-CO')}</span>
+                        <button class="btn-edit" data-id="${expense.id}">✏️</button>
+                        <button class="btn-delete" data-id="${expense.id}">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            // Botones eliminar
+            list.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = parseInt(btn.dataset.id);
+                    let expenses = JSON.parse(localStorage.getItem('gastosRapidos') || '[]'); // ← cambiado
+                    expenses = expenses.filter(e => e.id !== id);
+                    localStorage.setItem('gastosRapidos', JSON.stringify(expenses)); // ← cambiado
+                    renderList();
+                });
+            });
+        }
+
+        // Guardar gasto rápido
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('expense-name').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+            const methodIndex = expenseMethodSelect.value;
+
+            if (!name || !amount || methodIndex === '') {
+                alert('Por favor, completa todos los campos.');
+                return;
+            }
+
+            const quickExpense = {
+                id: Date.now(),
+                name,
+                amount,
+                methodIndex,
+                createdAt: new Date().toISOString()
+            };
+
+            const gastosRapidos = JSON.parse(localStorage.getItem('gastosRapidos') || '[]'); // ← cambiado
+            gastosRapidos.push(quickExpense);
+            localStorage.setItem('gastosRapidos', JSON.stringify(gastosRapidos)); // ← cambiado
+
+            modal.classList.remove('active');
+            form.reset();
+            renderList();
+        });
+
+        // Cargar al iniciar
+        renderList();
+    });
+</script>
+</body>
+</html>

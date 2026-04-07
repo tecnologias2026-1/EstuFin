@@ -22,10 +22,10 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="dashboard.html">🏠 Inicio</a>
-                <a href="#">📈 Gastos e Ingresos</a>
-                <a href="#">➕ Registrar Movimiento</a>
-                <a href="#">💰 Gastos Fijos</a>
-                <a href="#">⚡ Gastos Rápidos</a>
+                <a href="gatos-ingresos.html">📈 Gastos e Ingresos</a>
+                <a href="movimiento.html">➕ Registrar Movimiento</a>
+                <a href="gastos-fijos.html">💰 Gastos Fijos</a>
+                <a href="gatos-rapidos.html">⚡ Gastos Rápidos</a>
                 <a href="proximos-pagos.html" class="active">💳 Próximos Pagos</a>
                 <a href="mis-metas.html">🎯 Mis Metas</a>
             </nav>
@@ -92,5 +92,36 @@
 
         </main>
     </div>
+
+    <!-- Modal Agregar Pago -->
+    <div id="modal-agregar-pago" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2>Agregar Pago</h2>
+            <form id="form-agregar-pago">
+                <label>Descripción del pago</label>
+                <input type="text" id="pago-descripcion" placeholder="Ej: Arriendo, Servicios, etc." required>
+
+                <label>Monto (COP)</label>
+                <input type="number" id="pago-monto" placeholder="0" min="0" step="0.01" required>
+
+                <label>Fecha de vencimiento</label>
+                <input type="date" id="pago-fecha" required>
+
+                <label>Método de pago</label>
+                <select id="pago-metodo" required>
+                    <option value="">Selecciona un método</option>
+                </select>
+
+                <div class="modal-actions">
+                    <button type="button" id="btn-cancelar-pago" class="btn-cancel">Cancelar</button>
+                    <button type="submit" id="btn-guardar-pago" class="btn-save">Guardar Pago</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/proximos-pagos.js"></script>
 </body>
 </html>
