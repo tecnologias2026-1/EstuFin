@@ -1,0 +1,404 @@
+/* Estilos para la página Registrar Movimiento de EstuFin */
+:root {
+    --bg: #F4F7FF;
+    --white: #FFFFFF;
+    --text-dark: #111827;
+    --text-gray: #6B7280;
+    --border: #E5E7EB;
+    --primary: #059669;
+    --primary-dark: #047857;
+    --expense: #DC2626;
+    --expense-dark: #B91C1C;
+    --surface: #F8FAFC;
+    --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg);
+    color: var(--text-dark);
+}
+
+.page-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+}
+
+.page-layout .sidebar {
+    background: #FFFFFF;
+    border-right: 1px solid #E5E7EB;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.sidebar-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 100%);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 700;
+}
+
+.sidebar-header-title h1 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.sidebar-header-title p {
+    margin: 4px 0 0;
+    font-size: 0.82rem;
+    color: var(--text-gray);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background: #EFF6FF;
+    color: #2563EB;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    background: #F8FAED;
+    padding: 16px;
+    border-radius: 18px;
+    color: #0F172A;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.main-panel {
+    padding: 28px 40px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.topbar .brand-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.topbar .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.top-actions button,
+.top-actions .user-box {
+    border: none;
+    background: none;
+}
+
+.top-actions button {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563EB;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+}
+
+.user-box .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2563EB;
+    color: white;
+    display: grid;
+    place-items: center;
+}
+
+.register-card {
+    background: white;
+    border-radius: 32px;
+    box-shadow: var(--shadow);
+    padding: 32px;
+    max-width: 740px;
+    margin: 0 auto;
+}
+
+.register-card h2 {
+    margin: 0 0 24px;
+    font-size: 1.9rem;
+    text-align: center;
+}
+
+.transaction-type {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.transaction-type button {
+    background: #F3F4F6;
+    color: #374151;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+}
+
+.transaction-type .income.active {
+    background: var(--primary);
+    color: white;
+}
+
+.transaction-type .expense.active {
+    background: var(--expense);
+    color: white;
+}
+
+.field-group {
+    display: grid;
+    gap: 18px;
+}
+
+.field-row {
+    display: grid;
+    gap: 18px;
+}
+
+.field-row.two-cols {
+    grid-template-columns: 1fr 1fr;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field label {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.field input,
+.field textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-size: 1rem;
+    color: var(--text-dark);
+    background: #FFFFFF;
+}
+
+.field input:focus,
+.field textarea:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+.field textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.payment-card {
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    background: #EFF6FF;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.payment-card .info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.payment-card .icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: rgba(37, 99, 235, 0.12);
+    color: #2563EB;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+}
+
+.payment-card .details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.payment-card .details span:first-child {
+    font-weight: 600;
+}
+
+.payment-card .details span:last-child {
+    font-size: 0.93rem;
+    color: var(--text-gray);
+}
+
+.actions-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.cancel-btn {
+    background: #F3F4F6;
+    color: #374151;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+}
+
+.submit-btn {
+    background: #F3F4F6;
+    color: #374151;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+}
+
+.transaction-type button.active {
+    background: var(--primary);
+    color: white;
+}
+
+.transaction-type .expense.active {
+    background: #DC2626;
+}
+
+.field select.payment-select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-size: 1rem;
+    color: var(--text-dark);
+    background: #FFFFFF;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 18px center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 3em;
+}
+
+.field select.payment-select:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+.submit-btn.income-btn {
+    background: var(--primary);
+}
+
+.submit-btn.expense-btn {
+    background: var(--expense);
+}
+
+
+@media (max-width: 1024px) {
+    .page-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .main-panel {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 720px) {
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .field-row.two-cols {
+        grid-template-columns: 1fr;
+    }
+
+    .actions-row {
+        flex-direction: column;
+    }
+}
