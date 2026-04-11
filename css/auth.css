@@ -1,46 +1,48 @@
 /* Estilos para las tarjetas de Login y Registro */
-
 .auth-card {
-    background: rgba(31, 41, 55, 0.7); /* Fondo oscuro con transparencia */
-    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+    background: rgba(31, 41, 55, 0.8);
+    backdrop-filter: blur(12px);
     padding: 2.5rem;
     border-radius: 16px;
-    width: 100%;
+    width: 90%;
     max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     border: 1px solid rgba(255,255,255,0.1);
     text-align: center;
 }
 
 .logo-area-small h2 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     margin: 10px 0 5px 0;
+    color: #FFFFFF;
 }
 
 .logo-area-small p {
-    font-size: 0.85rem;
-    opacity: 0.7;
+    font-size: 0.9rem;
+    color: #9CA3AF;
     margin-bottom: 2rem;
 }
 
 .logo-icon-placeholder-small {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     background-color: #2563EB;
-    border-radius: 12px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
     margin: 0 auto;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
 }
 
-/* Estilos del Formulario */
+/* Formulario */
 .auth-form h3 {
     text-align: left;
     margin-bottom: 1.5rem;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    color: #F3F4F6;
 }
 
 .input-group {
@@ -51,19 +53,24 @@
 .input-group label {
     display: block;
     font-size: 0.85rem;
-    margin-bottom: 5px;
-    opacity: 0.9;
+    margin-bottom: 6px;
+    color: #D1D5DB;
 }
 
 .input-group input {
     width: 100%;
-    padding: 0.8rem;
+    padding: 0.9rem;
     background: #111827;
     border: 1px solid #374151;
     border-radius: 8px;
     color: white;
     font-family: inherit;
-    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #2563EB;
+    outline: none;
 }
 
 .password-wrapper {
@@ -72,36 +79,49 @@
 
 .toggle-password {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     opacity: 0.6;
 }
 
 .btn-full {
     width: 100%;
     margin-top: 1rem;
+    padding: 1rem;
 }
 
 .auth-footer {
     margin-top: 1.5rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    color: #9CA3AF;
 }
 
 .auth-footer a {
     color: #60A5FA;
-    text-decoration: none;
+    font-weight: 600;
 }
 
 .btn-back {
-    display: block;
+    display: inline-block;
     margin-top: 1.5rem;
-    font-size: 0.8rem;
-    color: white;
-    opacity: 0.5;
+    font-size: 0.85rem;
+    color: #9CA3AF;
     text-decoration: none;
+    transition: color 0.3s;
 }
 
-.btn-back:hover { opacity: 1; }
+.btn-back:hover { color: white; }
+
+/* Mensajes de Error */
+.error-message {
+    background: rgba(239, 68, 68, 0.1);
+    color: #F87171;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 15px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
