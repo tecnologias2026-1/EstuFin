@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const methodsContainer = document.getElementById('methodsContainer');
     const goToDashboardBtn = document.getElementById('goToDashboardBtn');
 
-    // Función para renderizar la lista de métodos
     function renderMethods() {
         if (!methodsContainer) return;
         if (paymentMethods.length === 0) {
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             methodsContainer.appendChild(methodDiv);
         });
 
-        // Agregar event listeners a los botones eliminar
+        // Event listeners para eliminar
         document.querySelectorAll('.delete-payment').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const index = parseInt(btn.getAttribute('data-index'));
@@ -51,56 +50,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+        return str.replace(/[&<>]/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[m]));
     }
 
-    // Manejar el envío del formulario
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = nameInput.value.trim();
         const amount = parseFloat(amountInput.value);
 
-        // Validaciones
-        if (!name) {
-            mostrarError('Por favor, ingresa un nombre para el método de pago.');
-            return;
-        }
-        if (isNaN(amount) || amount <= 0) {
-            mostrarError('Ingresa un monto válido mayor a 0.');
+        if (!name || isNaN(amount) || amount <= 0) {
+            mostrarError('Por favor, ingresa un nombre y un monto válido.');
             return;
         }
 
-        // Agregar nuevo método
         paymentMethods.push({
             id: Date.now(),
             name: name,
             amount: amount
         });
 
-        // Limpiar campos
         nameInput.value = '';
         amountInput.value = '';
-
-        // Guardar y actualizar vista
         saveAndRender();
-
-        // Mostrar mensaje de éxito temporal
-        const successMsg = document.createElement('div');
-        successMsg.className = 'error-message';
-        successMsg.style.color = 'green';
-        successMsg.textContent = 'Método agregado correctamente.';
-        form.appendChild(successMsg);
-        setTimeout(() => successMsg.remove(), 2000);
     });
 
     function mostrarError(mensaje) {
-        const existingError = document.querySelector('.error-message');
-        if (existingError) existingError.remove();
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.textContent = mensaje;
@@ -108,11 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => errorDiv.remove(), 3000);
     }
 
-    // Botón para ir al dashboard
     goToDashboardBtn.addEventListener('click', () => {
         window.location.href = 'dashboard.html';
     });
 
-    // Renderizar al cargar
     renderMethods();
 });

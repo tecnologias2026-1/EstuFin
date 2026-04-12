@@ -45,11 +45,11 @@
 
             <section class="dashboard-grid">
                 <div class="balance-card">
-                    <p>Saldo Diario Disponible</p>
-                    <h2 class="amount">$0</h2>
+                    <p>Saldo Total Disponible</p>
+                    <h2 class="amount" id="totalBalance">$0</h2>
                     <span class="currency">COP</span>
-                    <div class="balance-badge">
-                        💵 Total: $0
+                    <div class="balance-badge" id="totalMethodsBadge">
+                        💵 Total métodos: $0 COP
                     </div>
                     <div class="balance-icon">📈</div>
                 </div>
@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <!-- NUEVA SECCIÓN: Métodos de pago agregados -->
+                
                 <div class="payment-methods-section">
                     <h3>💰 Mis Métodos de Pago</h3>
                     <div id="paymentMethodsList" class="payment-methods-list">
