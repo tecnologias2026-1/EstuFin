@@ -1,10 +1,8 @@
 /* =============================================
    css/proximos-pagos.css
-   Solo estilos propios. El layout base viene
-   de dashboard.css (variables, sidebar, nav).
    ============================================= */
 
-/* ── Subtítulo del header ── */
+/* ── Subtítulo header ── */
 .page-subtitle {
     font-size: 13px;
     color: var(--text-gray);
@@ -12,7 +10,7 @@
     font-weight: 400;
 }
 
-/* ── Botón Agregar Pago (en el header) ── */
+/* ── Botón Agregar Pago ── */
 .btn-agregar-pago {
     background: var(--primary-blue);
     color: white;
@@ -31,6 +29,104 @@
 .btn-agregar-pago:hover {
     background: var(--dark-blue);
     transform: translateY(-1px);
+}
+
+/* ── Formulario inline ── */
+.inline-form {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.2s ease-out;
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.inline-form h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 18px 0;
+}
+
+.inline-form-fields {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.field-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+}
+
+.field-group input,
+.field-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text-dark);
+    background: white;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(26, 86, 255, 0.08);
+}
+
+.inline-form-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-cancel-inline {
+    padding: 11px 28px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #EDF2F7;
+    color: #4A5568;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn-cancel-inline:hover {
+    background: #E2E8F0;
+}
+
+.btn-save-inline {
+    flex: 1;
+    padding: 11px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn-save-inline:hover {
+    background: var(--dark-blue);
 }
 
 /* ── Grid dos columnas ── */
@@ -81,7 +177,7 @@
     margin: 0;
 }
 
-/* Ítem de pago (cuando hay pagos) */
+/* Ítem de pago pendiente */
 .pago-item {
     display: flex;
     justify-content: space-between;

@@ -65,9 +65,38 @@
                 <span class="bell">🔔</span>
                 <span class="user-name">User Name</span>
                 <div class="avatar">👤</div>
-                <button class="btn-agregar-pago" id="openModalPago">+ Agregar Pago</button>
+                <button class="btn-agregar-pago" id="btnAbrirForm">+ Agregar Pago</button>
             </div>
         </header>
+
+        <!-- Formulario inline (oculto por defecto) -->
+        <div id="formInlinePago" class="inline-form hidden">
+            <h4>Nuevo Pago</h4>
+            <div class="inline-form-fields">
+                <div class="field-group">
+                    <label for="pagoNombre">Nombre</label>
+                    <input type="text" id="pagoNombre" placeholder="Ej: Internet, Netflix">
+                </div>
+                <div class="field-group">
+                    <label for="pagoMonto">Monto (COP)</label>
+                    <input type="number" id="pagoMonto" placeholder="50000" min="0">
+                </div>
+                <div class="field-group">
+                    <label for="pagoFecha">Fecha de Vencimiento</label>
+                    <input type="date" id="pagoFecha">
+                </div>
+                <div class="field-group">
+                    <label for="pagoMetodo">Método de Pago</label>
+                    <select id="pagoMetodo">
+                        <option value="">Selecciona...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="inline-form-actions">
+                <button id="cancelInlinePago" class="btn-cancel-inline">Cancelar</button>
+                <button id="guardarInlinePago" class="btn-save-inline">Guardar Pago</button>
+            </div>
+        </div>
 
         <!-- Grid pagos -->
         <div class="pagos-grid">
@@ -76,7 +105,6 @@
             <div class="pagos-pendientes-col">
                 <h3 class="col-title">Pagos Pendientes</h3>
                 <div class="pagos-card" id="listaPagosPendientes">
-                    <!-- Estado vacío -->
                     <div class="empty-pagos" id="emptyPagos">
                         <div class="empty-icon-wrap">
                             <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -110,38 +138,8 @@
     </main>
 </div>
 
-<!-- FAB -->
+<!-- FAB → va a Registrar Movimiento -->
 <button class="fab-pago" id="fabPago">+</button>
-
-<!-- Modal Agregar Pago -->
-<div class="modal-overlay hidden" id="modalAgregarPago">
-    <div class="modal-box">
-        <button class="modal-close" id="closeModalPago">✕</button>
-        <h3>Agregar Pago</h3>
-        <p>Registra un nuevo pago pendiente</p>
-
-        <form id="formAgregarPago">
-            <label for="pagoDescripcion">Descripción del pago</label>
-            <input type="text" id="pagoDescripcion" placeholder="Ej: Arriendo, Netflix, etc." required>
-
-            <label for="pagoMonto">Monto (COP)</label>
-            <input type="number" id="pagoMonto" placeholder="0" min="0" required>
-
-            <label for="pagoFecha">Fecha de vencimiento</label>
-            <input type="date" id="pagoFecha" required>
-
-            <label for="pagoMetodo">Método de pago</label>
-            <select id="pagoMetodo" required style="width:100%;padding:11px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:'Poppins',sans-serif;outline:none;">
-                <option value="">Selecciona un método</option>
-            </select>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" id="cancelModalPago">Cancelar</button>
-                <button type="submit" class="btn-save">Guardar Pago</button>
-            </div>
-        </form>
-    </div>
-</div>
 
 <script src="js/dashboard.js"></script>
 <script src="js/proximos-pagos.js"></script>
