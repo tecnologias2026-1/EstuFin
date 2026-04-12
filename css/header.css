@@ -1,0 +1,251 @@
+/* ================================================
+   css/header.css
+   Estilos del header interactivo (campana + avatar)
+   ================================================ */
+
+/* ── user-info base ── */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+/* ── Campana ── */
+.header-bell-wrap {
+    position: relative;
+}
+
+.header-bell-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid #E2E8F0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #718096;
+    transition: border-color 0.2s, color 0.2s;
+    position: relative;
+}
+
+.header-bell-btn:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+}
+
+.bell-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background: #EF4444;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Dropdown Notificaciones ── */
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 300px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    z-index: 999;
+    overflow: hidden;
+    animation: dropDown 0.18s ease-out;
+}
+
+.notif-header {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.notif-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.notif-body {
+    padding: 8px 0;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.notif-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 24px 16px;
+    text-align: center;
+}
+
+.notif-empty p {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9CA3AF;
+    margin: 0;
+}
+
+.notif-empty span {
+    font-size: 11.5px;
+    color: #CBD5E0;
+}
+
+.notif-item {
+    padding: 10px 18px;
+    border-bottom: 1px solid #F8FAFC;
+    transition: background 0.15s;
+}
+
+.notif-item:hover { background: #F8FAFC; }
+
+.notif-item-texto {
+    font-size: 13px;
+    color: var(--text-dark);
+    margin: 0 0 2px 0;
+}
+
+.notif-item-fecha {
+    font-size: 11px;
+    color: #9CA3AF;
+}
+
+/* ── Avatar ── */
+.header-avatar-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.header-avatar-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.header-avatar-btn:hover { opacity: 0.85; }
+
+.avatar-inicial {
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Dropdown Usuario ── */
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 230px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    z-index: 999;
+    overflow: hidden;
+    animation: dropDown 0.18s ease-out;
+}
+
+.user-dropdown-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+}
+
+.user-dropdown-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    flex-shrink: 0;
+}
+
+.user-dropdown-nombre {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.user-dropdown-email {
+    font-size: 11px;
+    color: #9CA3AF;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.user-dropdown-hr {
+    border: none;
+    border-top: 1px solid #F1F5F9;
+    margin: 0;
+}
+
+.user-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dark);
+    text-decoration: none;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.15s;
+}
+
+.user-dropdown-item:hover { background: #F8FAFC; }
+
+.user-dropdown-logout {
+    color: #EF4444;
+}
+
+.user-dropdown-logout:hover { background: #FFF5F5; }
+
+/* ── Animación ── */
+@keyframes dropDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
