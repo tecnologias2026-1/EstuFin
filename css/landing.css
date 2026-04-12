@@ -1,154 +1,131 @@
-/* css/landing.css */
+:root {
+    --bg-dark: #0a192f;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --primary-blue: #1e69fd;
+    --text-white: #ffffff;
+    --text-gray: #a8b2d1;
+}
 
-/* --- Estilos del Contenedor Principal con Gradiente --- */
-.landing-container {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at top, #112240 0%, #0a192f 100%);
+    color: var(--text-white);
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    
-    /* Gradiente basado en tu captura de Figma (azul muy oscuro a azul medio) */
-    background: radial-gradient(circle at center, #1E40AF 0%, #0F172A 100%);
-    
-    color: #FFFFFF;
-    font-family: 'Poppins', sans-serif;
-    padding: 2rem;
-    box-sizing: border-box;
+    align-items: center;
+    padding: 20px;
 }
 
-/* --- Sección Hero (Central) --- */
-.hero-section {
+.hero-container {
+    max-width: 1000px;
     text-align: center;
-    margin-bottom: 5rem; /* Espacio antes de las tarjetas */
-    max-width: 600px;
 }
 
-/* Placeholder del Logo (Redondo azul con $) */
-.logo-icon-placeholder {
-    width: 96px;
-    height: 96px;
-    background-color: #2563EB; /* Azul primario */
-    border-radius: 50%;
+/* Sección de Logo */
+.logo-box {
+    background-color: var(--primary-blue);
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0 auto 1rem auto;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    align-items: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 10px 30px rgba(30, 105, 253, 0.3);
 }
 
-.brand-name {
+.logo-icon {
+    font-size: 45px !important;
+    color: #ffd700; /* Color moneda */
+}
+
+h1 {
     font-size: 3.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
+    margin-bottom: 10px;
 }
 
-.brand-tagline {
-    font-size: 1.1rem;
-    font-weight: 400;
-    opacity: 0.8;
-    margin-bottom: 2.5rem;
+.subtitle {
+    color: var(--text-gray);
+    font-size: 1.2rem;
+    margin-bottom: 40px;
 }
 
 /* Botones */
-.action-buttons {
+.button-group {
     display: flex;
-    gap: 1.5rem;
+    gap: 20px;
     justify-content: center;
+    margin-bottom: 60px;
 }
 
 .btn {
-    padding: 0.8rem 2.5rem;
-    border-radius: 8px; /* Bordes redondeados de Figma */
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-/* Botón 'Crear cuenta' (Sólido azul) */
-.btn-primary {
-    background-color: #2563EB;
-    color: white;
-    border: none;
-}
-
-.btn-primary:hover {
-    background-color: #1D4ED8;
-}
-
-/* Botón 'Iniciar sesión' (Delineado azul claro) */
-.btn-secondary {
-    background-color: transparent;
-    border: 2px solid #60A5FA;
-    color: #60A5FA;
-}
-
-.btn-secondary:hover {
-    background-color: rgba(96, 165, 250, 0.1);
-}
-
-/* --- Sección de Características (Tarjetas) --- */
-.features-section {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas */
-    gap: 2rem;
-    max-width: 1200px;
-    width: 100%;
-}
-
-/* Estilos de la Tarjeta Individual */
-.feature-card {
-    background-color: #1F2937; /* Fondo oscuro de la tarjeta */
-    padding: 2rem;
+    padding: 15px 35px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    border: 1px solid transparent;
-    transition: transform 0.3s ease, border-color 0.3s ease;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s, background 0.2s;
 }
 
-.feature-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(96, 165, 250, 0.3);
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: white;
 }
 
-/* Iconos de las tarjetas */
-.card-icon {
-    width: 60px;
-    height: 60px;
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.2);
+}
+
+/* Grid de Características */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.feature-card {
+    background: var(--bg-card);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: left;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.icon-wrapper {
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-/* Colores de fondo de los iconos de Figma */
-.blue-icon { background-color: rgba(37, 99, 235, 0.15); color: #60A5FA; }
-.yellow-icon { background-color: rgba(234, 179, 8, 0.15); color: #FACC15; }
-.green-icon { background-color: rgba(34, 197, 94, 0.15); color: #4ADE80; }
+.icon-wrapper.blue { background: rgba(30, 105, 253, 0.2); color: #4facfe; }
+.icon-wrapper.yellow { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+.icon-wrapper.green { background: rgba(0, 255, 127, 0.2); color: #00ff7f; }
 
 .feature-card h3 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin: 0 0 1rem 0;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
 }
 
 .feature-card p {
-    font-size: 0.95rem;
+    color: var(--text-gray);
     line-height: 1.6;
-    opacity: 0.8;
-    margin: 0;
-}
-
-/* --- Responsividad Básica para pantallas pequeñas --- */
-@media (max-width: 768px) {
-    .brand-name { font-size: 2.5rem; }
-    .features-section {
-        grid-template-columns: 1fr; /* Una columna en móvil */
-        gap: 1.5rem;
-    }
+    font-size: 0.95rem;
 }
