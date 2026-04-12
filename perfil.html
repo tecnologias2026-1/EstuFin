@@ -4,60 +4,169 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EstuFin - Mi Perfil</title>
-    <link rel="stylesheet" href="css/dashboard.css"> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/perfil.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-small">$</div>
-                <div>
-                    <h1>EstuFin</h1>
-                    <p>Tu dinero bajo control</p>
+<div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">$</div>
+            <div class="logo-text">
+                <h1>EstuFin</h1>
+                <p>Tu dinero bajo control</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span> Inicio
+            </a>
+            <a href="gatos-ingresos.html" class="nav-item">
+                <span class="nav-icon">📈</span> Gastos e Ingresos
+            </a>
+            <a href="movimiento.html" class="nav-item">
+                <span class="nav-icon">➕</span> Registrar Movimiento
+            </a>
+            <a href="gastos-fijos.html" class="nav-item">
+                <span class="nav-icon">💰</span> Gastos Fijos
+            </a>
+            <a href="gatos-rapidos.html" class="nav-item">
+                <span class="nav-icon">⚡</span> Gastos Rápidos
+            </a>
+            <a href="proximos-pagos.html" class="nav-item">
+                <span class="nav-icon">💳</span> Próximos Pagos
+            </a>
+            <a href="mis-metas.html" class="nav-item">
+                <span class="nav-icon">🎯</span> Mis Metas
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <p class="footer-brand">EstuFin</p>
+            <p class="footer-sub">Controla tu dinero con facilidad</p>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="top-header">
+            <div></div>
+            <div class="user-info">
+                <!-- header.js lo llena automáticamente -->
+            </div>
+        </header>
+
+        <!-- CONTENIDO PERFIL -->
+        <div class="perfil-wrapper">
+
+            <!-- Volver -->
+            <a href="dashboard.html" class="perfil-volver">← Volver al inicio</a>
+
+            <!-- Hero azul -->
+            <div class="perfil-hero">
+                <div class="perfil-hero-avatar">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="8" r="4" stroke="white" stroke-width="1.8"/>
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <span class="perfil-online-dot"></span>
+                </div>
+                <div class="perfil-hero-info">
+                    <h2 id="heroNombre">Usuario</h2>
+                    <p id="heroEmail">correo@ejemplo.com</p>
+                    <p class="perfil-hero-fecha">📅 <span id="heroFecha">—</span></p>
+                </div>
+                <button class="btn-editar-perfil" id="btnEditarPerfil">✏️ Editar perfil</button>
+            </div>
+
+            <!-- Card info personal -->
+            <div class="perfil-card">
+                <h3 class="perfil-card-title">Información Personal</h3>
+
+                <div class="perfil-campo">
+                    <label>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        Nombre Completo
+                    </label>
+                    <input type="text" id="inputNombre" placeholder="Tu nombre" readonly>
+                </div>
+
+                <div class="perfil-campo">
+                    <label>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                            <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                            <path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8"/>
+                        </svg>
+                        Correo Electrónico
+                    </label>
+                    <input type="email" id="inputEmail" placeholder="correo@ejemplo.com" readonly>
+                </div>
+
+                <div class="perfil-campo">
+                    <label>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                            <path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        Contraseña
+                    </label>
+                    <div class="perfil-password-wrap">
+                        <input type="password" id="inputPassword" value="123456" readonly>
+                        <button class="btn-ver-password" id="btnVerPassword" title="Ver contraseña">
+                            <svg id="iconOjo" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="perfil-hint">Haz clic en el icono del ojo para ver tu contraseña</span>
+                </div>
+
+                <div class="perfil-campo">
+                    <label>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        Fecha de Registro
+                    </label>
+                    <input type="text" id="inputFecha" placeholder="—" readonly>
+                    <span class="perfil-hint">Este campo no puede ser modificado</span>
+                </div>
+
+                <!-- Botones edición (ocultos por defecto) -->
+                <div class="perfil-edit-actions hidden" id="perfilEditActions">
+                    <button class="btn-cancelar-edit" id="btnCancelarEdit">Cancelar</button>
+                    <button class="btn-guardar-edit" id="btnGuardarEdit">Guardar Cambios</button>
                 </div>
             </div>
-            <nav class="sidebar-nav">
-                <a href="dashboard.html">🏠 Inicio</a>
-                <a href="gatos-ingresos.html">📈 Gastos e Ingresos</a>
-                <a href="mis-metas.html">🎯 Mis Metas</a>
-                <a href="perfil.html" class="active">👤 Mi Perfil</a>
-            </nav>
-        </aside>
 
-        <main class="main-content">
-            <header class="top-header">
-                <h2>Mi Perfil</h2>
-            </header>
-
-            <section class="profile-card">
-                <div class="profile-header-info">
-                    <div class="user-avatar-large">👤</div>
-                    <div class="user-main-details">
-                        <h3>Juanito Pérez</h3>
-                        <p>Estudiante Universitario</p>
-                    </div>
+            <!-- Seguridad -->
+            <div class="perfil-seguridad">
+                <span class="perfil-seguridad-icon">🔒</span>
+                <div>
+                    <p class="perfil-seguridad-titulo">Información de Seguridad</p>
+                    <p class="perfil-seguridad-texto">
+                        Tu información está protegida. Nunca compartiremos tus datos personales con terceros sin tu consentimiento.
+                        Si necesitas ayuda o tienes alguna duda sobre tu cuenta, contacta a nuestro equipo de soporte.
+                    </p>
                 </div>
+            </div>
 
-                <div class="profile-details-grid">
-                    <div class="detail-item">
-                        <label>Correo electrónico</label>
-                        <p>juanito.perez@universidad.edu.co</p>
-                    </div>
-                    <div class="detail-item">
-                        <label>Universidad</label>
-                        <p>Bogotá, Colombia</p>
-                    </div>
-                    <div class="detail-item">
-                        <label>Carrera</label>
-                        <p>Ingeniería</p>
-                    </div>
-                </div>
-                
-                <button class="btn-outline" style="margin-top: 2rem;">Editar Perfil</button>
-                <a href="index.html" class="btn-danger" style="display: block; margin-top: 1rem; color: #EF4444; text-decoration: none; font-size: 0.9rem;">Cerrar sesión</a>
-            </section>
-        </main>
-    </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/dashboard.js"></script>
+<script src="js/header.js"></script>
+<script src="js/perfil.js"></script>
 </body>
 </html>

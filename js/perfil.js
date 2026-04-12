@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nombre   = user.nombre   || user.name  || 'Usuario';
     const email    = user.email    || '';
     const password = user.password || user.contraseña || '';
-    const fecha    = user.fechaRegistro || user.fecha || new Date().toLocaleDateString('es-CO', {
+    const fecha    = user.fechaRegistro || new Date().toLocaleDateString('es-CO', {
         day: 'numeric', month: 'long', year: 'numeric'
     });
 
@@ -37,8 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnVerPassword.addEventListener('click', () => {
         passwordVisible = !passwordVisible;
         inputPassword.type = passwordVisible ? 'text' : 'password';
-
-        // Cambiar ícono
         btnVerPassword.innerHTML = passwordVisible
             ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -52,31 +50,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ── Editar perfil ────────────────────────────────────────
-    const btnEditar       = document.getElementById('btnEditarPerfil');
-    const editActions     = document.getElementById('perfilEditActions');
-    const btnCancelar     = document.getElementById('btnCancelarEdit');
-    const btnGuardar      = document.getElementById('btnGuardarEdit');
+    const btnEditar   = document.getElementById('btnEditarPerfil');
+    const editActions = document.getElementById('perfilEditActions');
+    const btnCancelar = document.getElementById('btnCancelarEdit');
+    const btnGuardar  = document.getElementById('btnGuardarEdit');
 
-    // Guardar valores originales para cancelar
     let valoresOriginales = { nombre, email, password };
 
     btnEditar.addEventListener('click', () => {
-        // Activar campos editables
         inputNombre.removeAttribute('readonly');
         inputEmail.removeAttribute('readonly');
         inputPassword.removeAttribute('readonly');
-
         inputNombre.focus();
         editActions.classList.remove('hidden');
         btnEditar.classList.add('hidden');
     });
 
     btnCancelar.addEventListener('click', () => {
-        // Restaurar valores
         inputNombre.value   = valoresOriginales.nombre;
         inputEmail.value    = valoresOriginales.email;
         inputPassword.value = valoresOriginales.password || '••••••';
-
         desactivarEdicion();
     });
 
@@ -90,24 +83,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Actualizar localStorage
         const userActualizado = {
             ...user,
-            nombre:   nuevoNombre,
-            name:     nuevoNombre,
-            email:    nuevoEmail,
-            password: nuevoPassword,
+            nombre:        nuevoNombre,
+            name:          nuevoNombre,
+            email:         nuevoEmail,
+            password:      nuevoPassword,
             fechaRegistro: fecha
         };
         localStorage.setItem('usuarioActual', JSON.stringify(userActualizado));
 
-        // Actualizar hero
         document.getElementById('heroNombre').textContent = nuevoNombre;
         document.getElementById('heroEmail').textContent  = nuevoEmail;
 
-        // Actualizar valores originales
         valoresOriginales = { nombre: nuevoNombre, email: nuevoEmail, password: nuevoPassword };
-
         desactivarEdicion();
         alert('¡Perfil actualizado correctamente!');
     });
@@ -118,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inputPassword.setAttribute('readonly', true);
         inputPassword.type = 'password';
         passwordVisible = false;
-
         editActions.classList.add('hidden');
         btnEditar.classList.remove('hidden');
     }
