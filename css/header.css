@@ -1,19 +1,28 @@
 /* ================================================
    css/header.css
-   Estilos del header interactivo (campana + avatar)
    ================================================ */
 
-/* ── user-info base ── */
+/* ── user-info: contenedor horizontal ── */
 .user-info {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
-    position: relative;
+}
+
+/* ── header-right-group: agrupa user-info + botón de acción ── */
+.header-right-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
 }
 
 /* ── Campana ── */
 .header-bell-wrap {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .header-bell-btn {
@@ -29,6 +38,7 @@
     color: #718096;
     transition: border-color 0.2s, color 0.2s;
     position: relative;
+    flex-shrink: 0;
 }
 
 .header-bell-btn:hover {
@@ -62,7 +72,7 @@
     background: white;
     border-radius: 16px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-    z-index: 999;
+    z-index: 1000;
     overflow: hidden;
     animation: dropDown 0.18s ease-out;
 }
@@ -124,10 +134,11 @@
     color: #9CA3AF;
 }
 
-/* ── Avatar ── */
+/* ── Avatar wrap ── */
 .header-avatar-wrap {
     position: relative;
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 8px;
 }
@@ -136,6 +147,7 @@
     font-size: 14px;
     font-weight: 500;
     color: var(--text-dark);
+    white-space: nowrap;
 }
 
 .header-avatar-btn {
@@ -149,6 +161,7 @@
     align-items: center;
     justify-content: center;
     transition: opacity 0.2s;
+    flex-shrink: 0;
 }
 
 .header-avatar-btn:hover { opacity: 0.85; }
@@ -169,7 +182,7 @@
     background: white;
     border-radius: 16px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-    z-index: 999;
+    z-index: 1000;
     overflow: hidden;
     animation: dropDown 0.18s ease-out;
 }
@@ -238,10 +251,7 @@
 
 .user-dropdown-item:hover { background: #F8FAFC; }
 
-.user-dropdown-logout {
-    color: #EF4444;
-}
-
+.user-dropdown-logout { color: #EF4444; }
 .user-dropdown-logout:hover { background: #FFF5F5; }
 
 /* ── Animación ── */

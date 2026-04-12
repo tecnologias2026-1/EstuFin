@@ -2,7 +2,6 @@
    css/proximos-pagos.css
    ============================================= */
 
-/* ── Subtítulo header ── */
 .page-subtitle {
     font-size: 13px;
     color: var(--text-gray);
@@ -10,7 +9,6 @@
     font-weight: 400;
 }
 
-/* ── Botón Agregar Pago ── */
 .btn-agregar-pago {
     background: var(--primary-blue);
     color: white;
@@ -23,15 +21,9 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
     white-space: nowrap;
-    margin-left: 8px;
 }
+.btn-agregar-pago:hover { background: var(--dark-blue); transform: translateY(-1px); }
 
-.btn-agregar-pago:hover {
-    background: var(--dark-blue);
-    transform: translateY(-1px);
-}
-
-/* ── Formulario inline ── */
 .inline-form {
     background: white;
     border-radius: 16px;
@@ -81,55 +73,28 @@
     color: var(--text-dark);
     background: white;
 }
-
 .field-group input:focus,
 .field-group select:focus {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px rgba(26, 86, 255, 0.08);
 }
 
-.inline-form-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
+.inline-form-actions { display: flex; gap: 12px; align-items: center; }
 
 .btn-cancel-inline {
-    padding: 11px 28px;
-    border-radius: 10px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    background: #EDF2F7;
-    color: #4A5568;
-    border: none;
-    transition: background 0.2s;
+    padding: 11px 28px; border-radius: 10px;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; background: #EDF2F7; color: #4A5568; border: none; transition: background 0.2s;
 }
-
-.btn-cancel-inline:hover {
-    background: #E2E8F0;
-}
+.btn-cancel-inline:hover { background: #E2E8F0; }
 
 .btn-save-inline {
-    flex: 1;
-    padding: 11px;
-    border-radius: 10px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    background: var(--primary-blue);
-    color: white;
-    border: none;
-    transition: background 0.2s;
+    flex: 1; padding: 11px; border-radius: 10px;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; background: var(--primary-blue); color: white; border: none; transition: background 0.2s;
 }
+.btn-save-inline:hover { background: var(--dark-blue); }
 
-.btn-save-inline:hover {
-    background: var(--dark-blue);
-}
-
-/* ── Grid dos columnas ── */
 .pagos-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
@@ -137,14 +102,8 @@
     align-items: start;
 }
 
-.col-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin: 0 0 12px 0;
-}
+.col-title { font-size: 15px; font-weight: 700; color: var(--text-dark); margin: 0 0 12px 0; }
 
-/* ── Tarjeta Pagos Pendientes ── */
 .pagos-card {
     background: var(--white);
     border-radius: 20px;
@@ -154,154 +113,73 @@
 }
 
 .empty-pagos {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    height: 100%;
-    min-height: 200px;
-    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 14px; height: 100%; min-height: 200px; text-align: center;
 }
 
-.empty-icon-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+.empty-icon-wrap { display: flex; align-items: center; justify-content: center; }
 
-.empty-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-gray);
-    margin: 0;
-}
+.empty-label { font-size: 14px; font-weight: 500; color: var(--text-gray); margin: 0; }
 
-/* Ítem de pago pendiente */
 .pago-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background: #F8FAFC;
-    border-radius: 12px;
-    border-left: 4px solid var(--primary-blue);
-    margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: #F8FAFC; border-radius: 12px;
+    border-left: 4px solid var(--primary-blue); margin-bottom: 10px;
 }
 
-.pago-item-info .pago-nombre {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-dark);
-    display: block;
-}
+.pago-item-info .pago-nombre { font-size: 14px; font-weight: 600; color: var(--text-dark); display: block; }
+.pago-item-info .pago-fecha { font-size: 12px; color: var(--text-gray); display: block; margin-top: 2px; }
 
-.pago-item-info .pago-fecha {
-    font-size: 12px;
-    color: var(--text-gray);
-    display: block;
-    margin-top: 2px;
-}
+.pago-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 
-.pago-item-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-}
-
-.pago-monto {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--primary-blue);
-}
+.pago-monto { font-size: 14px; font-weight: 700; color: var(--primary-blue); }
 
 .btn-pagar {
-    background: #10B981;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Poppins', sans-serif;
-    transition: background 0.2s;
+    background: #10B981; color: white; border: none; padding: 5px 12px;
+    border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'Poppins', sans-serif; transition: background 0.2s;
 }
-
 .btn-pagar:hover { background: #059669; }
 
-/* ── Tarjeta Historial Pagado ── */
 .historial-card {
-    background: var(--white);
-    border-radius: 20px;
-    border: 1.5px dashed #CBD5E0;
-    padding: 24px 16px;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    background: var(--white); border-radius: 20px; border: 1.5px dashed #CBD5E0;
+    padding: 24px 16px; min-height: 120px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
 }
 
-.historial-empty {
-    font-size: 13px;
-    color: #A0AEC0;
-    font-style: italic;
-    text-align: center;
-    margin: 0;
-}
+.historial-empty { font-size: 13px; color: #A0AEC0; font-style: italic; text-align: center; margin: 0; }
 
-/* Ítem historial */
 .historial-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 14px;
-    background: #F0FDF4;
-    border-radius: 10px;
-    border-left: 4px solid #10B981;
-    width: 100%;
-    margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; background: #F0FDF4; border-radius: 10px;
+    border-left: 4px solid #10B981; width: 100%; margin-bottom: 8px;
 }
 
-.historial-item .h-nombre {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-dark);
-}
+.historial-item .h-nombre { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+.historial-item .h-monto { font-size: 13px; font-weight: 700; color: #10B981; }
 
-.historial-item .h-monto {
-    font-size: 13px;
-    font-weight: 700;
-    color: #10B981;
-}
-
-/* ── FAB ── */
 .fab-pago {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    background: var(--primary-blue);
-    color: white;
-    font-size: 26px;
-    font-weight: 300;
-    border: none;
-    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    transition: background 0.2s, transform 0.15s;
+    position: fixed; bottom: 28px; right: 28px; width: 54px; height: 54px;
+    border-radius: 50%; background: var(--primary-blue); color: white;
+    font-size: 26px; font-weight: 300; border: none;
+    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1; transition: background 0.2s, transform 0.15s;
     font-family: 'Poppins', sans-serif;
 }
+.fab-pago:hover { background: var(--dark-blue); transform: scale(1.08); }
 
-.fab-pago:hover {
-    background: var(--dark-blue);
-    transform: scale(1.08);
+.header-right-group {
+    display: flex;
+    flex-direction: column;  /* ← columna, no fila */
+    align-items: flex-end;   /* ← alineado a la derecha */
+    gap: 8px;
+}
+
+.top-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;  /* ← arriba, no centrado */
+    margin-bottom: 24px;
 }

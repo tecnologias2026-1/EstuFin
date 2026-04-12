@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EstuFin - Mis Metas</title>
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/mis-metas.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/header.css">
 </head>
 <body>
 <div class="dashboard-container">
@@ -59,15 +59,15 @@
                 <h2 class="page-title">Mis Metas</h2>
                 <p class="page-subtitle">Ahorra para tus objetivos</p>
             </div>
-            <div class="user-info">
-                <span class="bell">🔔</span>
-                <span class="user-name">User Name</span>
-                <div class="avatar">👤</div>
+            <div class="header-right-group">
+                <!-- header.js llena este div -->
+                <div class="user-info"></div>
+                <!-- Botón FUERA del user-info -->
                 <button class="btn-nueva-meta" id="btnNuevaMeta">+ Nueva Meta</button>
             </div>
         </header>
 
-        <!-- FORMULARIO INLINE (oculto por defecto) -->
+        <!-- Formulario inline crear meta (oculto por defecto) -->
         <div id="formInlineMeta" class="meta-inline-form hidden">
             <h4>Crear Nueva Meta</h4>
             <div class="meta-form-fields">
@@ -90,11 +90,10 @@
             </div>
         </div>
 
-        <!-- SECCIÓN METAS ACTIVAS -->
+        <!-- METAS ACTIVAS -->
         <section class="metas-section">
             <h3 class="col-title">Metas Activas</h3>
 
-            <!-- Estado vacío -->
             <div id="emptyMetas" class="metas-empty-card">
                 <div class="metas-target-icon">
                     <svg width="70" height="70" viewBox="0 0 70 70" fill="none">
@@ -109,18 +108,17 @@
                 <button class="btn-crear-meta" id="btnCrearPrimera">Crear mi primera meta</button>
             </div>
 
-            <!-- Lista de metas (se llena con JS) -->
             <div id="listaMetas"></div>
         </section>
 
     </main>
 </div>
 
-<!-- FAB → va a Registrar Movimiento -->
+<!-- FAB → Registrar Movimiento -->
 <button class="fab-metas" id="fabMetas">+</button>
 
 <script src="js/dashboard.js"></script>
-<script src="js/mis-metas.js"></script>
 <script src="js/header.js"></script>
+<script src="js/mis-metas.js"></script>
 </body>
 </html>

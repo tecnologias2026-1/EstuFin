@@ -2,7 +2,6 @@
    css/mis-metas.css
    ============================================= */
 
-/* ── Subtítulo header ── */
 .page-subtitle {
     font-size: 13px;
     color: var(--text-gray);
@@ -10,7 +9,6 @@
     font-weight: 400;
 }
 
-/* ── Botón Nueva Meta ── */
 .btn-nueva-meta {
     background: var(--primary-blue);
     color: white;
@@ -23,15 +21,9 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
     white-space: nowrap;
-    margin-left: 8px;
 }
+.btn-nueva-meta:hover { background: var(--dark-blue); transform: translateY(-1px); }
 
-.btn-nueva-meta:hover {
-    background: var(--dark-blue);
-    transform: translateY(-1px);
-}
-
-/* ── Formulario inline crear meta ── */
 .meta-inline-form {
     background: white;
     border-radius: 16px;
@@ -79,17 +71,12 @@
     transition: border-color 0.2s;
     color: var(--text-dark);
 }
-
 .field-group input:focus {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px rgba(26, 86, 255, 0.08);
 }
 
-.meta-form-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
+.meta-form-actions { display: flex; gap: 12px; align-items: center; }
 
 .btn-cancel-meta {
     padding: 11px 28px;
@@ -103,7 +90,6 @@
     border: none;
     transition: background 0.2s;
 }
-
 .btn-cancel-meta:hover { background: #E2E8F0; }
 
 .btn-save-meta {
@@ -119,13 +105,10 @@
     border: none;
     transition: background 0.2s;
 }
-
 .btn-save-meta:hover { background: var(--dark-blue); }
 
-/* ── Sección metas ── */
 .metas-section { width: 100%; }
 
-/* ── Estado vacío ── */
 .metas-empty-card {
     background: white;
     border-radius: 20px;
@@ -170,13 +153,8 @@
     margin-top: 14px;
     transition: background 0.2s, transform 0.1s;
 }
+.btn-crear-meta:hover { background: var(--dark-blue); transform: translateY(-1px); }
 
-.btn-crear-meta:hover {
-    background: var(--dark-blue);
-    transform: translateY(-1px);
-}
-
-/* ── Tarjeta de meta activa ── */
 .meta-card {
     background: white;
     border-radius: 20px;
@@ -193,207 +171,90 @@
     margin-bottom: 4px;
 }
 
-.meta-nombre {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin: 0;
-}
+.meta-nombre { font-size: 16px; font-weight: 700; color: var(--text-dark); margin: 0; }
 
 .btn-eliminar-meta {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #EF4444;
-    font-size: 18px;
-    padding: 0;
-    line-height: 1;
+    background: none; border: none; cursor: pointer;
+    color: #EF4444; font-size: 18px; padding: 0; line-height: 1;
     transition: transform 0.15s;
 }
-
 .btn-eliminar-meta:hover { transform: scale(1.2); }
 
-.meta-monto-total {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--primary-blue);
-    margin: 0 0 14px 0;
-}
+.meta-monto-total { font-size: 22px; font-weight: 700; color: var(--primary-blue); margin: 0 0 14px 0; }
 
-/* Barra de progreso */
-.meta-progreso-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-gray);
-    margin-bottom: 6px;
-}
+.meta-progreso-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-gray); margin-bottom: 6px; }
 
-.meta-progreso-bar {
-    width: 100%;
-    height: 8px;
-    background: #E2E8F0;
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 14px;
-}
+.meta-progreso-bar { width: 100%; height: 8px; background: #E2E8F0; border-radius: 99px; overflow: hidden; margin-bottom: 14px; }
 
-.meta-progreso-fill {
-    height: 100%;
-    background: var(--primary-blue);
-    border-radius: 99px;
-    transition: width 0.4s ease;
-}
+.meta-progreso-fill { height: 100%; background: var(--primary-blue); border-radius: 99px; transition: width 0.4s ease; }
 
-/* Stats ahorrado / falta */
-.meta-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-}
+.meta-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 
-.meta-stat-box {
-    background: #F8FAFC;
-    border-radius: 10px;
-    padding: 10px 14px;
-}
+.meta-stat-box { background: #F8FAFC; border-radius: 10px; padding: 10px 14px; }
 
-.meta-stat-label {
-    font-size: 11px;
-    color: var(--text-gray);
-    display: block;
-    margin-bottom: 2px;
-}
+.meta-stat-label { font-size: 11px; color: var(--text-gray); display: block; margin-bottom: 2px; }
 
-.meta-stat-valor {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-dark);
-}
+.meta-stat-valor { font-size: 14px; font-weight: 700; color: var(--text-dark); }
 
-/* Ahorro diario recomendado */
-.meta-ahorro-diario {
-    background: #EFF6FF;
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-}
+.meta-ahorro-diario { background: #EFF6FF; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; }
 
-.meta-ahorro-diario-label {
-    font-size: 11px;
-    color: var(--primary-blue);
-    display: block;
-    margin-bottom: 2px;
-}
+.meta-ahorro-diario-label { font-size: 11px; color: var(--primary-blue); display: block; margin-bottom: 2px; }
 
-.meta-ahorro-diario-valor {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--primary-blue);
-}
+.meta-ahorro-diario-valor { font-size: 16px; font-weight: 700; color: var(--primary-blue); }
 
-/* Botón agregar ahorro */
 .btn-agregar-ahorro {
-    width: 100%;
-    background: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    width: 100%; background: var(--primary-blue); color: white; border: none;
+    padding: 12px; border-radius: 12px; font-family: 'Poppins', sans-serif;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-
 .btn-agregar-ahorro:hover { background: var(--dark-blue); }
 
-/* Input ahorro inline (aparece al pulsar el botón) */
-.ahorro-input-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-}
+.ahorro-input-row { display: flex; gap: 8px; margin-top: 10px; }
 
 .ahorro-input-row input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 10px;
-    font-size: 14px;
-    font-family: 'Poppins', sans-serif;
-    outline: none;
-    transition: border-color 0.2s;
+    flex: 1; padding: 10px 14px; border: 1.5px solid #E2E8F0;
+    border-radius: 10px; font-size: 14px; font-family: 'Poppins', sans-serif;
+    outline: none; transition: border-color 0.2s;
 }
-
 .ahorro-input-row input:focus { border-color: var(--primary-blue); }
 
 .btn-confirmar-ahorro {
-    background: #10B981;
-    color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-    flex-shrink: 0;
+    background: #10B981; color: white; border: none; width: 40px; height: 40px;
+    border-radius: 10px; cursor: pointer; font-size: 18px; display: flex;
+    align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;
 }
-
 .btn-confirmar-ahorro:hover { background: #059669; }
 
 .btn-cancelar-ahorro {
-    background: #EDF2F7;
-    color: #4A5568;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-    flex-shrink: 0;
+    background: #EDF2F7; color: #4A5568; border: none; width: 40px; height: 40px;
+    border-radius: 10px; cursor: pointer; font-size: 18px; display: flex;
+    align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;
 }
-
 .btn-cancelar-ahorro:hover { background: #E2E8F0; }
 
-/* ── FAB ── */
 .fab-metas {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    background: var(--primary-blue);
-    color: white;
-    font-size: 26px;
-    font-weight: 300;
-    border: none;
-    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    transition: background 0.2s, transform 0.15s;
+    position: fixed; bottom: 28px; right: 28px; width: 54px; height: 54px;
+    border-radius: 50%; background: var(--primary-blue); color: white;
+    font-size: 26px; font-weight: 300; border: none;
+    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1; transition: background 0.2s, transform 0.15s;
     font-family: 'Poppins', sans-serif;
 }
+.fab-metas:hover { background: var(--dark-blue); transform: scale(1.08); }
 
-.fab-metas:hover {
-    background: var(--dark-blue);
-    transform: scale(1.08);
+.header-right-group {
+    display: flex;
+    flex-direction: column;  /* ← columna, no fila */
+    align-items: flex-end;   /* ← alineado a la derecha */
+    gap: 8px;
+}
+
+.top-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;  /* ← arriba, no centrado */
+    margin-bottom: 24px;
 }

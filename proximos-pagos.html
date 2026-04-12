@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EstuFin - Próximos Pagos</title>
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/proximos-pagos.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/header.css">
 </head>
 <body>
 
 <div class="dashboard-container">
 
-    <!-- ── Sidebar ── -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo-icon">$</div>
@@ -22,7 +22,6 @@
                 <p>Tu dinero bajo control</p>
             </div>
         </div>
-
         <nav class="sidebar-nav">
             <a href="dashboard.html" class="nav-item">
                 <span class="nav-icon">🏠</span> Inicio
@@ -46,26 +45,25 @@
                 <span class="nav-icon">🎯</span> Mis Metas
             </a>
         </nav>
-
         <div class="sidebar-footer">
             <p class="footer-brand">EstuFin</p>
             <p class="footer-sub">Controla tu dinero con facilidad</p>
         </div>
     </aside>
 
-    <!-- ── Main Content ── -->
+    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-        <!-- Header -->
+        <!-- HEADER: título a la izquierda, user-info + botón a la derecha -->
         <header class="top-header">
             <div>
                 <h2 class="page-title">Próximos Pagos</h2>
                 <p class="page-subtitle">Administra tus pagos pendientes</p>
             </div>
-            <div class="user-info">
-                <span class="bell">🔔</span>
-                <span class="user-name">User Name</span>
-                <div class="avatar">👤</div>
+            <div class="header-right-group">
+                <!-- header.js llena este div con campana + avatar -->
+                <div class="user-info"></div>
+                <!-- Botón FUERA del user-info para que no lo borre header.js -->
                 <button class="btn-agregar-pago" id="btnAbrirForm">+ Agregar Pago</button>
             </div>
         </header>
@@ -102,13 +100,12 @@
         <!-- Grid pagos -->
         <div class="pagos-grid">
 
-            <!-- Columna izquierda: Pagos Pendientes -->
             <div class="pagos-pendientes-col">
                 <h3 class="col-title">Pagos Pendientes</h3>
                 <div class="pagos-card" id="listaPagosPendientes">
                     <div class="empty-pagos" id="emptyPagos">
                         <div class="empty-icon-wrap">
-                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
                                 <path d="M24 36L10 50" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
                                 <path d="M10 50l12-3-9-9-3 12z" fill="#22c55e"/>
                                 <path d="M24 36c4-10 16-20 24-22" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
@@ -116,7 +113,6 @@
                                 <circle cx="44" cy="16" r="2.5" fill="#4ade80"/>
                                 <circle cx="34" cy="10" r="2" fill="#86efac"/>
                                 <circle cx="50" cy="26" r="2" fill="#86efac"/>
-                                <path d="M38 24l2-5 2 5-5-2 5-2-5 2z" stroke="#4ade80" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
                                 <circle cx="28" cy="13" r="1.3" fill="#bbf7d0"/>
                                 <circle cx="50" cy="34" r="1.3" fill="#bbf7d0"/>
                             </svg>
@@ -126,7 +122,6 @@
                 </div>
             </div>
 
-            <!-- Columna derecha: Historial Pagado -->
             <div class="historial-col">
                 <h3 class="col-title">Historial Pagado</h3>
                 <div class="historial-card" id="listaHistorial">
@@ -139,11 +134,11 @@
     </main>
 </div>
 
-<!-- FAB → va a Registrar Movimiento -->
+<!-- FAB → Registrar Movimiento -->
 <button class="fab-pago" id="fabPago">+</button>
 
 <script src="js/dashboard.js"></script>
-<script src="js/proximos-pagos.js"></script>
 <script src="js/header.js"></script>
+<script src="js/proximos-pagos.js"></script>
 </body>
 </html>
