@@ -1,160 +1,98 @@
-// js/setup-saldos.js
-<<<<<<< HEAD
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. REFERENCIAS A ELEMENTOS DEL DOM
     const modal = document.getElementById('modal-method');
-    const btnOpenModal = document.getElementById('btn-add-method');
+    const btnOpenModal = document.getElementById('btn-add-method'); // Asegúrate que este ID exista en tu HTML
     const btnCloseX = document.getElementById('close-modal');
     const btnCancel = document.getElementById('btn-cancel');
     const formMethod = document.getElementById('form-method');
     const methodsList = document.getElementById('methods-list');
     const btnContinue = document.getElementById('btn-continue');
+    
+    // Elementos nuevos para la lógica del banco
+    const methodType = document.getElementById('method-type');
+    const bankNameGroup = document.getElementById('bank-name-group');
+    const bankInput = document.getElementById('method-bank');
 
+    // 2. ESTADO DE LA APLICACIÓN
     // Recuperamos lo que haya en memoria o empezamos con lista vacía
     let misMetodos = JSON.parse(localStorage.getItem('metodosPago')) || [];
 
-    const toggleModal = () => modal.classList.toggle('hidden');
+    // 3. FUNCIONES DE INTERFAZ
+    const toggleModal = () => {
+        modal.classList.toggle('hidden');
+        if (!modal.classList.contains('hidden')) {
+            updateBankFieldVisibility();
+        }
+    };
+
+    // Función para mostrar/ocultar el campo de banco según el tipo de método
+    function updateBankFieldVisibility() {
+        if (!methodType || !bankNameGroup) return;
+        const showBankField = methodType.value === 'tarjeta_deb' || methodType.value === 'tarjeta_cre';
+        bankNameGroup.classList.toggle('hidden', !showBankField);
+        if (bankInput) {
+            bankInput.required = showBankField;
+            if (!showBankField) bankInput.value = '';
+        }
+    }
 
     function actualizarInterfaz() {
         if (misMetodos.length === 0) {
-            // ESTADO VACÍO: Botón bloqueado y texto de advertencia
+            // ESTADO VACÍO
             methodsList.innerHTML = `
-                <div class="empty-state">
-                    <img src="assets/wallet-icon.png" alt="Wallet" class="welcome-icon">
+                <div class="empty-state" style="text-align:center; padding:20px;">
                     <p>No has agregado ningún método de pago</p>
                 </div>
             `;
             btnContinue.disabled = true;
             btnContinue.innerText = "Agrega al menos un método para continuar";
             btnContinue.style.opacity = "0.5";
+            btnContinue.style.cursor = "not-allowed";
         } else {
-            // ESTADO CON DATOS: Mostramos los métodos agregados
+            // ESTADO CON DATOS
             methodsList.innerHTML = misMetodos.map(m => `
-                <div class="method-card-item" style="display:flex; justify-content:space-between; background:#f4f7fe; padding:15px; border-radius:12px; margin-bottom:10px; border-left:5px solid #2563EB;">
+                <div class="method-card-item" style="display:flex; justify-content:space-between; background:#f4f7fe; padding:15px; border-radius:12px; margin-bottom:10px; border-left:5px solid #F24E05;">
                     <div>
-                        <span style="font-size:10px; background:#2563EB; color:white; padding:2px 6px; border-radius:4px; text-transform:uppercase;">${m.tipo}</span>
-                        <p style="margin:5px 0 0 0; font-weight:bold; color:#1e293b;">${m.nombre}</p>
+                        <span style="font-size:10px; background:#F24E05; color:white; padding:2px 6px; border-radius:4px; text-transform:uppercase;">${m.tipo.replace('_', ' ')}</span>
+                        <p style="margin:5px 0 0 0; font-weight:bold; color:#1e293b;">${m.nombre} ${m.banco ? ' — ' + m.banco : ''}</p>
                     </div>
                     <strong style="align-self:center; color:#1e293b;">$${Number(m.saldo).toLocaleString('es-CO')}</strong>
                 </div>
             `).join('');
 
-            // CAMBIO DE BOTÓN: Ahora ya es útil
+            // Habilitar botón continuar
             btnContinue.disabled = false;
-            btnContinue.innerText = "Continuar"; 
+            btnContinue.innerText = "Continuar al Dashboard"; 
             btnContinue.style.opacity = "1";
             btnContinue.style.cursor = "pointer";
-            // Aseguramos que tenga clase de botón principal si usas style.css
             btnContinue.className = "btn-primary"; 
         }
     }
 
-    // Eventos de interacción
-=======
-
-const modal = document.getElementById('modal-method');
-const btnAdd = document.getElementById('btn-add-method');
-const btnCancel = document.getElementById('btn-cancel');
-const formMethod = document.getElementById('form-method');
-const methodsList = document.getElementById('methods-list');
-const btnContinue = document.getElementById('btn-continue');
-const methodType = document.getElementById('method-type');
-const bankNameGroup = document.getElementById('bank-name-group');
-const bankInput = document.getElementById('method-bank');
-
-let misMetodos = [];
-
-function updateBankFieldVisibility() {
-    const showBankField = methodType.value === 'tarjeta_deb' || methodType.value === 'tarjeta_cre';
-    bankNameGroup.classList.toggle('hidden', !showBankField);
-    bankInput.required = showBankField;
-    if (!showBankField) {
-        bankInput.value = '';
-    }
-}
-
-methodType.onchange = updateBankFieldVisibility;
-
-btnAdd.onclick = () => {
-    modal.classList.remove('hidden');
-    updateBankFieldVisibility();
-};
-btnCancel.onclick = () => modal.classList.add('hidden');
-
-formMethod.onsubmit = (e) => {
-    e.preventDefault();
-
-    const nuevoMetodo = {
-        id: Date.now(),
-        tipo: methodType.value,
-        nombre: document.getElementById('method-name').value,
-        banco: bankInput.value.trim(),
-        saldo: parseFloat(document.getElementById('method-balance').value)
-    };
-
-    misMetodos.push(nuevoMetodo);
-    actualizarVistaMetodos();
-    modal.classList.add('hidden');
-    formMethod.reset();
-    updateBankFieldVisibility();
-};
-
-// Abrir/Cerrar Modal
-btnAdd.onclick = () => modal.classList.remove('hidden');
-btnCancel.onclick = () => modal.classList.add('hidden');
-
-// Guardar Método
-formMethod.onsubmit = (e) => {
-    e.preventDefault();
-
-    const nuevoMetodo = {
-        id: Date.now(),
-        tipo: document.getElementById('method-type').value,
-        nombre: document.getElementById('method-name').value,
-        saldo: parseFloat(document.getElementById('method-balance').value)
-    };
-
-    misMetodos.push(nuevoMetodo);
-    actualizarVistaMetodos();
-    modal.classList.add('hidden');
-    formMethod.reset();
-};
-
-function actualizarVistaMetodos() {
-    if (misMetodos.length > 0) {
-        methodsList.innerHTML = misMetodos.map(m => `
-            <div class="method-card">
-                <span>${m.nombre}${m.banco ? ' — ' + m.banco : ''}</span>
-                <strong>$${m.saldo.toLocaleString()}</strong>
-            </div>
-        `).join('');
-        
-        // Habilitar botón de continuar
-        btnContinue.disabled = false;
-        btnContinue.innerText = "Continuar al Dashboard";
-        btnContinue.classList.add('active');
+    // 4. EVENTOS
+    if (methodType) {
+        methodType.onchange = updateBankFieldVisibility;
     }
 
-    // Eventos de botones
->>>>>>> 00094f5c82acdfa53aa858b181015c5ae06d60d2
-    btnOpenModal.onclick = toggleModal;
-    btnCloseX.onclick = toggleModal;
-    btnCancel.onclick = toggleModal;
+    if (btnOpenModal) btnOpenModal.onclick = toggleModal;
+    if (btnCloseX) btnCloseX.onclick = toggleModal;
+    if (btnCancel) btnCancel.onclick = toggleModal;
 
     formMethod.onsubmit = (e) => {
         e.preventDefault();
         
         const nuevoMetodo = {
+            id: Date.now(),
             tipo: document.getElementById('method-type').value,
             nombre: document.getElementById('method-name').value,
+            banco: bankInput ? bankInput.value.trim() : '',
             saldo: parseFloat(document.getElementById('method-balance').value)
         };
 
         misMetodos.push(nuevoMetodo);
-<<<<<<< HEAD
+        
+        // Guardar en LocalStorage
         localStorage.setItem('metodosPago', JSON.stringify(misMetodos)); 
-=======
-        localStorage.setItem('metodosPago', JSON.stringify(misMetodos)); // Guardamos en memoria
->>>>>>> 00094f5c82acdfa53aa858b181015c5ae06d60d2
 
         actualizarInterfaz();
         toggleModal();
@@ -162,15 +100,9 @@ function actualizarVistaMetodos() {
     };
 
     btnContinue.onclick = () => {
-<<<<<<< HEAD
         window.location.href = 'dashboard.html';
     };
 
-=======
-        window.location.href = 'dashboard.html'; // Nos vamos al dashboard real
-    };
-
-    // Al cargar la página, verificamos si ya había algo
->>>>>>> 00094f5c82acdfa53aa858b181015c5ae06d60d2
+    // Al cargar la página, inicializamos la vista
     actualizarInterfaz();
 });
