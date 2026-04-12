@@ -4,84 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EstuFin - Bienvenida</title>
-    <link rel="stylesheet" href="css/landing.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/bienvenida.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .payment-methods-list {
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .payment-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .payment-info {
-            display: flex;
-            gap: 15px;
-            align-items: baseline;
-        }
-        .payment-name {
-            font-weight: 600;
-        }
-        .payment-amount {
-            color: #2e7d32;
-        }
-        .delete-payment {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: #d32f2f;
-        }
-        .btn-secondary {
-            background: #6c757d;
-            margin-top: 15px;
-        }
-        .error-message {
-            color: red;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            text-align: center;
-        }
-    </style>
 </head>
-<body class="landing-container">
-    <div class="auth-card" style="max-width: 500px;">
-        <div class="logo-area-small">
-            <div class="logo-icon-placeholder-small"><span>$</span></div>
-            <h2>¡Bienvenido a EstuFin!</h2>
-            <p>Antes de empezar, agrega tus métodos de pago (Nequi, Daviplata, efectivo, etc.)</p>
+<body>
+    <div class="welcome-container">
+
+        <div class="logo-area">
+            <div class="logo-icon">$</div>
+            <h1>¡Bienvenido a EstuFin!</h1>
+            <p>Agrega tus métodos de pago para comenzar a controlar tus finanzas.</p>
         </div>
 
-        <form id="paymentForm" class="auth-form">
-            <h3>Agregar método de pago</h3>
-            <div class="input-group">
-                <label for="paymentName">Nombre del método</label>
-                <input type="text" id="paymentName" placeholder="Ej: Nequi, Daviplata, Efectivo" required>
-            </div>
-            <div class="input-group">
-                <label for="paymentAmount">Monto disponible (COP)</label>
-                <input type="number" id="paymentAmount" placeholder="Ej: 50000" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-full">Agregar método</button>
+        <div class="info-box">
+            💡 Puedes agregar efectivo, cuentas bancarias o billeteras digitales.
+        </div>
+
+        <form id="paymentForm">
+            <label for="paymentName">¿Dónde tienes tu dinero?</label>
+            <input type="text" id="paymentName" placeholder="Ej: Nequi, Daviplata, Efectivo" required>
+
+            <label for="paymentAmount">¿Cuánto dinero hay ahí? (COP)</label>
+            <input type="number" id="paymentAmount" placeholder="0" min="0" required>
+
+            <button type="submit" class="btn-primary" style="margin-top: 16px;">
+                + Agregar método
+            </button>
         </form>
 
-        <div class="payment-methods-list" id="paymentMethodsList">
-            <h4>Métodos agregados:</h4>
-            <div id="methodsContainer">
-                <!-- Aquí se listarán dinámicamente -->
-            </div>
+        <div class="methods-container" id="methodsContainer">
+            <p style="text-align:center; color:#A0AEC0; margin: auto;">
+                Aún no has agregado ningún método.
+            </p>
         </div>
 
-        <button id="goToDashboardBtn" class="btn btn-primary btn-full" style="background-color: #2e7d32; margin-top: 20px;">Continuar al Dashboard</button>
-        <a href="login.html" class="btn-back" style="display: block; text-align: center; margin-top: 15px;">← Cerrar sesión</a>
+        <div id="totalDisplay" class="hidden" style="text-align:center; margin: 12px 0; font-weight:600; color: #1A56FF; font-size:15px;">
+            Total: $<span id="totalAmount">0</span> COP
+        </div>
+
+        <button id="goToDashboardBtn" class="btn-secondary" disabled>
+            Finalizar y ver Dashboard →
+        </button>
+
+        <a href="login.html" style="display:block; text-align:center; margin-top:16px; color:#718096; font-size:14px; text-decoration:none;">
+            ← Volver al login
+        </a>
     </div>
 
     <script src="js/bienvenida.js"></script>

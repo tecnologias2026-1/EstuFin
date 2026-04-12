@@ -3,147 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EstuFin - Inicio</title>
+    <title>EstuFin - Dashboard</title>
     <link rel="stylesheet" href="css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Estilos adicionales para la sección de métodos de pago */
-        .payment-methods-section {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .payment-methods-section h3 {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .payment-methods-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .payment-method-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8f9fa;
-            padding: 12px 16px;
-            border-radius: 12px;
-        }
-        .payment-method-info {
-            display: flex;
-            gap: 20px;
-            align-items: baseline;
-            flex-wrap: wrap;
-        }
-        .method-name {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-        .method-amount {
-            color: #2e7d32;
-            font-weight: 500;
-        }
-        .empty-methods {
-            text-align: center;
-            color: #777;
-            padding: 20px;
-        }
-        .btn-add-payment {
-            background: #1976d2;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-weight: 500;
-        }
-        .btn-add-payment:hover {
-            background: #1565c0;
-        }
-    </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-small">$</div>
-                <div>
-                    <h1>EstuFin</h1>
-                    <p>Tu dinero bajo control</p>
+
+<div class="dashboard-container">
+
+    <!-- ── Sidebar ─────────────────────────────────────────── -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">$</div>
+            <div class="logo-text">
+                <h1>EstuFin</h1>
+                <p>Tu dinero bajo control</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <span class="nav-icon">🏠</span> Inicio
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📈</span> Gastos e Ingresos
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">➕</span> Registrar Movimiento
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">💰</span> Gastos Fijos
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚡</span> Gastos Rápidos
+            </a>
+            <a href="proximos-pagos.html" class="nav-item">
+                <span class="nav-icon">💳</span> Próximos Pagos
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🎯</span> Mis Metas
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p class="footer-brand">EstuFin</p>
+            <p class="footer-sub">Controla tu dinero con facilidad</p>
+        </div>
+    </aside>
+
+    <!-- ── Contenido Principal ─────────────────────────────── -->
+    <main class="main-content">
+
+        <!-- Header -->
+        <header class="top-header">
+            <h2 class="page-title">Inicio</h2>
+            <div class="user-info">
+                <span class="bell">🔔</span>
+                <span class="user-name" id="userNameDisplay">Usuario</span>
+                <div class="avatar">👤</div>
+            </div>
+        </header>
+
+        <!-- Grid principal -->
+        <div class="dashboard-grid">
+
+            <!-- Tarjeta Saldo Total (azul) -->
+            <div class="balance-card">
+                <div class="balance-top">
+                    <div>
+                        <p class="balance-label">Saldo Total Disponible</p>
+                        <h2 class="balance-amount" id="totalBalance">$0</h2>
+                        <span class="balance-currency">COP</span>
+                    </div>
+                    <span class="trend-icon">📈</span>
+                </div>
+
+                <!-- Chips de métodos de pago -->
+                <div class="methods-chips" id="methodsChips">
+                    <!-- Se llena desde dashboard.js -->
+                </div>
+
+                <!-- Botón agregar método -->
+                <button class="btn-add-method" id="openAddMethodModal">
+                    + Agregar método de pago
+                </button>
+            </div>
+
+            <!-- Banner "Comienza a registrar" (amarillo) -->
+            <div class="banner-card">
+                <div class="plus-circle">+</div>
+                <h3>¡Comienza a registrar tus gastos!</h3>
+                <p>Registra tu primer gasto o ingreso para comenzar a tener control sobre tus finanzas.</p>
+                <button class="btn-register">Registrar primer movimiento</button>
+            </div>
+
+            <!-- Widget Próximos Pagos -->
+            <div class="payments-widget">
+                <div class="widget-header">
+                    <h3>Próximos Pagos</h3>
+                    <span>📅</span>
+                </div>
+                <div class="widget-empty">
+                    <span class="empty-icon">📅</span>
+                    <p>No tienes pagos pendientes</p>
+                    <button class="btn-outline">Agregar pago</button>
                 </div>
             </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="active">🏠 Inicio</a>
-                <a href="#">📈 Gastos e Ingresos</a>
-                <a href="#">➕ Registrar Movimiento</a>
-                <a href="#">💰 Gastos Fijos</a>
-                <a href="#">⚡ Gastos Rápidos</a>
-                <a href="proximos-pagos.html">💳 Próximos Pagos</a>
-                <a href="#">🎯 Mis Metas</a>
-            </nav>
-            <div class="sidebar-footer">
-                <p><strong>EstuFin</strong></p>
-                <p>Controla tu dinero con facilidad</p>
+
+            <!-- Sección Mis Métodos de Pago -->
+            <div class="my-methods-section">
+                <h3>💰 Mis Métodos de Pago</h3>
+                <div class="methods-list" id="methodsList">
+                    <!-- Se llena desde dashboard.js -->
+                </div>
+                <button class="btn-outline-blue" id="openAddMethodModal2">
+                    + Agregar otro método
+                </button>
             </div>
-        </aside>
 
-        <main class="main-content">
-            <header class="top-header">
-                <h2>Inicio</h2>
-                <div class="user-profile">
-                    <span class="notifications">🔔</span>
-                    <span class="user-name" id="userNameDisplay">Usuario</span>
-                    <div class="user-avatar">👤</div>
-                </div>
-            </header>
+        </div><!-- /dashboard-grid -->
 
-            <section class="dashboard-grid">
-                <div class="balance-card">
-                    <p>Saldo Total Disponible</p>
-                    <h2 class="amount" id="totalBalance">$0</h2>
-                    <span class="currency">COP</span>
-                    <div class="balance-badge" id="totalMethodsBadge">
-                        💵 Total métodos: $0 COP
-                    </div>
-                    <div class="balance-icon">📈</div>
-                </div>
+        <!-- Acciones rápidas (fila inferior) -->
+        <div class="quick-actions">
+            <button class="qa-btn green">➕ Registrar Movimiento</button>
+            <button class="qa-btn purple">📋 Gastos Fijos</button>
+            <button class="qa-btn orange">⚡ Gastos Rápidos</button>
+            <button class="qa-btn blue">📈 Gastos e Ingresos</button>
+        </div>
 
-                <div class="welcome-banner">
-                    <div class="plus-icon">+</div>
-                    <h3>¡Comienza a registrar tus gastos!</h3>
-                    <p>Registra tu primer gasto o ingreso para comenzar a tener control sobre tus finanzas.</p>
-                    <button class="btn-primary-dash">Registrar primer movimiento</button>
-                </div>
+    </main>
+</div>
 
-                <div class="payments-section">
-                    <div class="section-header">
-                        <h3>Próximos Pagos</h3>
-                        <span>📅</span>
-                    </div>
-                    <div class="empty-state">
-                        <div class="calendar-icon">📅</div>
-                        <p>No tienes pagos pendientes</p>
-                        <button class="btn-outline">Agregar pago</button>
-                    </div>
-                </div>
+<!-- ── Modal: Agregar Método de Pago ───────────────────────── -->
+<div class="modal-overlay hidden" id="addMethodModal">
+    <div class="modal-box">
+        <button class="modal-close" id="closeModal">✕</button>
+        <h3>Agregar Método de Pago</h3>
+        <p>Añade una cuenta, billetera o efectivo a tus saldos.</p>
 
-                
-                <div class="payment-methods-section">
-                    <h3>💰 Mis Métodos de Pago</h3>
-                    <div id="paymentMethodsList" class="payment-methods-list">
-                        <!-- Se llenará dinámicamente -->
-                    </div>
-                    <button id="addMoreMethodsBtn" class="btn-add-payment">+ Agregar otro método</button>
-                </div>
-            </section>
-        </main>
+        <form id="modalPaymentForm">
+            <label for="modalMethodName">Nombre del método</label>
+            <input type="text" id="modalMethodName"
+                   placeholder="Ej: Nequi, Daviplata, Efectivo">
+
+            <label for="modalMethodAmount">Saldo (COP)</label>
+            <input type="number" id="modalMethodAmount"
+                   placeholder="0" min="0">
+
+            <div id="modalError" class="modal-error hidden"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" id="cancelModal">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
     </div>
-    <script src="js/dashboard.js"></script>
+</div>
+
+<script src="js/dashboard.js"></script>
 </body>
 </html>
