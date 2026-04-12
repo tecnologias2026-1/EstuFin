@@ -1,79 +1,60 @@
 /* =============================================
    css/proximos-pagos.css
-   Solo estilos propios de esta página.
-   El layout base (sidebar, main, header) viene
-   de dashboard.css que ya se carga primero.
+   Solo estilos propios. El layout base viene
+   de dashboard.css (variables, sidebar, nav).
    ============================================= */
 
-/* ── Header de esta página ── */
-.top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-}
-
-.page-heading h2 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin: 0;
-}
-
+/* ── Subtítulo del header ── */
 .page-subtitle {
-    font-size: 0.82rem;
+    font-size: 13px;
     color: var(--text-gray);
-    margin: 4px 0 0;
+    margin-top: 2px;
+    font-weight: 400;
 }
 
-.header-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 14px;
-}
-
-/* Botón Agregar Pago */
+/* ── Botón Agregar Pago (en el header) ── */
 .btn-agregar-pago {
-    background-color: #4f46e5;
+    background: var(--primary-blue);
     color: white;
     border: none;
-    padding: 10px 22px;
-    border-radius: 10px;
+    padding: 11px 22px;
+    border-radius: 12px;
     font-family: 'Poppins', sans-serif;
-    font-size: 0.88rem;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
     white-space: nowrap;
+    margin-left: 8px;
 }
 
 .btn-agregar-pago:hover {
-    background-color: #4338ca;
+    background: var(--dark-blue);
     transform: translateY(-1px);
 }
 
-/* ── Grid de dos columnas ── */
+/* ── Grid dos columnas ── */
 .pagos-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 2rem;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
     align-items: start;
 }
 
 .col-title {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
     color: var(--text-dark);
     margin: 0 0 12px 0;
 }
 
-/* Tarjeta Pagos Pendientes (blanca, con sombra) */
+/* ── Tarjeta Pagos Pendientes ── */
 .pagos-card {
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: var(--card-shadow);
-    padding: 2.5rem 1.5rem;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 28px 20px;
+    min-height: 260px;
 }
 
 .empty-pagos {
@@ -82,7 +63,9 @@
     align-items: center;
     justify-content: center;
     gap: 14px;
+    height: 100%;
     min-height: 200px;
+    text-align: center;
 }
 
 .empty-icon-wrap {
@@ -92,122 +75,137 @@
 }
 
 .empty-label {
-    font-size: 0.88rem;
+    font-size: 14px;
     font-weight: 500;
-    color: #6b6b9a;
-    text-align: center;
+    color: var(--text-gray);
     margin: 0;
 }
 
-/* Tarjeta Historial Pagado (fondo gris punteado) */
-.historial-card {
-    background: #f8f8fc;
-    border-radius: 16px;
-    border: 1.5px dashed #d1d1e0;
-    padding: 2rem 1.5rem;
+/* Ítem de pago (cuando hay pagos) */
+.pago-item {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #F8FAFC;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-blue);
+    margin-bottom: 10px;
+}
+
+.pago-item-info .pago-nombre {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    display: block;
+}
+
+.pago-item-info .pago-fecha {
+    font-size: 12px;
+    color: var(--text-gray);
+    display: block;
+    margin-top: 2px;
+}
+
+.pago-item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.pago-monto {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+
+.btn-pagar {
+    background: #10B981;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.2s;
+}
+
+.btn-pagar:hover { background: #059669; }
+
+/* ── Tarjeta Historial Pagado ── */
+.historial-card {
+    background: var(--white);
+    border-radius: 20px;
+    border: 1.5px dashed #CBD5E0;
+    padding: 24px 16px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 110px;
+    gap: 10px;
 }
 
 .historial-empty {
-    font-size: 0.82rem;
-    color: #aaaacc;
+    font-size: 13px;
+    color: #A0AEC0;
     font-style: italic;
     text-align: center;
     margin: 0;
 }
 
-/* ── Modal Agregar Pago ── */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+/* Ítem historial */
+.historial-item {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(4px);
-}
-
-.modal.hidden {
-    display: none;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    width: 400px;
-    position: relative;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-}
-
-.close-btn {
-    position: absolute;
-    right: 20px;
-    top: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--text-gray);
-}
-
-.modal-content h2 {
-    margin: 0 0 20px;
-    font-size: 1.5rem;
-    text-align: center;
-}
-
-.modal-content label {
-    display: block;
-    margin: 15px 0 5px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.modal-content input,
-.modal-content select {
+    padding: 10px 14px;
+    background: #F0FDF4;
+    border-radius: 10px;
+    border-left: 4px solid #10B981;
     width: 100%;
-    padding: 12px;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
-    box-sizing: border-box;
-    font-size: 1rem;
+    margin-bottom: 8px;
 }
 
-.modal-content input:focus,
-.modal-content select:focus {
-    outline: none;
-    border-color: #2563EB;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+.historial-item .h-nombre {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
 }
 
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 25px;
+.historial-item .h-monto {
+    font-size: 13px;
+    font-weight: 700;
+    color: #10B981;
 }
 
-.btn-save {
-    background: #94A3B8;
+/* ── FAB ── */
+.fab-pago {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--primary-blue);
     color: white;
+    font-size: 26px;
+    font-weight: 300;
     border: none;
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.2s, transform 0.15s;
+    font-family: 'Poppins', sans-serif;
 }
 
-.btn-cancel {
-    background: #EDF2F7;
-    color: #4A5568;
-    border: none;
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    cursor: pointer;
+.fab-pago:hover {
+    background: var(--dark-blue);
+    transform: scale(1.08);
 }
