@@ -9,78 +9,116 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-container">
+<div class="dashboard-container">
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-small">$</div>
-                <div>
-                    <h1>EstuFin</h1>
-                    <p>Tu dinero bajo control</p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">$</div>
+            <div class="logo-text">
+                <h1>EstuFin</h1>
+                <p>Tu dinero bajo control</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span> Inicio
+            </a>
+            <a href="gatos-ingresos.html" class="nav-item">
+                <span class="nav-icon">📈</span> Gastos e Ingresos
+            </a>
+            <a href="movimiento.html" class="nav-item">
+                <span class="nav-icon">➕</span> Registrar Movimiento
+            </a>
+            <a href="gastos-fijos.html" class="nav-item">
+                <span class="nav-icon">💰</span> Gastos Fijos
+            </a>
+            <a href="gatos-rapidos.html" class="nav-item">
+                <span class="nav-icon">⚡</span> Gastos Rápidos
+            </a>
+            <a href="proximos-pagos.html" class="nav-item">
+                <span class="nav-icon">💳</span> Próximos Pagos
+            </a>
+            <a href="mis-metas.html" class="nav-item active">
+                <span class="nav-icon">🎯</span> Mis Metas
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <p class="footer-brand">EstuFin</p>
+            <p class="footer-sub">Controla tu dinero con facilidad</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="top-header">
+            <div>
+                <h2 class="page-title">Mis Metas</h2>
+                <p class="page-subtitle">Ahorra para tus objetivos</p>
+            </div>
+            <div class="user-info">
+                <span class="bell">🔔</span>
+                <span class="user-name">User Name</span>
+                <div class="avatar">👤</div>
+                <button class="btn-nueva-meta" id="btnNuevaMeta">+ Nueva Meta</button>
+            </div>
+        </header>
+
+        <!-- FORMULARIO INLINE (oculto por defecto) -->
+        <div id="formInlineMeta" class="meta-inline-form hidden">
+            <h4>Crear Nueva Meta</h4>
+            <div class="meta-form-fields">
+                <div class="field-group">
+                    <label for="metaNombre">Nombre de la Meta</label>
+                    <input type="text" id="metaNombre" placeholder="Ej: Nuevo celular">
+                </div>
+                <div class="field-group">
+                    <label for="metaMonto">Monto Meta (COP)</label>
+                    <input type="number" id="metaMonto" placeholder="500000" min="0">
+                </div>
+                <div class="field-group">
+                    <label for="metaDias">Días para Ahorrar</label>
+                    <input type="number" id="metaDias" placeholder="30" min="1">
                 </div>
             </div>
-            <nav class="sidebar-nav">
-                <a href="dashboard.html">🏠 Inicio</a>
-                <a href="gatos-ingresos.html">📈 Gastos e Ingresos</a>
-                <a href="movimiento.html">➕ Registrar Movimiento</a>
-                <a href="gastos-fijos.html">💰 Gastos Fijos</a>
-                <a href="gatos-rapidos.html">⚡ Gastos Rápidos</a>
-                <a href="proximos-pagos.html">💳 Próximos Pagos</a>
-                <a href="mis-metas.html" class="active">🎯 Mis Metas</a>
-            </nav>
-            <div class="sidebar-footer">
-                <p><strong>EstuFin</strong></p>
-                <p>Controla tu dinero con facilidad</p>
+            <div class="meta-form-actions">
+                <button id="cancelInlineMeta" class="btn-cancel-meta">Cancelar</button>
+                <button id="guardarInlineMeta" class="btn-save-meta">Crear Meta</button>
             </div>
-        </aside>
+        </div>
 
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
+        <!-- SECCIÓN METAS ACTIVAS -->
+        <section class="metas-section">
+            <h3 class="col-title">Metas Activas</h3>
 
-            <!-- HEADER -->
-            <header class="top-header">
-                <div class="page-heading">
-                    <h2>Mis Metas</h2>
-                    <p class="page-subtitle">Ahorra para tus objetivos</p>
+            <!-- Estado vacío -->
+            <div id="emptyMetas" class="metas-empty-card">
+                <div class="metas-target-icon">
+                    <svg width="70" height="70" viewBox="0 0 70 70" fill="none">
+                        <circle cx="35" cy="35" r="32" stroke="#d1d5db" stroke-width="2.5"/>
+                        <circle cx="35" cy="35" r="22" stroke="#d1d5db" stroke-width="2.5"/>
+                        <circle cx="35" cy="35" r="12" stroke="#d1d5db" stroke-width="2.5"/>
+                        <circle cx="35" cy="35" r="4" fill="#d1d5db"/>
+                    </svg>
                 </div>
-                <div class="header-right">
-                    <div class="user-profile">
-                        <span class="notifications">🔔</span>
-                        <span class="user-name">User Name</span>
-                        <div class="user-avatar">👤</div>
-                    </div>
-                    <button class="btn-nueva-meta">+ Nueva Meta</button>
-                </div>
-            </header>
+                <p class="metas-empty-title">No tienes metas activas</p>
+                <p class="metas-empty-desc">Crea una meta de ahorro para comenzar a cumplir tus objetivos financieros</p>
+                <button class="btn-crear-meta" id="btnCrearPrimera">Crear mi primera meta</button>
+            </div>
 
-            <!-- METAS ACTIVAS -->
-            <section class="metas-section">
-                <h3 class="section-title">Metas Activas</h3>
+            <!-- Lista de metas (se llena con JS) -->
+            <div id="listaMetas"></div>
+        </section>
 
-                <div class="metas-card empty-metas">
-                    <!-- Ícono diana / target -->
-                    <div class="target-icon">
-                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="32" cy="32" r="28" stroke="#c7c7d4" stroke-width="2.5"/>
-                            <circle cx="32" cy="32" r="19" stroke="#c7c7d4" stroke-width="2.5"/>
-                            <circle cx="32" cy="32" r="10" stroke="#c7c7d4" stroke-width="2.5"/>
-                            <circle cx="32" cy="32" r="3.5" fill="#c7c7d4"/>
-                        </svg>
-                    </div>
+    </main>
+</div>
 
-                    <p class="empty-title">No tienes metas activas</p>
-                    <p class="empty-desc">Crea una meta de ahorro para comenzar a cumplir tus objetivos financieros</p>
+<!-- FAB → va a Registrar Movimiento -->
+<button class="fab-metas" id="fabMetas">+</button>
 
-                    <button class="btn-crear-meta">Crear mi primera meta</button>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- FAB -->
-    <button class="fab-btn">+</button>
-
+<script src="js/dashboard.js"></script>
+<script src="js/mis-metas.js"></script>
 </body>
 </html>

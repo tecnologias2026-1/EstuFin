@@ -2,70 +2,134 @@
    css/mis-metas.css
    ============================================= */
 
-/* ── Header de la página ── */
-.metas-top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
+/* ── Subtítulo header ── */
+.page-subtitle {
+    font-size: 13px;
+    color: var(--text-gray);
+    margin-top: 2px;
+    font-weight: 400;
 }
 
-.metas-page-heading h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 4px 0;
-}
-
-.metas-page-heading p {
-    font-size: 0.85rem;
-    color: #6B7280;
-    margin: 0;
-}
-
-.metas-header-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 12px;
-}
-
-/* Botón Nueva Meta */
+/* ── Botón Nueva Meta ── */
 .btn-nueva-meta {
-    background-color: #2563EB;
-    color: #ffffff;
+    background: var(--primary-blue);
+    color: white;
     border: none;
-    padding: 12px 28px;
-    border-radius: 10px;
+    padding: 11px 22px;
+    border-radius: 12px;
     font-family: 'Poppins', sans-serif;
-    font-size: 0.92rem;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
     white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    margin-left: 8px;
 }
 
 .btn-nueva-meta:hover {
-    background-color: #1D4ED8;
+    background: var(--dark-blue);
     transform: translateY(-1px);
 }
 
-/* ── Título sección ── */
-.metas-section-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 16px 0;
+/* ── Formulario inline crear meta ── */
+.meta-inline-form {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.2s ease-out;
 }
 
-/* ── Tarjeta vacía ── */
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.meta-inline-form h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 18px 0;
+}
+
+.meta-form-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.field-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+}
+
+.field-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text-dark);
+}
+
+.field-group input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(26, 86, 255, 0.08);
+}
+
+.meta-form-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-cancel-meta {
+    padding: 11px 28px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #EDF2F7;
+    color: #4A5568;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn-cancel-meta:hover { background: #E2E8F0; }
+
+.btn-save-meta {
+    flex: 1;
+    padding: 11px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn-save-meta:hover { background: var(--dark-blue); }
+
+/* ── Sección metas ── */
+.metas-section { width: 100%; }
+
+/* ── Estado vacío ── */
 .metas-empty-card {
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
     padding: 4rem 2rem;
     display: flex;
     flex-direction: column;
@@ -76,14 +140,12 @@
     min-height: 320px;
 }
 
-.metas-target-icon {
-    margin-bottom: 8px;
-}
+.metas-target-icon { margin-bottom: 8px; }
 
 .metas-empty-title {
     font-size: 1rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-dark);
     margin: 0;
 }
 
@@ -95,10 +157,9 @@
     margin: 0;
 }
 
-/* Botón Crear mi primera meta */
 .btn-crear-meta {
-    background-color: #2563EB;
-    color: #ffffff;
+    background: var(--primary-blue);
+    color: white;
     border: none;
     padding: 14px 40px;
     border-radius: 10px;
@@ -111,33 +172,228 @@
 }
 
 .btn-crear-meta:hover {
-    background-color: #1D4ED8;
+    background: var(--dark-blue);
     transform: translateY(-1px);
 }
 
+/* ── Tarjeta de meta activa ── */
+.meta-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 16px;
+    max-width: 520px;
+}
+
+.meta-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+
+.meta-nombre {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.btn-eliminar-meta {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #EF4444;
+    font-size: 18px;
+    padding: 0;
+    line-height: 1;
+    transition: transform 0.15s;
+}
+
+.btn-eliminar-meta:hover { transform: scale(1.2); }
+
+.meta-monto-total {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin: 0 0 14px 0;
+}
+
+/* Barra de progreso */
+.meta-progreso-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-gray);
+    margin-bottom: 6px;
+}
+
+.meta-progreso-bar {
+    width: 100%;
+    height: 8px;
+    background: #E2E8F0;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.meta-progreso-fill {
+    height: 100%;
+    background: var(--primary-blue);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+/* Stats ahorrado / falta */
+.meta-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.meta-stat-box {
+    background: #F8FAFC;
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+.meta-stat-label {
+    font-size: 11px;
+    color: var(--text-gray);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.meta-stat-valor {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Ahorro diario recomendado */
+.meta-ahorro-diario {
+    background: #EFF6FF;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+}
+
+.meta-ahorro-diario-label {
+    font-size: 11px;
+    color: var(--primary-blue);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.meta-ahorro-diario-valor {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+
+/* Botón agregar ahorro */
+.btn-agregar-ahorro {
+    width: 100%;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-agregar-ahorro:hover { background: var(--dark-blue); }
+
+/* Input ahorro inline (aparece al pulsar el botón) */
+.ahorro-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.ahorro-input-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.ahorro-input-row input:focus { border-color: var(--primary-blue); }
+
+.btn-confirmar-ahorro {
+    background: #10B981;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-confirmar-ahorro:hover { background: #059669; }
+
+.btn-cancelar-ahorro {
+    background: #EDF2F7;
+    color: #4A5568;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-cancelar-ahorro:hover { background: #E2E8F0; }
+
 /* ── FAB ── */
-.metas-fab {
+.fab-metas {
     position: fixed;
     bottom: 28px;
     right: 28px;
     width: 54px;
     height: 54px;
     border-radius: 50%;
-    background-color: #2563EB;
+    background: var(--primary-blue);
     color: white;
-    font-size: 1.8rem;
+    font-size: 26px;
     font-weight: 300;
     border: none;
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
     transition: background 0.2s, transform 0.15s;
+    font-family: 'Poppins', sans-serif;
 }
 
-.metas-fab:hover {
-    background-color: #1D4ED8;
+.fab-metas:hover {
+    background: var(--dark-blue);
     transform: scale(1.08);
 }
