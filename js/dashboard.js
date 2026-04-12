@@ -1,57 +1,166 @@
 // js/dashboard.js
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Cargar Usuario
-    const currentUser = JSON.parse(localStorage.getItem('estuFinCurrentUser'));
-    const userNameSpan = document.getElementById('userNameDisplay');
-    userNameSpan.textContent = currentUser ? currentUser.name.split(' ')[0] : 'Invitado';
+// Clave unificada con bienvenida.js
+const STORAGE_KEY = 'estuFinPaymentMethods';
 
-    // 2. Cargar Métodos de Pago
-    let paymentMethods = JSON.parse(localStorage.getItem('estuFinPaymentMethods')) || [];
+/* ══════════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════════ */
+function getMethods() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
 
-    const totalBalanceSpan = document.getElementById('totalBalance');
-    const totalMethodsBadge = document.getElementById('totalMethodsBadge');
-    const methodsContainer = document.getElementById('paymentMethodsList');
+function saveMethods(methods) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(methods));
+}
 
-    function formatCurrency(amount) {
-        return '$' + amount.toLocaleString('es-CO');
+function formatCOP(num) {
+    return Number(num).toLocaleString('es-CO');
+}
+
+function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDERIZAR CHIPS (tarjeta azul)
+══════════════════════════════════════════════════════════ */
+function renderChips() {
+    const container = document.getElementById('methodsChips');
+    const methods   = getMethods();
+
+    container.innerHTML = '';
+
+    if (methods.length === 0) {
+        container.innerHTML = `
+            <span style="opacity:.7; font-size:13px;">
+                No tienes métodos de pago aún.
+            </span>`;
+    } else {
+        methods.forEach(m => {
+            const chip = document.createElement('div');
+            chip.className = 'method-chip';
+            chip.innerHTML = `
+                <span class="chip-name">${escapeHtml(m.name)}</span>
+                <span class="chip-amount">$${formatCOP(m.amount)}</span>
+            `;
+            container.appendChild(chip);
+        });
     }
 
-    function updateBalance() {
-        const total = paymentMethods.reduce((sum, method) => sum + method.amount, 0);
-        // Solo ponemos el número, el "COP" ya está en el HTML
-        totalBalanceSpan.textContent = formatCurrency(total);
-        totalMethodsBadge.innerHTML = `💵 Total métodos: ${formatCurrency(total)} COP`;
+    // Actualizar saldo total
+    const total = methods.reduce((acc, m) => acc + Number(m.amount), 0);
+    document.getElementById('totalBalance').textContent = `$${formatCOP(total)}`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDERIZAR LISTA DETALLADA (sección "Mis Métodos")
+══════════════════════════════════════════════════════════ */
+function renderMethodsList() {
+    const list    = document.getElementById('methodsList');
+    const methods = getMethods();
+
+    list.innerHTML = '';
+
+    if (methods.length === 0) {
+        list.innerHTML = `
+            <p class="method-list-empty">
+                Aún no tienes métodos de pago configurados.
+            </p>`;
+        return;
     }
 
-    function renderPaymentMethods() {
-        if (!methodsContainer) return;
-        
-        if (paymentMethods.length === 0) {
-            methodsContainer.innerHTML = '<div class="empty-methods">📭 No hay métodos. Ve a Bienvenida.</div>';
-            updateBalance();
+    methods.forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'method-list-item';
+        item.innerHTML = `
+            <span class="m-name">${escapeHtml(m.name)}</span>
+            <span class="m-amount">$${formatCOP(m.amount)} COP</span>
+        `;
+        list.appendChild(item);
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   NOMBRE DE USUARIO
+══════════════════════════════════════════════════════════ */
+function loadUserName() {
+    const user = JSON.parse(localStorage.getItem('estuFinUser')) || {};
+    const el   = document.getElementById('userNameDisplay');
+    if (el) el.textContent = user.name || user.email || 'Usuario';
+}
+
+/* ══════════════════════════════════════════════════════════
+   MODAL — AGREGAR MÉTODO DESDE DASHBOARD
+══════════════════════════════════════════════════════════ */
+function initModal() {
+    const modal      = document.getElementById('addMethodModal');
+    const form       = document.getElementById('modalPaymentForm');
+    const nameInput  = document.getElementById('modalMethodName');
+    const amtInput   = document.getElementById('modalMethodAmount');
+    const errorDiv   = document.getElementById('modalError');
+
+    // Botones que abren el modal
+    ['openAddMethodModal', 'openAddMethodModal2'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', () => openModal());
+    });
+
+    // Botones que cierran el modal
+    document.getElementById('closeModal') .addEventListener('click', closeModal);
+    document.getElementById('cancelModal').addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    // Guardar nuevo método
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        errorDiv.classList.add('hidden');
+
+        const name   = nameInput.value.trim();
+        const amount = parseFloat(amtInput.value);
+
+        if (!name) {
+            showModalError('Escribe un nombre para el método.');
+            return;
+        }
+        if (isNaN(amount) || amount < 0) {
+            showModalError('Ingresa un monto válido (puede ser 0).');
             return;
         }
 
-        methodsContainer.innerHTML = '';
-        paymentMethods.forEach(method => {
-            const card = document.createElement('div');
-            card.className = 'payment-method-card';
-            card.innerHTML = `
-                <div class="payment-method-info">
-                    <span class="method-name">${method.name}</span>
-                    <span class="method-amount">${formatCurrency(method.amount)} COP</span>
-                </div>
-            `;
-            methodsContainer.appendChild(card);
-        });
-        updateBalance();
-    }
+        const methods = getMethods();
+        methods.push({ id: Date.now(), name, amount });
+        saveMethods(methods);
 
-    // Botones de navegación
-    document.getElementById('addMoreMethodsBtn')?.addEventListener('click', () => {
-        window.location.href = 'bienvenida.html';
+        renderChips();
+        renderMethodsList();
+        closeModal();
     });
 
-    // Inicializar
-    renderPaymentMethods();
+    function openModal() {
+        nameInput.value  = '';
+        amtInput.value   = '';
+        errorDiv.classList.add('hidden');
+        modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+    }
+
+    function showModalError(msg) {
+        errorDiv.textContent = msg;
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    loadUserName();
+    renderChips();
+    renderMethodsList();
+    initModal();
 });

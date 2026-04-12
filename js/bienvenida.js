@@ -1,90 +1,131 @@
 // js/bienvenida.js
+// CLAVE ÚNICA: 'estuFinPaymentMethods' — usada también en dashboard.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Cargar métodos guardados
-    let paymentMethods = JSON.parse(localStorage.getItem('estuFinPaymentMethods')) || [];
 
-    const form = document.getElementById('paymentForm');
-    const nameInput = document.getElementById('paymentName');
-    const amountInput = document.getElementById('paymentAmount');
-    const methodsContainer = document.getElementById('methodsContainer');
-    const goToDashboardBtn = document.getElementById('goToDashboardBtn');
+    const STORAGE_KEY = 'estuFinPaymentMethods';
 
+    let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    const form              = document.getElementById('paymentForm');
+    const nameInput         = document.getElementById('paymentName');
+    const amountInput       = document.getElementById('paymentAmount');
+    const methodsContainer  = document.getElementById('methodsContainer');
+    const goToDashboardBtn  = document.getElementById('goToDashboardBtn');
+    const totalDisplay      = document.getElementById('totalDisplay');
+    const totalAmountSpan   = document.getElementById('totalAmount');
+
+    // ── Renderizar lista de métodos ──────────────────────────────
     function renderMethods() {
-        if (!methodsContainer) return;
+        methodsContainer.innerHTML = '';
+
         if (paymentMethods.length === 0) {
-            methodsContainer.innerHTML = '<p style="text-align:center; color:#777;">No has agregado ningún método aún.</p>';
+            methodsContainer.innerHTML = `
+                <p style="text-align:center; color:#A0AEC0; margin:auto; font-size:14px;">
+                    Aún no has agregado ningún método.
+                </p>`;
+            goToDashboardBtn.disabled = true;
+            totalDisplay.classList.add('hidden');
             return;
         }
 
-        methodsContainer.innerHTML = '';
         paymentMethods.forEach((method, index) => {
-            const methodDiv = document.createElement('div');
-            methodDiv.className = 'payment-item';
-            methodDiv.innerHTML = `
-                <div class="payment-info">
-                    <span class="payment-name">${escapeHtml(method.name)}</span>
-                    <span class="payment-amount">$${formatNumber(method.amount)} COP</span>
+            const item = document.createElement('div');
+            item.className = 'method-card-item';
+            item.innerHTML = `
+                <div class="method-info-left">
+                    <span class="method-name">${escapeHtml(method.name)}</span>
+                    <span class="method-amount">$${formatNumber(method.amount)} COP</span>
                 </div>
-                <button class="delete-payment" data-index="${index}" title="Eliminar">🗑️</button>
+                <button class="delete-btn" data-index="${index}" title="Eliminar">🗑️</button>
             `;
-            methodsContainer.appendChild(methodDiv);
+            methodsContainer.appendChild(item);
         });
 
-        // Event listeners para eliminar
-        document.querySelectorAll('.delete-payment').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(btn.getAttribute('data-index'));
-                paymentMethods.splice(index, 1);
+        // Botones eliminar
+        methodsContainer.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.getAttribute('data-index'));
+                paymentMethods.splice(idx, 1);
                 saveAndRender();
             });
         });
+
+        // Total
+        const total = paymentMethods.reduce((acc, m) => acc + m.amount, 0);
+        totalAmountSpan.textContent = formatNumber(total);
+        totalDisplay.classList.remove('hidden');
+
+        // Habilitar botón de continuar
+        goToDashboardBtn.disabled = false;
     }
 
+    // ── Guardar en localStorage y re-renderizar ──────────────────
     function saveAndRender() {
-        localStorage.setItem('estuFinPaymentMethods', JSON.stringify(paymentMethods));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(paymentMethods));
         renderMethods();
     }
 
-    function formatNumber(num) {
-        return num.toLocaleString('es-CO');
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[m]));
-    }
-
+    // ── Agregar método ───────────────────────────────────────────
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const name = nameInput.value.trim();
+
+        const name   = nameInput.value.trim();
         const amount = parseFloat(amountInput.value);
 
-        if (!name || isNaN(amount) || amount <= 0) {
-            mostrarError('Por favor, ingresa un nombre y un monto válido.');
+        // Validaciones
+        if (!name) {
+            mostrarError('Por favor escribe un nombre para el método de pago.');
+            return;
+        }
+        if (isNaN(amount) || amount < 0) {
+            mostrarError('Ingresa un monto válido (puede ser 0).');
             return;
         }
 
         paymentMethods.push({
-            id: Date.now(),
-            name: name,
+            id:     Date.now(),
+            name:   name,
             amount: amount
         });
 
-        nameInput.value = '';
+        nameInput.value   = '';
         amountInput.value = '';
+        nameInput.focus();
+
         saveAndRender();
     });
 
-    function mostrarError(mensaje) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.textContent = mensaje;
-        form.appendChild(errorDiv);
-        setTimeout(() => errorDiv.remove(), 3000);
-    }
-
+    // ── Ir al Dashboard ──────────────────────────────────────────
     goToDashboardBtn.addEventListener('click', () => {
+        if (paymentMethods.length === 0) return;
+        // Marcar que el usuario ya configuró sus métodos
+        localStorage.setItem('estuFinSetupDone', 'true');
         window.location.href = 'dashboard.html';
     });
 
+    // ── Helpers ──────────────────────────────────────────────────
+    function formatNumber(num) {
+        return Number(num).toLocaleString('es-CO');
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;',
+            '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+
+    function mostrarError(msg) {
+        // Quitar errores anteriores
+        document.querySelectorAll('.error-message').forEach(e => e.remove());
+        const div = document.createElement('div');
+        div.className = 'error-message';
+        div.textContent = msg;
+        form.appendChild(div);
+        setTimeout(() => div.remove(), 3500);
+    }
+
+    // ── Inicio ───────────────────────────────────────────────────
     renderMethods();
 });
