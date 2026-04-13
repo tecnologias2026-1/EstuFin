@@ -5,26 +5,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.querySelector('.submit-btn');
     const transactionType = document.querySelector('.transaction-type');
 
-    // Cargar métodos de pago desde localStorage
-    let methods = JSON.parse(localStorage.getItem('metodosPago') || '[]');
-
-    if (methods.length > 0) {
-        methods.forEach((method, index) => {
+    // Cargar métodos de pago desde localStorage (estuFinPaymentMethods)
+    function loadPaymentMethods() {
+        paymentSelect.innerHTML = '<option value="">Selecciona un método</option>';
+        let methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
+        if (methods.length > 0) {
+            methods.forEach((method, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = method.nombre || method.name;
+                paymentSelect.appendChild(option);
+            });
+            paymentSelect.disabled = false;
+        } else {
             const option = document.createElement('option');
-            option.value = index;
-            option.textContent = `${method.nombre}${method.banco ? ' — ' + method.banco : ''} (${method.tipo}) - $${method.saldo.toLocaleString('es-CO')}`;
+            option.value = '';
+            option.textContent = 'No hay métodos de pago configurados';
             paymentSelect.appendChild(option);
-        });
-    } else {
-        const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'No hay métodos de pago configurados';
-        paymentSelect.appendChild(option);
-        paymentSelect.disabled = true;
+            paymentSelect.disabled = true;
+        }
     }
+
+    // Inicializar métodos de pago al cargar la página
+    loadPaymentMethods();
+
 
     // Manejar selección de tipo de transacción
     let currentType = 'income';
+
+    function updateTransactionButtons(type) {
+        if (type === 'income') {
+            incomeBtn.classList.add('active');
+            expenseBtn.classList.remove('active');
+        } else {
+            incomeBtn.classList.remove('active');
+            expenseBtn.classList.add('active');
+        }
+    }
 
     incomeBtn.addEventListener('click', () => {
         setActiveType('income');
@@ -36,8 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setActiveType(type) {
         currentType = type;
-        incomeBtn.classList.toggle('active', type === 'income');
-        expenseBtn.classList.toggle('active', type === 'expense');
+        updateTransactionButtons(type);
         submitBtn.textContent = type === 'income' ? 'Registrar Ingreso' : 'Registrar Gasto';
         submitBtn.classList.toggle('income-btn', type === 'income');
         submitBtn.classList.toggle('expense-btn', type === 'expense');
@@ -48,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Manejar envío del formulario
     submitBtn.addEventListener('click', () => {
+        // Efecto visual: poner azul el botón mientras está presionado
+        submitBtn.classList.add('active');
+        setTimeout(() => submitBtn.classList.remove('active'), 200);
         const amountValue = document.getElementById('amount').value;
         const methodIndex = paymentSelect.value;
         const date = document.getElementById('date').value;
@@ -58,8 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Obtener métodos de pago actualizados
+        let methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
         const amount = parseFloat(amountValue);
-        const selectedMethod = methods[methodIndex];
+        // Asegurarse de que el método tenga la propiedad 'nombre' para compatibilidad
+        const selectedMethodRaw = methods[methodIndex];
+        const selectedMethod = {
+            nombre: selectedMethodRaw.nombre || selectedMethodRaw.name || '',
+            tipo: selectedMethodRaw.tipo || selectedMethodRaw.type || '',
+            banco: selectedMethodRaw.banco || selectedMethodRaw.bank || '',
+            saldo: selectedMethodRaw.saldo || selectedMethodRaw.balance || 0
+        };
         const transaction = {
             type: currentType,
             amount,
@@ -75,8 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             methods[methodIndex].saldo = (parseFloat(methods[methodIndex].saldo) || 0) - amount;
         }
-
-        localStorage.setItem('metodosPago', JSON.stringify(methods));
+        localStorage.setItem('estuFinPaymentMethods', JSON.stringify(methods));
 
         // Guardar transacción en localStorage
         const transactions = JSON.parse(localStorage.getItem('transacciones') || '[]');

@@ -5,75 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EstuFin - Registrar Movimiento</title>
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/movimiento.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/header.css">
+    
 </head>
 <body>
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-small">$</div>
-                <div>
+                <div class="logo-icon">$</div>
+                <div class="logo-text">
                     <h1>EstuFin</h1>
                     <p>Tu dinero bajo control</p>
                 </div>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.html">🏠 Inicio</a>
-                <a href="gatos-ingresos.html">📈 Gastos e Ingresos</a>
-                <a href="movimiento.html" class="active">➕ Registrar Movimiento</a>
-                <a href="gastos-fijos.html">💰 Gastos Fijos</a>
-                <a href="gatos-rapidos.html">⚡ Gastos Rápidos</a>
-                <a href="proximos-pagos.html">💳 Próximos Pagos</a>
-                <a href="mis-metas.html">🎯 Mis Metas</a>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span> Inicio
+                </a>
+                <a href="gatos-ingresos.html" class="nav-item">
+                    <span class="nav-icon">📈</span> Gastos e Ingresos
+                </a>
+                <a href="movimiento.html" class="nav-item active">
+                    <span class="nav-icon">➕</span> Registrar Movimiento
+                </a>
+                <a href="gastos-fijos.html" class="nav-item">
+                    <span class="nav-icon">💰</span> Gastos Fijos
+                </a>
+                <a href="gatos-rapidos.html" class="nav-item">
+                    <span class="nav-icon">⚡</span> Gastos Rápidos
+                </a>
+                <a href="proximos-pagos.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Próximos Pagos
+                </a>
+                <a href="mis-metas.html" class="nav-item">
+                    <span class="nav-icon">🎯</span> Mis Metas
+                </a>
             </nav>
             <div class="sidebar-footer">
-                <p><strong>EstuFin</strong></p>
-                <p>Controla tu dinero con facilidad</p>
+                <p class="footer-brand">EstuFin</p>
+                <p class="footer-sub">Controla tu dinero con facilidad</p>
             </div>
         </aside>
 
-        <main class="main-content">
+        <main class="main-content main-content-movimiento">
             <header class="top-header">
-                <h2>Registrar Movimiento</h2>
-                <div class="user-profile">
-                    <span class="notifications">🔔</span>
-                    <span class="user-name">Usuario</span>
-                    <div class="user-avatar">👤</div>
+                <div>
+                    <h2 class="page-title">Registrar Movimiento</h2>
+                    <p class="page-subtitle">Agrega un nuevo ingreso o gasto a tu historial</p>
+                </div>
+                <div class="header-right-group" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                    <div class="user-info"></div>
                 </div>
             </header>
-
-            <div class="register-card">
-                <h2>Registrar Movimiento</h2>
-                <div class="transaction-type">
-                    <button class="income">+ Ingreso</button>
-                    <button class="expense">- Gasto</button>
+            <div class="register-card-mov">
+                <div style="margin-bottom:1.7rem;">
+                    <label class="mov-label">Tipo de Transacción</label>
+                    <div class="mov-transaction-type transaction-type">
+                        <button class="income transaction-btn" type="button"><span style="font-size:1.3rem;">＋</span> Ingreso</button>
+                        <button class="expense transaction-btn" type="button"><span style="font-size:1.3rem;">－</span> Gasto</button>
+                    </div>
                 </div>
-                <div class="field-group">
+                <div class="mov-field-group field-group">
                     <div class="field">
                         <label for="amount">Monto (COP)</label>
-                        <input id="amount" type="number" placeholder="0" min="0">
+                        <input id="amount" type="number" placeholder="0" min="0" class="mov-input">
                     </div>
                     <div class="field">
                         <label>Método de Pago</label>
-                        <select id="payment-method" class="payment-select">
+                        <select id="payment-method" class="mov-select payment-select">
                             <option value="">Selecciona un método</option>
                         </select>
                     </div>
                     <div class="field">
                         <label for="date">Fecha</label>
-                        <input id="date" type="date">
+                        <input id="date" type="date" class="mov-input">
                     </div>
                     <div class="field">
                         <label for="description">Descripción</label>
-                        <textarea id="description" placeholder="Ej: Mesada, Trabajo freelance, etc."></textarea>
+                        <textarea id="description" placeholder="Ej: Mesada, Trabajo freelance, etc." class="mov-input" style="min-height:60px;"></textarea>
                     </div>
                 </div>
-
-                <div class="actions-row">
-                    <button type="button" class="cancel-btn">Cancelar</button>
-                    <button type="button" class="submit-btn">Registrar Ingreso</button>
+                <div class="actions-row" style="gap:18px; margin-top:2.2rem;">
+                    <button type="button" class="cancel-btn" style="flex:1;">Cancelar</button>
+                    <button type="button" class="submit-btn" style="flex:1;">Registrar Ingreso</button>
                 </div>
             </div>
         </main>

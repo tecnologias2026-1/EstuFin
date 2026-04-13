@@ -4,42 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EstuFin - Gastos e Ingresos</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/gastos-ingresos.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/header.css">
 </head>
 <body>
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-small">$</div>
-                <div>
+                <div class="logo-icon">$</div>
+                <div class="logo-text">
                     <h1>EstuFin</h1>
                     <p>Tu dinero bajo control</p>
                 </div>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.html">🏠 Inicio</a>
-                <a href="gatos-ingresos.html" class="active">📈 Gastos e Ingresos</a>
-                <a href="movimiento.html">➕ Registrar Movimiento</a>
-                <a href="#gastos-fijos.html">💰 Gastos Fijos</a>
-                <a href="gatos-rapidos.html">⚡ Gastos Rápidos</a>
-                <a href="proximos-pagos.html">💳 Próximos Pagos</a>
-                <a href="mis-metas.html">🎯 Mis Metas</a>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span> Inicio
+                </a>
+                <a href="gatos-ingresos.html" class="nav-item active">
+                    <span class="nav-icon">📈</span> Gastos e Ingresos
+                </a>
+                <a href="movimiento.html" class="nav-item">
+                    <span class="nav-icon">➕</span> Registrar Movimiento
+                </a>
+                <a href="gastos-fijos.html" class="nav-item">
+                    <span class="nav-icon">💰</span> Gastos Fijos
+                </a>
+                <a href="gatos-rapidos.html" class="nav-item">
+                    <span class="nav-icon">⚡</span> Gastos Rápidos
+                </a>
+                <a href="proximos-pagos.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Próximos Pagos
+                </a>
+                <a href="mis-metas.html" class="nav-item">
+                    <span class="nav-icon">🎯</span> Mis Metas
+                </a>
             </nav>
             <div class="sidebar-footer">
-                <p><strong>EstuFin</strong></p>
-                <p>Controla tu dinero con facilidad</p>
+                <p class="footer-brand">EstuFin</p>
+                <p class="footer-sub">Controla tu dinero con facilidad</p>
             </div>
         </aside>
 
         <main class="main-content">
+            <main class="main-content main-content-ingresos">
             <header class="top-header">
-                <h2>Gastos e Ingresos</h2>
-                <div class="user-profile">
-                    <span class="notifications">🔔</span>
-                    <span class="user-name">Usuario</span>
-                    <div class="user-avatar">👤</div>
+                <div>
+                    <h2 class="page-title">Gastos e Ingresos</h2>
+                    <p class="page-subtitle">Gestiona todos tus movimientos financieros</p>
+                </div>
+                <div class="header-right-group" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                    <div class="user-info"></div>
                 </div>
             </header>
 
@@ -77,111 +94,7 @@
         </main>
     </div>
     <script src="js/dashboard.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const addButton = document.querySelector('.btn-primary-dash');
-            if (addButton) {
-                addButton.addEventListener('click', () => {
-                    window.location.href = 'movimiento.html';
-                });
-            }
-
-            const closeButton = document.querySelector('.details-close');
-            if (closeButton) {
-                closeButton.addEventListener('click', () => {
-                    hideTransactionDetails();
-                });
-            }
-
-            // Cargar y mostrar transacciones
-            loadTransactions();
-        });
-
-        function loadTransactions() {
-            const transactions = JSON.parse(localStorage.getItem('transacciones') || '[]');
-            const transactionsList = document.getElementById('transactions-list');
-            const totalEl = document.getElementById('total-transactions');
-
-            totalEl.textContent = `${transactions.length} total`;
-
-            if (transactions.length === 0) {
-                return; // Ya muestra el mensaje vacío
-            }
-
-            // Limpiar la lista
-            transactionsList.innerHTML = '';
-
-            transactions.forEach((transaction, index) => {
-                const item = document.createElement('div');
-                item.className = 'transaction-item';
-                item.innerHTML = `
-                    <div class="transaction-info">
-                        <div class="transaction-icon ${transaction.type}">
-                            ${transaction.type === 'income' ? '+' : '-'}
-                        </div>
-                        <div class="transaction-details">
-                            <h4>${transaction.description}</h4>
-                            <p>${transaction.method.nombre} • ${new Date(transaction.date).toLocaleDateString('es-CO')}</p>
-                        </div>
-                    </div>
-                    <div class="transaction-amount ${transaction.type === 'income' ? 'income' : 'expense'}">
-                        ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toLocaleString('es-CO')}
-                    </div>
-                `;
-
-                item.addEventListener('click', () => {
-                    document.querySelectorAll('.transaction-item').forEach(el => el.classList.remove('selected'));
-                    item.classList.add('selected');
-                    showTransactionDetails(transaction);
-                });
-
-                transactionsList.appendChild(item);
-            });
-        }
-
-        function showTransactionDetails(transaction) {
-            const detailsContainer = document.getElementById('transaction-details-content');
-            const typeLabel = transaction.type === 'income' ? 'Ingreso' : 'Gasto';
-            const formattedDate = new Date(transaction.date).toLocaleDateString('es-CO', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-
-            detailsContainer.innerHTML = `
-                <div class="details-card">
-                    <div class="details-item">
-                        <h4>Tipo</h4>
-                        <p>${typeLabel}</p>
-                    </div>
-                    <div class="details-item">
-                        <h4>Monto</h4>
-                        <p class="transaction-detail-amount ${transaction.type}">${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toLocaleString('es-CO')}</p>
-                    </div>
-                    <div class="details-item">
-                        <h4>Fecha</h4>
-                        <p>${formattedDate}</p>
-                    </div>
-                    <div class="details-item">
-                        <h4>Método de Pago</h4>
-                        <p>${transaction.method.nombre}</p>
-                    </div>
-                    <div class="details-item">
-                        <h4>Descripción</h4>
-                        <p>${transaction.description}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function hideTransactionDetails() {
-            document.getElementById('transaction-details-content').innerHTML = `
-                <div class="details-icon">📄</div>
-                <p>Selecciona una transacción<br>para ver los detalles</p>
-            `;
-            document.querySelectorAll('.transaction-item').forEach(el => el.classList.remove('selected'));
-        }
-    </script>
     <script src="js/header.js"></script>
+    <script src="js/gastos-ingresos.js"></script>
 </body>
 </html>

@@ -42,15 +42,15 @@ function renderChips() {
             const chip = document.createElement('div');
             chip.className = 'method-chip';
             chip.innerHTML = `
-                <span class="chip-name">${escapeHtml(m.name)}</span>
-                <span class="chip-amount">$${formatCOP(m.amount)}</span>
+                <span class="chip-name">${escapeHtml(m.name || m.nombre)}</span>
+                <span class="chip-amount">$${formatCOP(m.saldo !== undefined ? m.saldo : (m.amount !== undefined ? m.amount : 0))}</span>
             `;
             container.appendChild(chip);
         });
     }
 
-    // Actualizar saldo total
-    const total = methods.reduce((acc, m) => acc + Number(m.amount), 0);
+    // Actualizar saldo total usando saldo si existe, sino amount
+    const total = methods.reduce((acc, m) => acc + Number(m.saldo !== undefined ? m.saldo : (m.amount !== undefined ? m.amount : 0)), 0);
     document.getElementById('totalBalance').textContent = `$${formatCOP(total)}`;
 }
 

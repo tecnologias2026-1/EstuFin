@@ -1,3 +1,40 @@
+/* ── Responsive Header ───────────────────────────────────── */
+@media (max-width: 900px) {
+    .user-info, .header-right-group {
+        gap: 6px !important;
+        flex-direction: row !important;
+        font-size: 13px !important;
+    }
+    .header-avatar-wrap, .header-bell-wrap {
+        gap: 4px !important;
+    }
+    .header-bell-btn, .header-avatar-btn {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 13px !important;
+    }
+    .user-name {
+        font-size: 12px !important;
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+@media (max-width: 600px) {
+    .user-info, .header-right-group {
+        gap: 3px !important;
+        font-size: 11px !important;
+    }
+    .header-avatar-btn, .header-bell-btn {
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 11px !important;
+    }
+    .user-name {
+        font-size: 10px !important;
+        max-width: 50px;
+    }
+}
 /* ================================================
    css/header.css
    ================================================ */
