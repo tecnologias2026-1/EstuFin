@@ -156,4 +156,35 @@ document.addEventListener('DOMContentLoaded', () => {
             `).join('');
         }
     }
+
+    // Sidebar responsive para móvil
+    function checkSidebarToggle() {
+        const btn = document.getElementById('sidebarToggle');
+        if (!btn) return;
+        if (window.innerWidth <= 900) {
+            btn.style.display = 'block';
+        } else {
+            btn.style.display = 'none';
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.classList.remove('open');
+        }
+    }
+    window.addEventListener('resize', checkSidebarToggle);
+    window.addEventListener('DOMContentLoaded', checkSidebarToggle);
+
+    if (document.getElementById('sidebarToggle')) {
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.classList.toggle('open');
+        });
+    }
+    window.addEventListener('click', function(e) {
+        const sidebar = document.querySelector('.sidebar');
+        const toggle = document.getElementById('sidebarToggle');
+        if (window.innerWidth <= 900 && sidebar && sidebar.classList.contains('open')) {
+            if (!sidebar.contains(e.target) && e.target !== toggle) {
+                sidebar.classList.remove('open');
+            }
+        }
+    });
 });
