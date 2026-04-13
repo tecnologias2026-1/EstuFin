@@ -1,3 +1,45 @@
+/* ── Responsive Design ───────────────────────────────────── */
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    .main-content {
+        padding: 16px 6px !important;
+    }
+    .payments-section, .balance-card, .welcome-banner {
+        padding: 14px 8px !important;
+        border-radius: 14px !important;
+    }
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .btn-primary-dash {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        border-radius: 8px !important;
+    }
+}
+@media (max-width: 600px) {
+    .main-content {
+        padding: 8px 2px !important;
+        gap: 10px !important;
+    }
+    .dashboard-grid {
+        gap: 8px !important;
+    }
+    .payments-section, .balance-card, .welcome-banner {
+        padding: 8px 2px !important;
+        border-radius: 8px !important;
+    }
+    .btn-primary-dash {
+        font-size: 12px !important;
+        padding: 8px 6px !important;
+        border-radius: 6px !important;
+    }
+}
 @import url('dashboard.css');
 
 .sidebar-nav a.active, .sidebar-nav a:hover {

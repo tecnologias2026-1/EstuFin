@@ -1,3 +1,101 @@
+/* ── Responsive Design ───────────────────────────────────── */
+@media (max-width: 900px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 12px 6px;
+        min-width: 0;
+        overflow-y: visible;
+    }
+    .sidebar-header, .sidebar-footer {
+        display: none;
+    }
+    .sidebar-nav {
+        flex-direction: row;
+        gap: 8px;
+        width: 100%;
+        justify-content: space-between;
+    }
+    .nav-item {
+        font-size: 12px;
+        padding: 8px 6px;
+        border-radius: 8px;
+        gap: 6px;
+    }
+    .main-content {
+        padding: 16px 6px;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .balance-card, .banner-card, .my-methods-section, .payments-widget {
+        grid-column: 1 / -1 !important;
+        padding: 18px 10px;
+        border-radius: 16px;
+    }
+    .quick-actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    .qa-btn {
+        padding: 14px 8px;
+        font-size: 12px;
+        border-radius: 12px;
+    }
+    .methods-chips {
+        gap: 6px;
+    }
+    .method-chip {
+        min-width: 80px;
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+    .modal-box {
+        width: 98vw;
+        min-width: 0;
+        padding: 12px 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-content {
+        padding: 8px 2px;
+        gap: 10px;
+    }
+    .dashboard-grid {
+        gap: 8px;
+    }
+    .balance-card, .banner-card, .my-methods-section, .payments-widget {
+        padding: 10px 2px;
+        border-radius: 10px;
+    }
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .user-info {
+        gap: 6px;
+    }
+    .btn-add-method, .btn-register, .btn-outline, .btn-outline-blue, .btn-cancel, .btn-save {
+        font-size: 12px;
+        padding: 8px 6px;
+        border-radius: 8px;
+    }
+    .modal-box {
+        width: 100vw;
+        min-width: 0;
+        padding: 8px 2px;
+    }
+}
 /* ── Variables ─────────────────────────────────────────────── */
 :root {
     --primary-blue:   #1A56FF;
