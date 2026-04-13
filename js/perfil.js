@@ -4,12 +4,12 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Leer usuario desde localStorage ─────────────────────
-    const user = JSON.parse(localStorage.getItem('usuarioActual') || '{}');
+    // ── Leer usuario desde localStorage (clave de auth.js) ──
+    const user = JSON.parse(localStorage.getItem('estuFinCurrentUser') || '{}');
 
-    const nombre   = user.nombre   || user.name  || 'Usuario';
-    const email    = user.email    || '';
-    const password = user.password || user.contraseña || '';
+    const nombre   = user.name   || user.nombre || 'Usuario';
+    const email    = user.email  || '';
+    const password = user.password ? atob(user.password) : '';
     const fecha    = user.fechaRegistro || new Date().toLocaleDateString('es-CO', {
         day: 'numeric', month: 'long', year: 'numeric'
     });
@@ -83,15 +83,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Actualizar estuFinCurrentUser
         const userActualizado = {
             ...user,
-            nombre:        nuevoNombre,
             name:          nuevoNombre,
             email:         nuevoEmail,
-            password:      nuevoPassword,
+            password:      nuevoPassword ? btoa(nuevoPassword) : user.password,
             fechaRegistro: fecha
         };
-        localStorage.setItem('usuarioActual', JSON.stringify(userActualizado));
+        localStorage.setItem('estuFinCurrentUser', JSON.stringify(userActualizado));
+
+        // Actualizar también en la lista de usuarios
+        const usuarios = JSON.parse(localStorage.getItem('estuFinUsers') || '[]');
+        const idx = usuarios.findIndex(u => u.email === email);
+        if (idx !== -1) {
+            usuarios[idx] = { ...usuarios[idx], name: nuevoNombre, email: nuevoEmail };
+            if (nuevoPassword) usuarios[idx].password = btoa(nuevoPassword);
+            localStorage.setItem('estuFinUsers', JSON.stringify(usuarios));
+        }
 
         document.getElementById('heroNombre').textContent = nuevoNombre;
         document.getElementById('heroEmail').textContent  = nuevoEmail;
