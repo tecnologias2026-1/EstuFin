@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Renderizar lista
         function renderList() {
-            const expenses = JSON.parse(localStorage.getItem('gastosRapidos') || '[]');
+            const expenses = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
             list.innerHTML = '';
 
             if (expenses.length === 0) {
@@ -100,15 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
             list.querySelectorAll('.btn-delete').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const id = parseInt(btn.dataset.id);
-                    let expenses = JSON.parse(localStorage.getItem('gastosRapidos') || '[]'); // ← cambiado
+                    let expenses = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
                     expenses = expenses.filter(e => e.id !== id);
-                    localStorage.setItem('gastosRapidos', JSON.stringify(expenses)); // ← cambiado
+                    localStorage.setItem('gastosFijos', JSON.stringify(expenses));
                     renderList();
                 });
             });
         }
 
-        // Guardar gasto rápido
+        // Guardar gasto fijo
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('expense-name').value;
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const quickExpense = {
+            const fixedExpense = {
                 id: Date.now(),
                 name,
                 amount,
@@ -128,9 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 createdAt: new Date().toISOString()
             };
 
-            const gastosRapidos = JSON.parse(localStorage.getItem('gastosRapidos') || '[]'); // ← cambiado
-            gastosRapidos.push(quickExpense);
-            localStorage.setItem('gastosRapidos', JSON.stringify(gastosRapidos)); // ← cambiado
+            const gastosFijos = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
+            gastosFijos.push(fixedExpense);
+            localStorage.setItem('gastosFijos', JSON.stringify(gastosFijos));
 
             modal.classList.remove('active');
             form.reset();

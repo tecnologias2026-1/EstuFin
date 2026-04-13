@@ -1,72 +1,4 @@
-/* Estilos para el Dashboard de EstuFin */
-
-:root {
-    --primary-blue: #2563EB;
-    --sidebar-bg: #F9FAFB;
-    --main-bg: #FFFFFF;
-    --text-dark: #111827;
-    --text-gray: #6B7280;
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--sidebar-bg);
-}
-
-.dashboard-container {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: 100vh;
-}
-
-/* --- SIDEBAR --- */
-.sidebar {
-    background-color: var(--main-bg);
-    border-right: 1px solid #E5E7EB;
-    padding: 2rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 2.5rem;
-}
-
-.logo-small {
-    background-color: var(--primary-blue);
-    color: white;
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-.sidebar-header h1 { font-size: 1.2rem; margin: 0; }
-.sidebar-header p { font-size: 0.7rem; color: var(--text-gray); margin: 0; }
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex-grow: 1;
-}
-
-.sidebar-nav a {
-    text-decoration: none;
-    color: var(--text-gray);
-    padding: 12px 15px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-}
+@import url('dashboard.css');
 
 .sidebar-nav a.active, .sidebar-nav a:hover {
     background-color: rgba(37, 99, 235, 0.1);
@@ -77,7 +9,10 @@ body {
 /* --- CONTENIDO PRINCIPAL --- */
 .main-content {
     background-color: var(--sidebar-bg);
-    padding: 2rem 3rem;
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .top-header {
@@ -414,4 +349,18 @@ body {
     justify-content: center;
     width: auto;
     padding: 0.95rem 1.7rem;
+}
+
+/* Migración de estilos inline desde gatos-rapidos.html */
+.header-right-group-rapidos {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.btn-add-rapidos-top {
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 13px 28px;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.12);
 }

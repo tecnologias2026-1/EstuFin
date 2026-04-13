@@ -1,83 +1,36 @@
 /* Estilos para la página de Gastos e Ingresos de EstuFin */
 
+/* Sidebar unificado desde dashboard.css */
 :root {
-    --primary-blue: #2563EB;
-    --sidebar-bg: #F9FAFB;
-    --main-bg: #FFFFFF;
-    --text-dark: #111827;
-    --text-gray: #6B7280;
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--sidebar-bg);
+    --primary-blue:   #1A56FF;
+    --dark-blue:      #1440CC;
+    --bg-light:       #F4F7FE;
+    --white:          #FFFFFF;
+    --text-dark:      #1B254B;
+    --text-gray:      #718096;
+    --sidebar-width:  220px;
+    --color-green:    #10B981;
+    --color-purple:   #A855F7;
+    --color-orange:   #F97316;
+    --shadow:         0 4px 20px rgba(0,0,0,0.06);
 }
 
 .dashboard-container {
     display: grid;
-    grid-template-columns: 260px 1fr; /* Sidebar fija y contenido flexible */
-    min-height: 100vh;
-}
-
-/* --- SIDEBAR --- */
-.sidebar {
-    background-color: var(--main-bg);
-    border-right: 1px solid #E5E7EB;
-    padding: 2rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 2.5rem;
-}
-
-.logo-small {
-    background-color: var(--primary-blue);
-    color: white;
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-.sidebar-header h1 { font-size: 1.2rem; margin: 0; }
-.sidebar-header p { font-size: 0.7rem; color: var(--text-gray); margin: 0; }
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex-grow: 1;
-}
-
-.sidebar-nav a {
-    text-decoration: none;
-    color: var(--text-gray);
-    padding: 12px 15px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-}
-
-.sidebar-nav a.active, .sidebar-nav a:hover {
-    background-color: rgba(37, 99, 235, 0.1);
-    color: var(--primary-blue);
-    font-weight: 500;
-}
-
+    grid-template-columns: var(--sidebar-width) 1fr;
+    @import url('dashboard.css');
+    /* Puedes agregar aquí estilos específicos para la página de Gastos e Ingresos debajo de este import. */
 /* --- CONTENIDO PRINCIPAL --- */
 .main-content {
     background-color: var(--sidebar-bg);
     padding: 1.5rem 2rem;
+}
+
+.main-content-ingresos {
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .top-header {
@@ -492,4 +445,13 @@ body {
     border-radius: 8px;
     cursor: pointer;
     font-family: inherit;
+}
+
+/* Migración de estilos inline desde gatos-ingresos.html */
+.header-right-group-ingresos {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    display: flex;
+}
 }
