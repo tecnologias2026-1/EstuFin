@@ -66,12 +66,6 @@ Aquí es donde definimos la estructura de los objetos. He añadido las clases pa
 
 <img width="2646" height="1720" alt="mermaid-diagram-2026-04-14-020827" src="https://github.com/user-attachments/assets/3da1dcf4-4dbe-48ea-88b5-747197bf0810" />
 
-Diagrama de Casos de Uso: Muestra las funciones principales como la gestión de cuentas, el registro de transacciones, la definición de metas de ahorro, la consulta de reportes gráficos y la generación de planes financieros.
-
-
-Diagrama de Secuencia: Representa el flujo de comunicación temporal entre el usuario, la aplicación, los servicios internos y la base de datos para procesos como el registro de gastos e ingresos, validación de datos y actualización de saldos.
-
-Explicar qué proceso representa.
 
 🎨 5. URL del Prototipo
 
