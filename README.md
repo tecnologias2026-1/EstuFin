@@ -51,6 +51,20 @@ RNF03: Seguridad de Datos: Implementación de protocolos de cifrado para protege
 RNF04: Disponibilidad: El servicio web debe estar operativo el 99.9% del tiempo
 
 🧠 4. Diagramas UML
+1. Diagrama de Casos de Uso (Específico y Completo)
+Este diagrama describe todas las fronteras de tu sistema y cómo el usuario interactúa con cada módulo funcional.
+
+<img width="5215" height="1322" alt="mermaid-diagram-2026-04-14-020820" src="https://github.com/user-attachments/assets/8fcf2bcc-c500-430e-90ce-98c35d1bcb80" />
+
+2. Diagrama de Secuencia: Flujo de "Gasto Rápido"
+Este es perfecto para la tesis porque explica la innovación de tu app: cómo un botón configurable ahorra tiempo al usuario actualizando múltiples capas de datos.
+
+<img width="3422" height="1690" alt="mermaid-diagram-2026-04-14-020824" src="https://github.com/user-attachments/assets/1a24582c-c98c-4531-9616-731862b0ae44" />
+
+3. Diagrama de Clases (Arquitectura de Datos para Tesis)
+Aquí es donde definimos la estructura de los objetos. He añadido las clases para Meta, PagoProgramado (como Netflix) y el GastoRápido.
+
+<img width="2646" height="1720" alt="mermaid-diagram-2026-04-14-020827" src="https://github.com/user-attachments/assets/3da1dcf4-4dbe-48ea-88b5-747197bf0810" />
 
 Diagrama de Casos de Uso: Muestra las funciones principales como la gestión de cuentas, el registro de transacciones, la definición de metas de ahorro, la consulta de reportes gráficos y la generación de planes financieros.
 
