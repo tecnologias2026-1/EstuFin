@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             usuarios.push({ name, email, password: btoa(password) });
             localStorage.setItem('estuFinUsers', JSON.stringify(usuarios));
             localStorage.setItem('estuFinCurrentUser', JSON.stringify({ name, email }));
-            
+            localStorage.setItem('usuarioActual', JSON.stringify({ nombre: name, email }));
             window.location.href = 'bienvenida.html';
         });
     }
@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             localStorage.setItem('estuFinCurrentUser', JSON.stringify({ name: usuario.name, email: usuario.email }));
+            localStorage.setItem('usuarioActual', JSON.stringify({ nombre: usuario.name, email: usuario.email }));
             window.location.href = 'dashboard.html'; // O bienvenida si prefieres
         });
     }
