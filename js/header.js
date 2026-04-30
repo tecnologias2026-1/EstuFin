@@ -7,10 +7,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ── 1. Leer usuario desde localStorage ──────────────────
-    const user = JSON.parse(localStorage.getItem('usuarioActual') || '{}');
-    const nombre  = user.nombre  || user.name  || 'Usuario';
-    const email   = user.email   || '';
-    const inicial = nombre.charAt(0).toUpperCase();
+    // IMPORTANTE: Buscamos ambas claves para asegurar compatibilidad con tu perfil.js
+    const userString = localStorage.getItem('estuFinCurrentUser') || localStorage.getItem('usuarioActual') || '{}';
+    const user = JSON.parse(userString);
+    
+    const nombreCompleto = user.nombre || user.name || 'Usuario';
+    const primerNombre   = nombreCompleto.split(' ')[0]; // Extrae solo el primer nombre
+    const email          = user.email || user.correo || '';
+    const inicial        = primerNombre.charAt(0).toUpperCase();
 
     // ── 2. Buscar el contenedor .user-info del header ────────
     const userInfo = document.querySelector('.user-info');
@@ -54,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- NOMBRE + AVATAR -->
         <div class="header-avatar-wrap" id="headerAvatarWrap">
-            <span class="user-name" id="headerUserName">${nombre}</span>
+            <span class="user-name" id="headerUserName">${primerNombre}</span>
             <button class="header-avatar-btn" id="headerAvatarBtn" title="Mi cuenta">
                 <span class="avatar-inicial">${inicial}</span>
             </button>
@@ -64,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="user-dropdown-info">
                     <div class="user-dropdown-avatar">${inicial}</div>
                     <div>
-                        <p class="user-dropdown-nombre">${nombre}</p>
+                        <p class="user-dropdown-nombre">${nombreCompleto}</p>
                         <p class="user-dropdown-email">${email}</p>
                     </div>
                 </div>
@@ -120,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cerrar sesión
     btnLogout.addEventListener('click', () => {
         localStorage.removeItem('usuarioActual');
+        localStorage.removeItem('estuFinCurrentUser'); // Limpia la sesión en ambas variables
         localStorage.removeItem('sesionActiva');
         window.location.href = 'login.html';
     });
@@ -128,6 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarNotificaciones();
 
     function cargarNotificaciones() {
+        // Revisamos si hay pagos vencidos cada vez que carga cualquier página
+        revisarNotificacionesGlobales();
+
         const notifs = JSON.parse(localStorage.getItem('notificaciones') || '[]');
         const badge  = document.getElementById('bellBadge');
         const body   = document.getElementById('notifBody');
@@ -148,12 +156,56 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             badge.textContent = notifs.length;
             badge.classList.remove('hidden');
-            body.innerHTML = notifs.map(n => `
-                <div class="notif-item">
+            body.innerHTML = notifs.map(n => {
+                // Si la notificación es generada por pagos, le damos un puntero y la redirección
+                const pointerStyle = n.isAutoPago ? 'cursor: pointer; transition: background 0.2s;' : '';
+                const clickAction  = n.isAutoPago ? `onclick="window.location.href='proximos-pagos.html'"` : '';
+                
+                return `
+                <div class="notif-item" style="${pointerStyle}" ${clickAction}>
                     <p class="notif-item-texto">${n.texto}</p>
                     <span class="notif-item-fecha">${n.fecha || ''}</span>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
+    }
+
+    // ── Función para actualizar las alertas en todas las pestañas ──
+    function revisarNotificacionesGlobales() {
+        const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
+        let notificaciones = JSON.parse(localStorage.getItem('notificaciones') || '[]');
+
+        // Limpiar automáticas antiguas para no duplicar datos
+        notificaciones = notificaciones.filter(n => !n.isAutoPago);
+
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        pagos.forEach(pago => {
+            if (pago.estado === 'pendiente') {
+                const fechaPago = new Date(pago.fecha + 'T00:00:00'); 
+                const diferenciaTiempo = fechaPago.getTime() - hoy.getTime();
+                const diferenciaDias = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24));
+
+                if (diferenciaDias <= 5 && diferenciaDias >= 0) {
+                    notificaciones.push({
+                        id: 'auto_' + pago.id,
+                        texto: `⏳ El pago "${pago.descripcion}" vence en ${diferenciaDias} día(s).`,
+                        fecha: new Date().toLocaleDateString('es-CO'),
+                        isAutoPago: true
+                    });
+                } else if (diferenciaDias < 0) {
+                    notificaciones.push({
+                        id: 'auto_' + pago.id,
+                        texto: `⚠️ El pago "${pago.descripcion}" está VENCIDO.`,
+                        fecha: new Date().toLocaleDateString('es-CO'),
+                        isAutoPago: true
+                    });
+                }
+            }
+        });
+
+        localStorage.setItem('notificaciones', JSON.stringify(notificaciones));
     }
 });

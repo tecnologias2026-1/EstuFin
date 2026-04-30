@@ -183,3 +183,32 @@
     align-items: flex-start;  /* ← arriba, no centrado */
     margin-bottom: 24px;
 }
+
+/* =========================================
+   Adaptación para Móviles (Próximos Pagos)
+   Añadir al final del archivo
+   ========================================= */
+@media (max-width: 768px) {
+    .pagos-grid {
+        grid-template-columns: 1fr; /* Pone el historial debajo de los pendientes */
+    }
+    
+    .inline-form-fields {
+        grid-template-columns: 1fr; /* Apila los campos del formulario uno sobre otro */
+    }
+    
+    .top-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .header-right-group {
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .btn-agregar-pago {
+        width: 100%;
+        text-align: center;
+    }
+}

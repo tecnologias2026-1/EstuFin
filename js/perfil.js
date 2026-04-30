@@ -1,16 +1,24 @@
 /* ================================================
    js/perfil.js
    ================================================ */
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Leer usuario desde localStorage (clave de auth.js) ──
-    const user = JSON.parse(localStorage.getItem('estuFinCurrentUser') || '{}');
+    // ── Leer usuario desde localStorage ──
+    let user = JSON.parse(localStorage.getItem('estuFinCurrentUser') || '{}');
 
-    const nombre   = user.name   || user.nombre || 'Usuario';
-    const email    = user.email  || '';
-    const password = user.password ? atob(user.password) : '';
-    const fecha    = user.fechaRegistro || new Date().toLocaleDateString('es-CO', {
+    // Cambiado 'const' por 'let' para permitir actualizarlas luego si no se recarga la página
+    let nombre   = user.name   || user.nombre || 'Usuario';
+    let email    = user.email  || user.correo || '';
+    let password = '';
+    
+    // Bloque try-catch por si la contraseña anterior no estaba en Base64
+    try {
+        password = user.password ? atob(user.password) : '';
+    } catch (e) {
+        password = user.password || ''; 
+    }
+
+    let fecha    = user.fechaRegistro || new Date().toLocaleDateString('es-CO', {
         day: 'numeric', month: 'long', year: 'numeric'
     });
 
@@ -83,31 +91,49 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Actualizar estuFinCurrentUser
-        const userActualizado = {
-            ...user,
-            name:          nuevoNombre,
-            email:         nuevoEmail,
-            password:      nuevoPassword ? btoa(nuevoPassword) : user.password,
-            fechaRegistro: fecha
-        };
-        localStorage.setItem('estuFinCurrentUser', JSON.stringify(userActualizado));
+        // 1. Actualizar objeto usuario local
+        user.name = nuevoNombre;
+        user.email = nuevoEmail;
+        if(nuevoPassword && nuevoPassword !== '••••••') {
+            user.password = btoa(nuevoPassword);
+        }
+        
+        // 2. Guardar CurrentUser actualizado
+        localStorage.setItem('estuFinCurrentUser', JSON.stringify(user));
 
-        // Actualizar también en la lista de usuarios
+        // 3. Actualizar en el array principal de usuarios
         const usuarios = JSON.parse(localStorage.getItem('estuFinUsers') || '[]');
-        const idx = usuarios.findIndex(u => u.email === email);
+        // Usamos la variable email que contiene el valor ANTES de este guardado
+        const idx = usuarios.findIndex(u => u.email === email || u.correo === email);
+        
         if (idx !== -1) {
-            usuarios[idx] = { ...usuarios[idx], name: nuevoNombre, email: nuevoEmail };
-            if (nuevoPassword) usuarios[idx].password = btoa(nuevoPassword);
+            usuarios[idx].name = nuevoNombre;
+            usuarios[idx].email = nuevoEmail;
+            
+            // Actualizar posibles propiedades equivalentes para evitar fallos
+            if(usuarios[idx].nombre !== undefined) usuarios[idx].nombre = nuevoNombre;
+            if(usuarios[idx].correo !== undefined) usuarios[idx].correo = nuevoEmail;
+
+            if (nuevoPassword && nuevoPassword !== '••••••') {
+                usuarios[idx].password = btoa(nuevoPassword);
+            }
             localStorage.setItem('estuFinUsers', JSON.stringify(usuarios));
         }
 
+        // Actualizamos las variables de control en memoria (Importante para evitar fallos si no se recarga la pag)
+        email = nuevoEmail;
+        nombre = nuevoNombre;
+        valoresOriginales = { nombre: nuevoNombre, email: nuevoEmail, password: nuevoPassword };
+        
+        // Efectos visuales de confirmación
         document.getElementById('heroNombre').textContent = nuevoNombre;
         document.getElementById('heroEmail').textContent  = nuevoEmail;
-
-        valoresOriginales = { nombre: nuevoNombre, email: nuevoEmail, password: nuevoPassword };
         desactivarEdicion();
+        
         alert('¡Perfil actualizado correctamente!');
+
+        // 4. Forzar recarga de página para que scripts como header.js obtengan la info actualizada
+        window.location.reload();
     });
 
     function desactivarEdicion() {
@@ -118,5 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordVisible = false;
         editActions.classList.add('hidden');
         btnEditar.classList.remove('hidden');
+        
+        // Restaurar botón ojito
+        btnVerPassword.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/>
+             <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+           </svg>`;
     }
 });

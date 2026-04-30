@@ -256,3 +256,32 @@
     line-height: 1.55;
     margin: 0;
 }
+
+/* =========================================
+   Adaptación para Móviles (Mi Perfil)
+   Añadir al final del archivo
+   ========================================= */
+@media (max-width: 768px) {
+    .perfil-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 15px;
+    }
+
+    .btn-editar-perfil {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .perfil-edit-actions {
+        flex-direction: column;
+    }
+
+    .btn-cancelar-edit, .btn-guardar-edit {
+        width: 100%;
+    }
+
+    .perfil-card {
+        padding: 20px 15px;
+    }
+}
