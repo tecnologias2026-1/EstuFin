@@ -28,8 +28,9 @@ function escapeHtml(str) {
 ══════════════════════════════════════════════════════════ */
 function renderChips() {
     const container = document.getElementById('methodsChips');
-    const methods   = getMethods();
+    if (!container) return; // Si no estamos en el dashboard, salir
 
+    const methods   = getMethods();
     container.innerHTML = '';
 
     if (methods.length === 0) {
@@ -51,7 +52,8 @@ function renderChips() {
 
     // Actualizar saldo total usando saldo si existe, sino amount
     const total = methods.reduce((acc, m) => acc + Number(m.saldo !== undefined ? m.saldo : (m.amount !== undefined ? m.amount : 0)), 0);
-    document.getElementById('totalBalance').textContent = `$${formatCOP(total)}`;
+    const totalBalance = document.getElementById('totalBalance');
+    if (totalBalance) totalBalance.textContent = `$${formatCOP(total)}`;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -59,8 +61,9 @@ function renderChips() {
 ══════════════════════════════════════════════════════════ */
 function renderMethodsList() {
     const list    = document.getElementById('methodsList');
-    const methods = getMethods();
+    if (!list) return;
 
+    const methods = getMethods();
     list.innerHTML = '';
 
     if (methods.length === 0) {
@@ -75,8 +78,8 @@ function renderMethodsList() {
         const item = document.createElement('div');
         item.className = 'method-list-item';
         item.innerHTML = `
-            <span class="m-name">${escapeHtml(m.name)}</span>
-            <span class="m-amount">$${formatCOP(m.amount)} COP</span>
+            <span class="m-name">${escapeHtml(m.name || m.nombre)}</span>
+            <span class="m-amount">$${formatCOP(m.amount !== undefined ? m.amount : m.saldo)} COP</span>
         `;
         list.appendChild(item);
     });
@@ -86,9 +89,9 @@ function renderMethodsList() {
    NOMBRE DE USUARIO
 ══════════════════════════════════════════════════════════ */
 function loadUserName() {
-    const user = JSON.parse(localStorage.getItem('estuFinUser')) || {};
+    const user = JSON.parse(localStorage.getItem('estuFinCurrentUser')) || JSON.parse(localStorage.getItem('usuarioActual')) || {};
     const el   = document.getElementById('userNameDisplay');
-    if (el) el.textContent = user.name || user.email || 'Usuario';
+    if (el) el.textContent = user.name || user.nombre || user.email || 'Usuario';
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -96,6 +99,8 @@ function loadUserName() {
 ══════════════════════════════════════════════════════════ */
 function initModal() {
     const modal      = document.getElementById('addMethodModal');
+    if (!modal) return;
+
     const form       = document.getElementById('modalPaymentForm');
     const nameInput  = document.getElementById('modalMethodName');
     const amtInput   = document.getElementById('modalMethodAmount');
@@ -108,7 +113,7 @@ function initModal() {
     });
 
     // Botones que cierran el modal
-    document.getElementById('closeModal') .addEventListener('click', closeModal);
+    document.getElementById('closeModal').addEventListener('click', closeModal);
     document.getElementById('cancelModal').addEventListener('click', closeModal);
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
@@ -156,11 +161,75 @@ function initModal() {
 }
 
 /* ══════════════════════════════════════════════════════════
-   INIT
+   NUEVO: MENÚ HAMBURGUESA PARA CELULARES
+══════════════════════════════════════════════════════════ */
+function initMobileMenu() {
+    const header = document.querySelector('.top-header');
+    const sidebar = document.querySelector('.sidebar');
+    
+    // Si la página tiene un header y un sidebar, aplicamos la magia
+    if (header && sidebar) {
+        
+        // 1. Crear el botón hamburguesa
+        const menuBtn = document.createElement('button');
+        menuBtn.className = 'mobile-menu-btn';
+        menuBtn.innerHTML = `
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        `;
+        
+        // Lo inyectamos al principio de la cabecera (al lado del título)
+        const leftDiv = header.querySelector('div:first-child');
+        if (leftDiv) {
+            leftDiv.style.display = 'flex';
+            leftDiv.style.alignItems = 'center';
+            leftDiv.insertBefore(menuBtn, leftDiv.firstChild);
+        } else {
+            header.insertBefore(menuBtn, header.firstChild);
+        }
+
+        // 2. Crear el fondo negro semi-transparente
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+
+        // 3. Darle funcionalidad al botón para abrir/cerrar
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            // Evitar que la página de fondo haga scroll cuando el menú está abierto
+            document.body.style.overflow = 'hidden'; 
+        });
+
+        // 4. Cerrar al hacer clic en el fondo negro
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Devolver el scroll
+        });
+        
+        // Cerrar al hacer clic en un enlace del menú
+        const navLinks = sidebar.querySelectorAll('.nav-item');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   INIT GENERAL
 ══════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
     loadUserName();
     renderChips();
     renderMethodsList();
     initModal();
+    initMobileMenu(); // <- Activamos el menú móvil en todas las páginas
 });

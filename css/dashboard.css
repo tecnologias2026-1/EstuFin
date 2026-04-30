@@ -39,6 +39,8 @@ body {
     top: 0;
     height: 100vh;
     overflow-y: auto;
+    z-index: 1001; /* Asegura que pase por encima del overlay en móvil */
+    transition: transform 0.3s ease; /* Transición suave para móvil */
 }
 
 .sidebar-header {
@@ -494,7 +496,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 9999;
     backdrop-filter: blur(4px);
 }
 
@@ -607,3 +609,78 @@ body {
 
 /* ── Utilidades ────────────────────────────────────────────── */
 .hidden { display: none !important; }
+
+/* ── Fondo Oscuro para Menú Celular ────────────────────────── */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ── ADAPTACIÓN MÓVIL (Media Queries) ──────────────────────── */
+@media (max-width: 900px) {
+    .dashboard-container {
+        grid-template-columns: 1fr; /* Oculta la columna del sidebar */
+    }
+
+    /* Esconde el sidebar fuera de la pantalla */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+    }
+
+    /* Lo trae de vuelta cuando está activo */
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        padding: 20px 16px; /* Menos espacio a los lados en celular */
+    }
+
+    /* Apilar tarjetas del Dashboard */
+    .dashboard-grid {
+        grid-template-columns: 1fr; 
+    }
+
+    .balance-card, .banner-card, .payments-widget, .my-methods-section {
+        grid-column: 1 / -1;
+    }
+
+    .banner-card {
+        grid-row: auto;
+    }
+
+    .payments-widget, .my-methods-section {
+        grid-row: auto;
+    }
+
+    /* Botones de acción rápida 2x2 */
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .balance-amount {
+        font-size: 2rem;
+    }
+    .quick-actions {
+        grid-template-columns: 1fr; /* Botones uno debajo de otro en pantallas muy peques */
+    }
+}
