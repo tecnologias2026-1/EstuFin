@@ -9,6 +9,21 @@
     font-weight: 400;
 }
 
+.btn-agregar-pago {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 11px 22px;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+}
+.btn-agregar-pago:hover { background: var(--dark-blue); transform: translateY(-1px); }
+
 .inline-form {
     background: white;
     border-radius: 16px;
@@ -16,10 +31,6 @@
     padding: 24px 28px;
     margin-bottom: 24px;
     animation: fadeDown 0.2s ease-out;
-}
-
-.inline-form.hidden {
-    display: none;
 }
 
 @keyframes fadeDown {
@@ -101,12 +112,9 @@
     min-height: 260px;
 }
 
-.empty-pagos, .historial-empty {
+.empty-pagos {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; gap: 14px; height: 100%; min-height: 200px; text-align: center;
-}
-.empty-pagos.hidden, .historial-empty.hidden {
-    display: none !important;
 }
 
 .empty-icon-wrap { display: flex; align-items: center; justify-content: center; }
@@ -139,7 +147,7 @@
     align-items: center; justify-content: center; gap: 10px;
 }
 
-.historial-empty { font-size: 13px; color: #A0AEC0; font-style: italic; text-align: center; margin: 0; min-height: auto;}
+.historial-empty { font-size: 13px; color: #A0AEC0; font-style: italic; text-align: center; margin: 0; }
 
 .historial-item {
     display: flex; justify-content: space-between; align-items: center;
@@ -158,19 +166,49 @@
     display: flex; align-items: center; justify-content: center;
     line-height: 1; transition: background 0.2s, transform 0.15s;
     font-family: 'Poppins', sans-serif;
-    z-index: 900;
 }
 .fab-pago:hover { background: var(--dark-blue); transform: scale(1.08); }
 
+.header-right-group {
+    display: flex;
+    flex-direction: column;  /* ← columna, no fila */
+    align-items: flex-end;   /* ← alineado a la derecha */
+    gap: 8px;
+}
+
+.top-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;  /* ← arriba, no centrado */
+    margin-bottom: 24px;
+}
+
 /* =========================================
-   Adaptación para Móviles
+   Adaptación para Móviles (Próximos Pagos)
+   Añadir al final del archivo
    ========================================= */
 @media (max-width: 768px) {
     .pagos-grid {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr; /* Pone el historial debajo de los pendientes */
     }
     
     .inline-form-fields {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr; /* Apila los campos del formulario uno sobre otro */
+    }
+    
+    .top-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .header-right-group {
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .btn-agregar-pago {
+        width: 100%;
+        text-align: center;
     }
 }
