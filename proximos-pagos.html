@@ -14,7 +14,6 @@
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú" style="display:none;">&#9776;</button>
 <div class="dashboard-container">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo-icon">$</div>
@@ -52,24 +51,18 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-        <!-- HEADER: título a la izquierda, user-info + botón a la derecha -->
         <header class="top-header">
             <div>
                 <h2 class="page-title">Próximos Pagos</h2>
-               
             </div>
             <div class="header-right-group">
-                <!-- header.js llena este div con campana + avatar -->
                 <div class="user-info"></div>
-                <!-- Botón FUERA del user-info para que no lo borre header.js -->
-                <button class="btn-agregar-pago" id="btnAbrirForm">+ Agregar Pago</button>
+                <button class="btn-agregar-pago btn-rectangular" id="btnAbrirForm">+ Agregar Pago</button>
             </div>
         </header>
 
-        <!-- Formulario inline (oculto por defecto) -->
         <div id="formInlinePago" class="inline-form hidden">
             <h4>Nuevo Pago</h4>
             <div class="inline-form-fields">
@@ -98,7 +91,6 @@
             </div>
         </div>
 
-        <!-- Grid pagos -->
         <div class="pagos-grid">
 
             <div class="pagos-pendientes-col">
@@ -135,7 +127,6 @@
     </main>
 </div>
 
-<!-- FAB → Registrar Movimiento -->
 <button class="fab-pago" id="fabPago">+</button>
 
 <script src="js/dashboard.js"></script>

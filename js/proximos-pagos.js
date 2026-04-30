@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formInline        = document.getElementById('formInlinePago');
     const btnCancelar       = document.getElementById('cancelInlinePago');
     const btnGuardar        = document.getElementById('guardarInlinePago');
-    const fabPago           = document.getElementById('fabPago');
+    const fabPago           = document.getElementById('fabPago'); // Botón redondo
 
     const inputNombre       = document.getElementById('pagoNombre');
     const inputMonto        = document.getElementById('pagoMonto');
@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let methods = JSON.parse(localStorage.getItem('metodosPago') || '[]');
 
     if (methods.length === 0) {
-        // Creamos métodos por defecto si el usuario aún no tiene ninguno configurado
         methods = [
             { nombre: 'Efectivo', tipo: 'Físico' },
             { nombre: 'Nequi / Daviplata', tipo: 'Billetera Digital' },
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('metodosPago', JSON.stringify(methods));
     }
 
-    // Llenar el selector con los métodos
     methods.forEach((method, index) => {
         const option = document.createElement('option');
         option.value = index;
@@ -44,24 +42,22 @@ document.addEventListener('DOMContentLoaded', () => {
         selectMetodo.appendChild(option);
     });
     
-    // Aseguramos que el menú siempre esté habilitado
     selectMetodo.disabled = false;
 
-    // ── Botón "+ Agregar Pago" → muestra formulario inline ───
-    btnAbrirForm.addEventListener('click', () => {
+    // ── CAMBIO: Función para abrir el formulario  ────────────
+    function abrirFormulario() {
         formInline.classList.remove('hidden');
         inputNombre.focus();
-    });
+    }
+
+    // Tanto el botón rectangular (PC) como el redondo (Móvil) usan la misma función
+    if (btnAbrirForm) btnAbrirForm.addEventListener('click', abrirFormulario);
+    if (fabPago) fabPago.addEventListener('click', abrirFormulario);
 
     // ── Cancelar → oculta formulario ─────────────────────────
     btnCancelar.addEventListener('click', () => {
         formInline.classList.add('hidden');
         limpiarForm();
-    });
-
-    // ── FAB "+" → redirige a Registrar Movimiento ────────────
-    fabPago.addEventListener('click', () => {
-        window.location.href = 'movimiento.html';
     });
 
     // ── Guardar Pago ─────────────────────────────────────────
@@ -86,18 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
             estado: 'pendiente'
         };
 
-        // Guardar en localStorage
         const pagosPendientes = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
         pagosPendientes.push(nuevoPago);
         localStorage.setItem('pagosPendientes', JSON.stringify(pagosPendientes));
 
-        // Ocultar formulario y limpiar
         formInline.classList.add('hidden');
         limpiarForm();
 
-        // Actualizar vista y revisar alertas
         renderPagosPendientes();
-        revisarNotificacionesPagos(); // Verificamos si este nuevo pago genera alerta
+        revisarNotificacionesPagos(); 
     });
 
     // ── Render Pagos Pendientes ───────────────────────────────
@@ -105,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
         const pendientes = pagos.filter(p => p.estado === 'pendiente');
 
-        // Limpiar tarjeta (excepto el empty state)
         const items = listaPendientes.querySelectorAll('.pago-item');
         items.forEach(i => i.remove());
 
@@ -130,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 listaPendientes.appendChild(item);
             });
 
-            // Evento "Marcar pagado"
             listaPendientes.querySelectorAll('.btn-pagar').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     marcarPagado(parseInt(e.target.dataset.id));
@@ -172,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('pagosPendientes', JSON.stringify(pagos));
             renderPagosPendientes();
             renderHistorial();
-            revisarNotificacionesPagos(); // Recalcular notificaciones (elimina la alerta si ya se pagó)
+            revisarNotificacionesPagos();
         }
     }
 
@@ -181,21 +172,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
         let notificaciones = JSON.parse(localStorage.getItem('notificaciones') || '[]');
 
-        // 1. Limpiar notificaciones automáticas previas para no duplicar
         notificaciones = notificaciones.filter(n => !n.isAutoPago);
 
         const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0); // Ignorar la hora, solo nos importan los días
+        hoy.setHours(0, 0, 0, 0); 
 
-        // 2. Revisar cada pago pendiente
         pagos.forEach(pago => {
             if (pago.estado === 'pendiente') {
-                // Truco para evitar problemas de zona horaria: añadir T00:00:00
                 const fechaPago = new Date(pago.fecha + 'T00:00:00'); 
                 const diferenciaTiempo = fechaPago.getTime() - hoy.getTime();
                 const diferenciaDias = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24));
 
-                // Si faltan 5 días o menos, y no ha vencido
                 if (diferenciaDias <= 5 && diferenciaDias >= 0) {
                     notificaciones.push({
                         id: 'auto_' + pago.id,
@@ -204,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         isAutoPago: true
                     });
                 } 
-                // Si ya está vencido (días negativos)
                 else if (diferenciaDias < 0) {
                     notificaciones.push({
                         id: 'auto_' + pago.id,
@@ -216,19 +202,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 3. Guardar en localStorage
         localStorage.setItem('notificaciones', JSON.stringify(notificaciones));
-
-        // 4. Actualizar visualmente la campana del header en tiempo real
         actualizarCampanaDOM(notificaciones);
     }
 
-    // Actualiza la UI de la campanita sin necesidad de recargar la página entera
     function actualizarCampanaDOM(notifs) {
         const badge = document.getElementById('bellBadge');
         const body  = document.getElementById('notifBody');
 
-        if (!badge || !body) return; // Si por alguna razón no carga el header, salimos
+        if (!badge || !body) return; 
 
         if (notifs.length === 0) {
             badge.classList.add('hidden');
@@ -247,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
             badge.textContent = notifs.length;
             badge.classList.remove('hidden');
             body.innerHTML = notifs.map(n => {
-                // Hacemos que sea cliqueable si está marcada como pago automático
                 const pointerStyle = n.isAutoPago ? 'cursor: pointer;' : '';
                 const clickAction  = n.isAutoPago ? `onclick="window.location.href='proximos-pagos.html'"` : '';
 
@@ -279,6 +260,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPagosPendientes();
     renderHistorial();
     
-    // IMPORTANTE: Revisar y generar alertas tan pronto entramos a esta página
     setTimeout(revisarNotificacionesPagos, 100); 
 });

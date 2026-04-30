@@ -233,21 +233,10 @@
 }
 .btn-cancelar-ahorro:hover { background: #E2E8F0; }
 
-.fab-metas {
-    position: fixed; bottom: 28px; right: 28px; width: 54px; height: 54px;
-    border-radius: 50%; background: var(--primary-blue); color: white;
-    font-size: 26px; font-weight: 300; border: none;
-    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    line-height: 1; transition: background 0.2s, transform 0.15s;
-    font-family: 'Poppins', sans-serif;
-}
-.fab-metas:hover { background: var(--dark-blue); transform: scale(1.08); }
-
 .header-right-group {
     display: flex;
-    flex-direction: column;  /* ← columna, no fila */
-    align-items: flex-end;   /* ← alineado a la derecha */
+    flex-direction: column;
+    align-items: flex-end;
     gap: 8px;
 }
 
@@ -255,6 +244,118 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;  /* ← arriba, no centrado */
+    align-items: flex-start; 
     margin-bottom: 24px;
+}
+
+/* =============================================
+   Responsive Design & Botones Flotantes
+   ============================================= */
+
+/* Botón flotante oculto en PC por defecto */
+.fab-metas {
+    display: none; 
+    position: fixed; 
+    bottom: 28px; 
+    right: 28px; 
+    width: 54px; 
+    height: 54px;
+    border-radius: 50%; 
+    background: var(--primary-blue); 
+    color: white;
+    font-size: 26px; 
+    font-weight: 300; 
+    border: none;
+    box-shadow: 0 6px 20px rgba(26, 86, 255, 0.35); 
+    cursor: pointer;
+    align-items: center; 
+    justify-content: center;
+    line-height: 1; 
+    transition: background 0.2s, transform 0.15s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.fab-metas:hover { 
+    background: var(--dark-blue); 
+    transform: scale(1.08); 
+}
+
+@media (max-width: 768px) {
+    /* Ocultamos el botón rectangular en móvil */
+    .btn-nueva-meta {
+        display: none !important; 
+    }
+
+    /* Mostramos el botón redondo en móvil */
+    .fab-metas {
+        display: flex; 
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .header-right-group {
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .meta-inline-form {
+        padding: 20px 16px;
+    }
+
+    .meta-form-fields {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .meta-form-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .btn-save-meta, 
+    .btn-cancel-meta {
+        width: 100%;
+    }
+
+    .meta-card {
+        max-width: 100%;
+        padding: 20px 16px;
+    }
+
+    .meta-stats {
+        gap: 8px;
+    }
+
+    .meta-stat-box {
+        padding: 10px;
+    }
+
+    .meta-ahorro-diario-valor {
+        font-size: 14px;
+    }
+
+    .ahorro-input-row {
+        flex-wrap: nowrap; 
+    }
+
+    .ahorro-input-row input {
+        width: 100%;
+    }
+
+    .metas-empty-card {
+        padding: 3rem 1.5rem;
+        min-height: auto;
+    }
+
+    .btn-crear-meta {
+        width: 100%;
+    }
 }

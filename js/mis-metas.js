@@ -15,19 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyMetas        = document.getElementById('emptyMetas');
     const listaMetas        = document.getElementById('listaMetas');
 
-    // ── FAB → Registrar Movimiento ───────────────────────────
-    fabMetas.addEventListener('click', () => {
-        window.location.href = 'movimiento.html';
-    });
-
     // ── Abrir formulario ─────────────────────────────────────
-    btnNuevaMeta.addEventListener('click', abrirForm);
-    btnCrearPrimera.addEventListener('click', abrirForm);
-
     function abrirForm() {
         formInline.classList.remove('hidden');
         inputNombre.focus();
     }
+
+    // ── Eventos de apertura ──────────────────────────────────
+    btnNuevaMeta.addEventListener('click', abrirForm);
+    btnCrearPrimera.addEventListener('click', abrirForm);
+    // El FAB en móvil ahora también abre el formulario
+    fabMetas.addEventListener('click', abrirForm); 
 
     // ── Cancelar formulario ──────────────────────────────────
     btnCancelar.addEventListener('click', () => {

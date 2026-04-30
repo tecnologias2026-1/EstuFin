@@ -14,7 +14,6 @@
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú" style="display:none;">&#9776;</button>
 <div class="dashboard-container">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo-icon">$</div>
@@ -52,23 +51,18 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-        <!-- HEADER -->
         <header class="top-header">
             <div>
                 <h2 class="page-title">Mis Metas</h2>
             </div>
             <div class="header-right-group">
-                <!-- header.js llena este div -->
                 <div class="user-info"></div>
-                <!-- Botón FUERA del user-info -->
                 <button class="btn-nueva-meta" id="btnNuevaMeta">+ Nueva Meta</button>
             </div>
         </header>
 
-        <!-- Formulario inline crear meta (oculto por defecto) -->
         <div id="formInlineMeta" class="meta-inline-form hidden">
             <h4>Crear Nueva Meta</h4>
             <div class="meta-form-fields">
@@ -91,7 +85,6 @@
             </div>
         </div>
 
-        <!-- METAS ACTIVAS -->
         <section class="metas-section">
             <h3 class="col-title">Metas Activas</h3>
 
@@ -115,7 +108,6 @@
     </main>
 </div>
 
-<!-- FAB → Registrar Movimiento -->
 <button class="fab-metas" id="fabMetas">+</button>
 
 <script src="js/dashboard.js"></script>
