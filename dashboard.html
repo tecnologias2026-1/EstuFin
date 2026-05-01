@@ -9,114 +9,79 @@
 </head>
 <body>
 
-<!-- Botón de Hamburguesa (Solo visible en móviles) -->
-<button class="mobile-menu-btn" id="sidebarToggle">
-    ☰
-</button>
-
-<!-- Overlay para cerrar el menú al tocar afuera en móvil -->
+<button class="mobile-menu-btn" id="sidebarToggle">☰</button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard-container">
-
-    <!-- ── Sidebar ─────────────────────────────────────────── -->
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo-icon">$</div>
             <div class="logo-text">
                 <h1>EstuFin</h1>
-                <p>Tu dinero bajo control</p>
+                <p>Finanzas para Estudiantes</p>
             </div>
         </div>
-
         <nav class="sidebar-nav">
-            <a href="dashboard.html" class="nav-item active">
-                <span class="nav-icon">🏠</span> Inicio
-            </a>
-            <a href="gatos-ingresos.html" class="nav-item">
-                <span class="nav-icon">📈</span> Gastos e Ingresos
-            </a>
-            <a href="movimiento.html" class="nav-item">
-                <span class="nav-icon">➕</span> Registrar Movimiento
-            </a>
-            <a href="gastos-fijos.html" class="nav-item">
-                <span class="nav-icon">💰</span> Gastos Fijos
-            </a>
-            <a href="gatos-rapidos.html" class="nav-item">
-                <span class="nav-icon">⚡</span> Gastos Rápidos
-            </a>
-            <a href="proximos-pagos.html" class="nav-item">
-                <span class="nav-icon">💳</span> Próximos Pagos
-            </a>
-            <a href="mis-metas.html" class="nav-item">
-                <span class="nav-icon">🎯</span> Mis Metas
-            </a>
+            <a href="dashboard.html" class="nav-item active"><span>🏠</span> Inicio</a>
+            <a href="#" class="nav-item"><span>📈</span> Gastos e Ingresos</a>
+            <a href="#" class="nav-item"><span>➕</span> Registrar Movimiento</a>
+            <a href="#" class="nav-item"><span>💰</span> Gastos Fijos</a>
+            <a href="#" class="nav-item"><span>🎯</span> Mis Metas</a>
         </nav>
-
-        <div class="sidebar-footer">
-            <p class="footer-brand">EstuFin</p>
-            <p class="footer-sub">Controla tu dinero con facilidad</p>
-        </div>
     </aside>
 
-    <!-- ── Contenido Principal ─────────────────────────────── -->
+    <!-- Main Content -->
     <main class="main-content">
-
-        <!-- Header Superior -->
         <header class="top-header">
-            <h2 class="page-title">Inicio</h2>
+            <h2 class="page-title">Mi Resumen</h2>
             <div class="user-info">
-                <span class="bell">🔔</span>
-                <span class="user-name" id="userNameDisplay">Usuario</span>
+                <span class="user-name">Usuario</span>
                 <div class="avatar">👤</div>
             </div>
         </header>
 
-        <!-- Sección de Saldo Central (PUNTO 1) -->
-        <section class="balance-container-centered">
-            <div class="balance-card-simple">
+        <!-- CAJA DE SALDO AZUL (PUNTO CENTRAL) -->
+        <section class="balance-highlight">
+            <div class="balance-card-blue">
                 <p class="balance-label">Saldo Total Disponible</p>
-                <h2 class="balance-amount" id="totalBalance">$0</h2>
-                <span class="balance-currency">COP</span>
+                <h2 class="balance-amount" id="totalBalance">$ 0</h2>
+                <span class="balance-currency">Pesos Colombianos (COP)</span>
             </div>
         </section>
 
-        <!-- Sección Mis Métodos de Pago (PUNTO 1) -->
-        <section class="my-methods-section">
+        <!-- MÉTODOS DE PAGO -->
+        <section class="methods-section">
             <div class="section-header">
                 <h3>💰 Mis Métodos de Pago</h3>
             </div>
             
-            <div class="methods-list" id="methodsList">
-                <!-- Se llena dinámicamente desde JS -->
+            <div class="methods-grid" id="methodsList">
+                <!-- Se genera dinámicamente -->
             </div>
 
-            <button class="btn-outline-blue" id="openAddMethodModal">
-                + Agregar otro método
+            <button class="btn-add-method" id="openAddMethodModal">
+                + Agregar nuevo método
             </button>
         </section>
-
     </main>
 </div>
 
-<!-- Modal: Agregar Método de Pago -->
+<!-- Modal para agregar -->
 <div class="modal-overlay hidden" id="addMethodModal">
     <div class="modal-box">
-        <button class="modal-close" id="closeModal">✕</button>
-        <h3>Agregar Método de Pago</h3>
-        <p>Añade una cuenta, billetera o efectivo.</p>
-
+        <h3>Nuevo Método de Pago</h3>
         <form id="modalPaymentForm">
-            <label for="modalMethodName">Nombre del método</label>
-            <input type="text" id="modalMethodName" placeholder="Ej: Nequi, Daviplata">
-
-            <label for="modalMethodAmount">Saldo Inicial (COP)</label>
-            <input type="number" id="modalMethodAmount" placeholder="0" min="0">
-
-            <div id="modalError" class="modal-error hidden"></div>
-
+            <div class="input-group">
+                <label>Nombre del método</label>
+                <input type="text" id="modalMethodName" placeholder="Ej. Nequi, Efectivo" required>
+            </div>
+            <div class="input-group">
+                <label>Saldo inicial</label>
+                <input type="number" id="modalMethodAmount" placeholder="0" required>
+            </div>
             <div class="modal-actions">
-                <button type="button" class="btn-cancel" id="cancelModal">Cancelar</button>
+                <button type="button" class="btn-cancel" id="closeModal">Cancelar</button>
                 <button type="submit" class="btn-save">Guardar</button>
             </div>
         </form>
