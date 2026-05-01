@@ -5,89 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EstuFin - Dashboard</title>
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/header.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <button class="mobile-menu-btn" id="sidebarToggle">☰</button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard-container">
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo-icon">$</div>
             <div class="logo-text">
                 <h1>EstuFin</h1>
-                <p>Finanzas para Estudiantes</p>
+                <p>Control Estudiantil</p>
             </div>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.html" class="nav-item active"><span>🏠</span> Inicio</a>
-            <a href="#" class="nav-item"><span>📈</span> Gastos e Ingresos</a>
-            <a href="#" class="nav-item"><span>➕</span> Registrar Movimiento</a>
-            <a href="#" class="nav-item"><span>💰</span> Gastos Fijos</a>
-            <a href="#" class="nav-item"><span>🎯</span> Mis Metas</a>
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="nav-icon">🏠</span> Inicio
+                </a>
+                <a href="gatos-ingresos.html" class="nav-item">
+                    <span class="nav-icon">📈</span> Gastos e Ingresos
+                </a>
+                <a href="movimiento.html" class="nav-item">
+                    <span class="nav-icon">➕</span> Registrar Movimiento
+                </a>
+                <a href="gastos-fijos.html" class="nav-item ">
+                    <span class="nav-icon">💰</span> Gastos Fijos
+                </a>
+                <a href="gatos-rapidos.html" class="nav-item">
+                    <span class="nav-icon">⚡</span> Gastos Rápidos
+                </a>
+                <a href="proximos-pagos.html" class="nav-item">
+                    <span class="nav-icon">💳</span> Próximos Pagos
+                </a>
+                <a href="mis-metas.html" class="nav-item">
+                    <span class="nav-icon">🎯</span> Mis Metas
+                </a>
         </nav>
+        <div class="sidebar-footer">
+            <p class="footer-brand">EstuFin</p>
+            <p class="footer-sub">Controla tu dinero con facilidad</p>
+        </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content">        
+     
         <header class="top-header">
-            <h2 class="page-title">Mi Resumen</h2>
-            <div class="user-info">
-                <span class="user-name">Usuario</span>
-                <div class="avatar">👤</div>
+            <div>
+                <h2 class="page-title">Mi Resumen</h2>
+            </div>
+            <div class="header-right-group">                
+                <div class="user-info"></div>
             </div>
         </header>
 
-        <!-- CAJA DE SALDO AZUL (PUNTO CENTRAL) -->
-        <section class="balance-highlight">
-            <div class="balance-card-blue">
+        <section class="balance-section">
+            <div class="balance-card-primary">
                 <p class="balance-label">Saldo Total Disponible</p>
                 <h2 class="balance-amount" id="totalBalance">$ 0</h2>
-                <span class="balance-currency">Pesos Colombianos (COP)</span>
+                <span class="balance-currency">COP - Pesos Colombianos</span>
             </div>
         </section>
 
-        <!-- MÉTODOS DE PAGO -->
-        <section class="methods-section">
+        <section class="methods-container">
             <div class="section-header">
                 <h3>💰 Mis Métodos de Pago</h3>
             </div>
-            
-            <div class="methods-grid" id="methodsList">
-                <!-- Se genera dinámicamente -->
-            </div>
-
-            <button class="btn-add-method" id="openAddMethodModal">
-                + Agregar nuevo método
-            </button>
+            <div class="methods-grid" id="methodsList"></div>
+            <button class="btn-add-large" id="openAddModal">+ Agregar Nuevo Método</button>
         </section>
     </main>
 </div>
 
-<!-- Modal para agregar -->
+<!-- VENTANA MODAL MEJORADA -->
 <div class="modal-overlay hidden" id="addMethodModal">
     <div class="modal-box">
-        <h3>Nuevo Método de Pago</h3>
-        <form id="modalPaymentForm">
+        <div class="modal-header">
+            <h3>Nuevo Método de Pago</h3>
+            <p>Organiza tus cuentas de forma clara.</p>
+        </div>
+        
+        <form id="addMethodForm">
             <div class="input-group">
-                <label>Nombre del método</label>
-                <input type="text" id="modalMethodName" placeholder="Ej. Nequi, Efectivo" required>
+                <label for="newMethodName">Nombre del método</label>
+                <input type="text" id="newMethodName" placeholder="Ej. Nequi, Daviplata, Efectivo" required>
             </div>
+            
             <div class="input-group">
-                <label>Saldo inicial</label>
-                <input type="number" id="modalMethodAmount" placeholder="0" required>
+                <label for="newMethodAmount">Monto o Saldo Inicial</label>
+                <input type="number" id="newMethodAmount" placeholder="0" required>
             </div>
-            <div class="modal-actions">
+
+            <!-- Espacio para el mensaje de error si el nombre ya existe -->
+            <p id="errorMessage" class="error-text hidden">Este método ya existe. Intenta con otro nombre.</p>
+
+            <div class="modal-buttons">
                 <button type="button" class="btn-cancel" id="closeModal">Cancelar</button>
-                <button type="submit" class="btn-save">Guardar</button>
+                <button type="submit" class="btn-confirm">Guardar Método</button>
             </div>
         </form>
     </div>
 </div>
 
 <script src="js/dashboard.js"></script>
+<script src="js/header.js"></script>
+
 </body>
 </html>

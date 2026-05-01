@@ -1,74 +1,108 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const STORAGE_KEY = 'estuFin_Data';
-    let myMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-        { name: 'nequi', amount: 60000 },
-        { name: 'bancolombia', amount: 320000 }
+    // 1. VARIABLES Y ESTADO INICIAL
+    const STORAGE_KEY = 'estufin_payment_data';
+    const USER_STORAGE_KEY = 'usuarioActual'; // La llave que usas en auth.js
+
+    let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+        { name: 'Nequi', amount: 60000 },
+        { name: 'Bancolombia', amount: 320000 }
     ];
 
-    const formatMoney = (val) => new Intl.NumberFormat('es-CO', {
-        style: 'currency', currency: 'COP', maximumFractionDigits: 0
-    }).format(val);
+   
+    // 3. UTILIDADES (Formato de moneda)
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency', 
+            currency: 'COP', 
+            maximumFractionDigits: 0
+        }).format(value);
+    };
 
-    const render = () => {
-        const list = document.getElementById('methodsList');
-        const totalDisp = document.getElementById('totalBalance');
-        list.innerHTML = '';
-        let total = 0;
+    // 4. RENDERIZADO DEL DASHBOARD
+    const renderDashboard = () => {
+        const listContainer = document.getElementById('methodsList');
+        const totalDisplay = document.getElementById('totalBalance');
+        
+        if (!listContainer || !totalDisplay) return; // Evita errores si no existen los IDs
 
-        myMethods.forEach((m, index) => {
-            total += m.amount;
+        listContainer.innerHTML = '';
+        let currentTotal = 0;
+
+        paymentMethods.forEach((method, index) => {
+            currentTotal += method.amount;
             const card = document.createElement('div');
             card.className = 'method-card';
             card.innerHTML = `
                 <div class="method-info">
-                    <h4>${m.name}</h4>
-                    <p>${formatMoney(m.amount)}</p>
+                    <h4>${method.name}</h4>
+                    <p>${formatCurrency(method.amount)}</p>
                 </div>
                 <div class="method-actions">
-                    <button class="btn-edit" onclick="editMethod(${index})">Editar</button>
-                    <button class="btn-delete" onclick="deleteMethod(${index})">Eliminar</button>
+                    <button class="btn-edit" onclick="handleEdit(${index})">Editar</button>
+                    <button class="btn-delete" onclick="handleDelete(${index})">Eliminar</button>
                 </div>
             `;
-            list.appendChild(card);
+            listContainer.appendChild(card);
         });
 
-        totalDisp.innerText = formatMoney(total);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(myMethods));
+        totalDisplay.innerText = formatCurrency(currentTotal);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(paymentMethods));
     };
 
-    // FUNCIÓN ELIMINAR CON PREGUNTA
-    window.deleteMethod = (index) => {
-        const confirmDelete = confirm(`¿En serio deseas eliminar "${myMethods[index].name}"? Esta acción no se puede deshacer.`);
-        if (confirmDelete) {
-            myMethods.splice(index, 1);
-            render();
+    // 5. FUNCIONES GLOBALES (Edit y Delete)
+    window.handleDelete = (index) => {
+        if (confirm(`¿Deseas eliminar "${paymentMethods[index].name}"?`)) {
+            paymentMethods.splice(index, 1);
+            renderDashboard();
         }
     };
 
-    // FUNCIÓN EDITAR
-    window.editMethod = (index) => {
-        const newAmount = prompt(`Nuevo saldo para ${myMethods[index].name}:`, myMethods[index].amount);
-        if (newAmount !== null && !isNaN(newAmount)) {
-            myMethods[index].amount = parseFloat(newAmount);
-            render();
+    window.handleEdit = (index) => {
+        const newAmount = prompt(`Nuevo saldo para ${paymentMethods[index].name}:`, paymentMethods[index].amount);
+        if (newAmount !== null && !isNaN(newAmount) && newAmount.trim() !== "") {
+            paymentMethods[index].amount = parseFloat(newAmount);
+            renderDashboard();
         }
     };
 
-    // Lógica del Modal para agregar
+    // 6. LÓGICA DEL MODAL
     const modal = document.getElementById('addMethodModal');
-    document.getElementById('openAddMethodModal').onclick = () => modal.classList.remove('hidden');
-    document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
+    const errorMsg = document.getElementById('errorMessage');
+    const openBtn = document.getElementById('openAddModal');
+    const closeBtn = document.getElementById('closeModal');
+    const addForm = document.getElementById('addMethodForm');
 
-    document.getElementById('modalPaymentForm').onsubmit = (e) => {
-        e.preventDefault();
-        const name = document.getElementById('modalMethodName').value;
-        const amount = parseFloat(document.getElementById('modalMethodAmount').value);
-        
-        myMethods.push({ name, amount });
-        render();
-        modal.classList.add('hidden');
-        e.target.reset();
-    };
+    if (openBtn) {
+        openBtn.onclick = () => {
+            modal.classList.remove('hidden');
+            errorMsg.classList.add('hidden');
+        };
+    }
 
-    render();
+    if (closeBtn) {
+        closeBtn.onclick = () => modal.classList.add('hidden');
+    }
+
+    if (addForm) {
+        addForm.onsubmit = (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('newMethodName').value.trim();
+            const amountInput = parseFloat(document.getElementById('newMethodAmount').value);
+            
+            const exists = paymentMethods.some(m => m.name.toLowerCase() === nameInput.toLowerCase());
+
+            if (exists) {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            paymentMethods.push({ name: nameInput, amount: amountInput });
+            renderDashboard();
+            modal.classList.add('hidden');
+            e.target.reset();
+        };
+    }
+
+    // 7. EJECUCIÓN INICIAL
+    renderDashboard();
 });
