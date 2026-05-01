@@ -6,18 +6,21 @@
     <title>EstuFin - Dashboard</title>
     <link rel="stylesheet" href="css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/header.css">
 </head>
 <body>
 
-<button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú" style="display:none;">
-    &#9776;
+<!-- Botón de Hamburguesa (Solo visible en móviles) -->
+<button class="mobile-menu-btn" id="sidebarToggle">
+    ☰
 </button>
+
+<!-- Overlay para cerrar el menú al tocar afuera en móvil -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard-container">
 
     <!-- ── Sidebar ─────────────────────────────────────────── -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo-icon">$</div>
             <div class="logo-text">
@@ -39,8 +42,8 @@
             <a href="gastos-fijos.html" class="nav-item">
                 <span class="nav-icon">💰</span> Gastos Fijos
             </a>
-            <a href="gastos-fijos.html" class="nav-item">
-                <span class="nav-icon">💰</span> Gastos Fijos
+            <a href="gatos-rapidos.html" class="nav-item">
+                <span class="nav-icon">⚡</span> Gastos Rápidos
             </a>
             <a href="proximos-pagos.html" class="nav-item">
                 <span class="nav-icon">💳</span> Próximos Pagos
@@ -59,7 +62,7 @@
     <!-- ── Contenido Principal ─────────────────────────────── -->
     <main class="main-content">
 
-        <!-- Header -->
+        <!-- Header Superior -->
         <header class="top-header">
             <h2 class="page-title">Inicio</h2>
             <div class="user-info">
@@ -69,87 +72,46 @@
             </div>
         </header>
 
-        <!-- Grid principal -->
-        <div class="dashboard-grid">
-
-            <!-- Tarjeta Saldo Total (azul) -->
-            <div class="balance-card">
-                <div class="balance-top">
-                    <div>
-                        <p class="balance-label">Saldo Total Disponible</p>
-                        <h2 class="balance-amount" id="totalBalance">$0</h2>
-                        <span class="balance-currency">COP</span>
-                    </div>
-                    <span class="trend-icon">📈</span>
-                </div>
-
-                <!-- Chips de métodos de pago -->
-                <div class="methods-chips" id="methodsChips">
-                    <!-- Se llena desde dashboard.js -->
-                </div>
-
-                <!-- Botón agregar método -->
-                <button class="btn-add-method" id="openAddMethodModal">
-                    + Agregar método de pago
-                </button>
+        <!-- Sección de Saldo Central (PUNTO 1) -->
+        <section class="balance-container-centered">
+            <div class="balance-card-simple">
+                <p class="balance-label">Saldo Total Disponible</p>
+                <h2 class="balance-amount" id="totalBalance">$0</h2>
+                <span class="balance-currency">COP</span>
             </div>
+        </section>
 
-            <!-- Banner "Comienza a registrar" (amarillo) -->
-            <div class="banner-card">
-                <div class="plus-circle">+</div>
-                <h3>¡Comienza a registrar tus gastos!</h3>
-                <p>Registra tu primer gasto o ingreso para comenzar a tener control sobre tus finanzas.</p>
-                <button class="btn-register">Registrar primer movimiento</button>
-            </div>
-
-            <!-- Widget Próximos Pagos -->
-            <div class="widget-empty">
-                <span class="empty-icon">📅</span>
-                <p>No tienes pagos pendientes</p>
-                <button class="btn-outline" onclick="window.location.href='proximos-pagos.html'">
-                    Agregar pago
-                </button>
-            </div>
-
-            <!-- Sección Mis Métodos de Pago -->
-            <div class="my-methods-section">
+        <!-- Sección Mis Métodos de Pago (PUNTO 1) -->
+        <section class="my-methods-section">
+            <div class="section-header">
                 <h3>💰 Mis Métodos de Pago</h3>
-                <div class="methods-list" id="methodsList">
-                    <!-- Se llena desde dashboard.js -->
-                </div>
-                <button class="btn-outline-blue" id="openAddMethodModal2">
-                    + Agregar otro método
-                </button>
+            </div>
+            
+            <div class="methods-list" id="methodsList">
+                <!-- Se llena dinámicamente desde JS -->
             </div>
 
-        </div><!-- /dashboard-grid -->
-
-        <!-- Acciones rápidas (fila inferior) -->
-        <div class="quick-actions">
-            <button class="qa-btn green" onclick="window.location.href='movimiento.html'">➕ Registrar Movimiento</button>
-            <button class="qa-btn purple" onclick="window.location.href='gastos-fijos.html'">📋 Gastos Fijos</button>
-            <button class="qa-btn orange" onclick="window.location.href='gatos-rapidos.html'">💰 Gastos Rapidos</button>
-            <button class="qa-btn blue" onclick="window.location.href='gatos-ingresos.html'">📈 Gastos e Ingresos</button>
-        </div>
+            <button class="btn-outline-blue" id="openAddMethodModal">
+                + Agregar otro método
+            </button>
+        </section>
 
     </main>
 </div>
 
-<!-- ── Modal: Agregar Método de Pago ───────────────────────── -->
+<!-- Modal: Agregar Método de Pago -->
 <div class="modal-overlay hidden" id="addMethodModal">
     <div class="modal-box">
         <button class="modal-close" id="closeModal">✕</button>
         <h3>Agregar Método de Pago</h3>
-        <p>Añade una cuenta, billetera o efectivo a tus saldos.</p>
+        <p>Añade una cuenta, billetera o efectivo.</p>
 
         <form id="modalPaymentForm">
             <label for="modalMethodName">Nombre del método</label>
-            <input type="text" id="modalMethodName"
-                   placeholder="Ej: Nequi, Daviplata, Efectivo">
+            <input type="text" id="modalMethodName" placeholder="Ej: Nequi, Daviplata">
 
-            <label for="modalMethodAmount">Saldo (COP)</label>
-            <input type="number" id="modalMethodAmount"
-                   placeholder="0" min="0">
+            <label for="modalMethodAmount">Saldo Inicial (COP)</label>
+            <input type="number" id="modalMethodAmount" placeholder="0" min="0">
 
             <div id="modalError" class="modal-error hidden"></div>
 
@@ -162,6 +124,5 @@
 </div>
 
 <script src="js/dashboard.js"></script>
-<script src="js/header.js"></script>
 </body>
 </html>

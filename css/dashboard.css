@@ -684,3 +684,74 @@ body {
         grid-template-columns: 1fr; /* Botones uno debajo de otro en pantallas muy peques */
     }
 }
+
+/* --- RESPONSIVIDAD DASHBOARD --- */
+
+/* Estilos para el cuadro azul centrado */
+.balance-card-centered {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.blue-card {
+    background: linear-gradient(135deg, #2b6cb0 0%, #4299e1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- MÓVIL (Celulares) --- */
+@media (max-width: 768px) {
+    /* La barra lateral ahora se oculta fuera de la pantalla por defecto */
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        bottom: 0;
+        width: 250px;
+        z-index: 1000;
+        transition: 0.3s ease-in-out;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    /* El botón de hamburguesa debe ser visible en el header móvil */
+    .mobile-menu-btn {
+        display: block !important;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: #2d3748;
+        margin-right: 15px;
+    }
+
+    /* Ajustamos el contenido para que no choque */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 15px;
+    }
+
+    /* El cuadro azul ocupa todo el ancho en móvil */
+    .blue-card {
+        max-width: 100%;
+    }
+}
+
+/* Estilo para el fondo oscuro cuando abres el menú en móvil */
+.sidebar-overlay.active {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
