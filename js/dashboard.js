@@ -1,235 +1,127 @@
 // js/dashboard.js
-// Clave unificada con bienvenida.js
 const STORAGE_KEY = 'estuFinPaymentMethods';
 
-/* ══════════════════════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════════════════════ */
-function getMethods() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-}
+function getMethods() { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+function saveMethods(methods) { localStorage.setItem(STORAGE_KEY, JSON.stringify(methods)); }
+function formatCOP(num) { return Number(num).toLocaleString('es-CO'); }
+function escapeHtml(str) { return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 
-function saveMethods(methods) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(methods));
-}
-
-function formatCOP(num) {
-    return Number(num).toLocaleString('es-CO');
-}
-
-function escapeHtml(str) {
-    return String(str).replace(/[&<>"']/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[c]));
-}
-
-/* ══════════════════════════════════════════════════════════
-   RENDERIZAR CHIPS (tarjeta azul)
-══════════════════════════════════════════════════════════ */
+// SOLUCIÓN PUNTO 5: Actualizar saldo total automáticamente
 function renderChips() {
     const container = document.getElementById('methodsChips');
-    if (!container) return; // Si no estamos en el dashboard, salir
-
-    const methods   = getMethods();
+    if (!container) return;
+    const methods = getMethods();
     container.innerHTML = '';
 
     if (methods.length === 0) {
-        container.innerHTML = `
-            <span style="opacity:.7; font-size:13px;">
-                No tienes métodos de pago aún.
-            </span>`;
+        container.innerHTML = `<span style="opacity:.7; font-size:13px;">No tienes métodos de pago aún.</span>`;
     } else {
         methods.forEach(m => {
             const chip = document.createElement('div');
             chip.className = 'method-chip';
             chip.innerHTML = `
-                <span class="chip-name">${escapeHtml(m.name || m.nombre)}</span>
-                <span class="chip-amount">$${formatCOP(m.saldo !== undefined ? m.saldo : (m.amount !== undefined ? m.amount : 0))}</span>
+                <span class="chip-name">${escapeHtml(m.name)}</span>
+                <span class="chip-amount">$${formatCOP(m.amount)}</span>
             `;
             container.appendChild(chip);
         });
     }
 
-    // Actualizar saldo total usando saldo si existe, sino amount
-    const total = methods.reduce((acc, m) => acc + Number(m.saldo !== undefined ? m.saldo : (m.amount !== undefined ? m.amount : 0)), 0);
+    const total = methods.reduce((acc, m) => acc + Number(m.amount), 0);
     const totalBalance = document.getElementById('totalBalance');
     if (totalBalance) totalBalance.textContent = `$${formatCOP(total)}`;
 }
 
-/* ══════════════════════════════════════════════════════════
-   RENDERIZAR LISTA DETALLADA (sección "Mis Métodos")
-══════════════════════════════════════════════════════════ */
+// SOLUCIÓN PUNTO 2: Permitir editar métodos de pago
 function renderMethodsList() {
-    const list    = document.getElementById('methodsList');
+    const list = document.getElementById('methodsList');
     if (!list) return;
-
     const methods = getMethods();
     list.innerHTML = '';
 
     if (methods.length === 0) {
-        list.innerHTML = `
-            <p class="method-list-empty">
-                Aún no tienes métodos de pago configurados.
-            </p>`;
+        list.innerHTML = `<p class="method-list-empty">No hay métodos configurados.</p>`;
         return;
     }
 
-    methods.forEach(m => {
+    methods.forEach((m, index) => {
         const item = document.createElement('div');
         item.className = 'method-list-item';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
         item.innerHTML = `
-            <span class="m-name">${escapeHtml(m.name || m.nombre)}</span>
-            <span class="m-amount">$${formatCOP(m.amount !== undefined ? m.amount : m.saldo)} COP</span>
+            <div>
+                <span class="m-name" style="font-weight:bold;">${escapeHtml(m.name)}</span>
+                <br>
+                <span class="m-amount" style="color: #4A5568;">$${formatCOP(m.amount)} COP</span>
+            </div>
+            <button onclick="editMethodAmount(${index})" style="background:#4C51BF; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px;">Editar Saldo</button>
         `;
         list.appendChild(item);
     });
 }
 
-/* ══════════════════════════════════════════════════════════
-   NOMBRE DE USUARIO
-══════════════════════════════════════════════════════════ */
-function loadUserName() {
-    const user = JSON.parse(localStorage.getItem('estuFinCurrentUser')) || JSON.parse(localStorage.getItem('usuarioActual')) || {};
-    const el   = document.getElementById('userNameDisplay');
-    if (el) el.textContent = user.name || user.nombre || user.email || 'Usuario';
-}
-
-/* ══════════════════════════════════════════════════════════
-   MODAL — AGREGAR MÉTODO DESDE DASHBOARD
-══════════════════════════════════════════════════════════ */
-function initModal() {
-    const modal      = document.getElementById('addMethodModal');
-    if (!modal) return;
-
-    const form       = document.getElementById('modalPaymentForm');
-    const nameInput  = document.getElementById('modalMethodName');
-    const amtInput   = document.getElementById('modalMethodAmount');
-    const errorDiv   = document.getElementById('modalError');
-
-    // Botones que abren el modal
-    ['openAddMethodModal', 'openAddMethodModal2'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.addEventListener('click', () => openModal());
-    });
-
-    // Botones que cierran el modal
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    document.getElementById('cancelModal').addEventListener('click', closeModal);
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-
-    // Guardar nuevo método
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        errorDiv.classList.add('hidden');
-
-        const name   = nameInput.value.trim();
-        const amount = parseFloat(amtInput.value);
-
-        if (!name) {
-            showModalError('Escribe un nombre para el método.');
-            return;
-        }
-        if (isNaN(amount) || amount < 0) {
-            showModalError('Ingresa un monto válido (puede ser 0).');
-            return;
-        }
-
-        const methods = getMethods();
-        methods.push({ id: Date.now(), name, amount });
+window.editMethodAmount = function(index) {
+    const methods = getMethods();
+    const newAmount = prompt(`Editar saldo para ${methods[index].name}:`, methods[index].amount);
+    if (newAmount !== null && !isNaN(parseFloat(newAmount)) && parseFloat(newAmount) >= 0) {
+        methods[index].amount = parseFloat(newAmount);
         saveMethods(methods);
-
         renderChips();
         renderMethodsList();
-        closeModal();
+    } else if (newAmount !== null) {
+        alert("Por favor ingresa un número válido.");
+    }
+};
+
+function initModal() {
+    const modal = document.getElementById('addMethodModal');
+    if (!modal) return;
+    const form = document.getElementById('modalPaymentForm');
+    const nameInput = document.getElementById('modalMethodName');
+    const amtInput = document.getElementById('modalMethodAmount');
+    const errorDiv = document.getElementById('modalError');
+
+    ['openAddMethodModal', 'openAddMethodModal2'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', () => { modal.classList.remove('hidden'); });
     });
 
-    function openModal() {
-        nameInput.value  = '';
-        amtInput.value   = '';
-        errorDiv.classList.add('hidden');
-        modal.classList.remove('hidden');
-    }
-
-    function closeModal() {
-        modal.classList.add('hidden');
-    }
-
-    function showModalError(msg) {
-        errorDiv.textContent = msg;
-        errorDiv.classList.remove('hidden');
-    }
-}
-
-/* ══════════════════════════════════════════════════════════
-   NUEVO: MENÚ HAMBURGUESA PARA CELULARES
-══════════════════════════════════════════════════════════ */
-function initMobileMenu() {
-    const header = document.querySelector('.top-header');
-    const sidebar = document.querySelector('.sidebar');
+    document.getElementById('closeModal').addEventListener('click', () => modal.classList.add('hidden'));
     
-    // Si la página tiene un header y un sidebar, aplicamos la magia
-    if (header && sidebar) {
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const name = nameInput.value.trim();
+        const amount = parseFloat(amtInput.value);
+
+        if (!name || isNaN(amount)) return;
         
-        // 1. Crear el botón hamburguesa
-        const menuBtn = document.createElement('button');
-        menuBtn.className = 'mobile-menu-btn';
-        menuBtn.innerHTML = `
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        `;
-        
-        // Lo inyectamos al principio de la cabecera (al lado del título)
-        const leftDiv = header.querySelector('div:first-child');
-        if (leftDiv) {
-            leftDiv.style.display = 'flex';
-            leftDiv.style.alignItems = 'center';
-            leftDiv.insertBefore(menuBtn, leftDiv.firstChild);
-        } else {
-            header.insertBefore(menuBtn, header.firstChild);
+        const methods = getMethods();
+        // SOLUCIÓN PUNTO 3: Validar duplicados también en el modal
+        if (methods.some(m => m.name.toLowerCase() === name.toLowerCase())) {
+            errorDiv.textContent = "Este nombre ya existe.";
+            errorDiv.classList.remove('hidden');
+            return;
         }
 
-        // 2. Crear el fondo negro semi-transparente
-        const overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
-
-        // 3. Darle funcionalidad al botón para abrir/cerrar
-        menuBtn.addEventListener('click', () => {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-            // Evitar que la página de fondo haga scroll cuando el menú está abierto
-            document.body.style.overflow = 'hidden'; 
-        });
-
-        // 4. Cerrar al hacer clic en el fondo negro
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Devolver el scroll
-        });
-        
-        // Cerrar al hacer clic en un enlace del menú
-        const navLinks = sidebar.querySelectorAll('.nav-item');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            });
-        });
-    }
+        methods.push({ id: Date.now(), name, amount });
+        saveMethods(methods);
+        renderChips();
+        renderMethodsList();
+        modal.classList.add('hidden');
+    });
 }
 
-/* ══════════════════════════════════════════════════════════
-   INIT GENERAL
-══════════════════════════════════════════════════════════ */
+function loadUserName() {
+    const user = JSON.parse(localStorage.getItem('estuFinCurrentUser')) || {};
+    const el = document.getElementById('userNameDisplay');
+    if (el) el.textContent = user.name || 'Estudiante';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadUserName();
     renderChips();
     renderMethodsList();
     initModal();
-    initMobileMenu(); // <- Activamos el menú móvil en todas las páginas
 });
