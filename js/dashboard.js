@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. VARIABLES Y ESTADO INICIAL
-    const STORAGE_KEY = 'estufin_payment_data';
+    const STORAGE_KEY = 'estuFinPaymentMethods';
     const USER_STORAGE_KEY = 'usuarioActual'; // La llave que usas en auth.js
 
     let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-        { name: 'Nequi', amount: 60000 },
-        { name: 'Bancolombia', amount: 320000 }
+       
     ];
 
    
