@@ -29,8 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.querySelector('.submit-btn');
     let currentType = 'income';
 
-    // ASUME QUE TIENES EL CORREO GUARDADO EN LOCALSTORAGE AL INICIAR SESIÓN. 
-    // Por ahora usamos el de prueba que vimos en tu base de datos.
+    // Usamos el correo de prueba que vimos en tu base de datos
     const emailUsuario = localStorage.getItem('usuarioLogueado') || 'juli@gmail.com';
 
     // 1. Cargar métodos de pago desde Supabase
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const { data: methods, error } = await db
             .from('metodos_pago')
             .select('*')
-            .eq('usuario_email', emailUsuario); // Filtramos por el usuario actual
+            .eq('usuario_email', emailUsuario); // Filtramos por tu usuario
 
         if (error) {
             console.error("Error al cargar métodos:", error);
@@ -53,13 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         methods.forEach((method) => {
             const option = document.createElement('option');
-            option.value = method.id; // Usamos el ID de la tabla como valor
-            // Asumimos que cambiaste la columna a "nombre_metodo" como te sugerí
-            option.textContent = `${method.nombre_metodo} (Saldo: $${method.saldo.toLocaleString('es-CO')})`;
+            option.value = method.id; 
+            // Usamos "method.nombre" como está en tu tabla de Supabase
+            option.textContent = `${method.nombre} (Saldo: $${method.saldo.toLocaleString('es-CO')})`;
             
-            // Guardamos datos extra en el HTML para usarlos al validar
             option.dataset.saldo = method.saldo;
-            option.dataset.nombre = method.nombre_metodo;
+            option.dataset.nombre = method.nombre;
             
             paymentSelect.appendChild(option);
         });
@@ -82,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Registrar el movimiento en la nube
     submitBtn.addEventListener('click', async (e) => {
-        e.preventDefault(); // Previene que la página se recargue si está en un form
+        e.preventDefault(); 
 
         const amountValue = parseFloat(document.getElementById('amount').value);
         const methodId = paymentSelect.value;
@@ -94,33 +92,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Recuperamos los datos de la opción seleccionada
         const selectedOption = paymentSelect.options[paymentSelect.selectedIndex];
         const currentSaldo = parseFloat(selectedOption.dataset.saldo);
         const methodName = selectedOption.dataset.nombre;
 
-        // Validar fondos insuficientes
         if (currentType === 'expense' && amountValue > currentSaldo) {
             alert(`¡Fondos insuficientes en ${methodName}! Tu saldo actual es $${currentSaldo.toLocaleString('es-CO')}.`);
             return;
         }
 
-        // Bloqueamos el botón para evitar que el usuario le dé doble clic
         submitBtn.disabled = true;
         submitBtn.textContent = 'Guardando en la nube...';
 
-        // Calculamos el nuevo saldo
         const nuevoSaldo = currentType === 'income' ? currentSaldo + amountValue : currentSaldo - amountValue;
         const tipoMovimiento = currentType === 'income' ? 'ingreso' : 'gasto';
 
         try {
-            // PASO A: Guardar el historial en la tabla `movimientos`
+            // Guardar en la tabla `movimientos`
             const { error: errorMov } = await db.from('movimientos').insert([
                 {
                     usuario_email: emailUsuario,
                     tipo: tipoMovimiento,
                     monto: amountValue,
-                    categoria: 'General', // Si luego agregas un select de categoría, cambias esto
+                    categoria: 'General', 
                     fecha: date,
                     metodo_pago: methodName,
                     descripcion: description
@@ -129,11 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (errorMov) throw errorMov;
 
-            // PASO B: Actualizar el saldo en la tabla `metodos_pago`
+            // Actualizar el saldo en la tabla `metodos_pago`
             const { error: errorSaldo } = await db
                 .from('metodos_pago')
                 .update({ saldo: nuevoSaldo })
-                .eq('id', methodId); // Buscamos la fila exacta por su ID
+                .eq('id', methodId); 
 
             if (errorSaldo) throw errorSaldo;
 
@@ -144,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error en la base de datos:", error.message);
             alert("Hubo un error al guardar. Intenta de nuevo.");
             
-            // Restauramos el botón
             submitBtn.disabled = false;
             submitBtn.textContent = currentType === 'income' ? 'Registrar Ingreso' : 'Registrar Gasto';
         }
