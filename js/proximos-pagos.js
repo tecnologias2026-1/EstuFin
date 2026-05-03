@@ -1,3 +1,23 @@
+// --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('sidebarToggle');
+    function isMobile() {
+        return window.innerWidth <= 900;
+    }
+    if (sidebar && menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+            if (isMobile()) {
+                sidebar.classList.toggle('active');
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (isMobile() && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuBtn) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+});
 /* ================================================
    js/proximos-pagos.js
    ================================================ */

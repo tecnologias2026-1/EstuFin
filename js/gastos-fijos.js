@@ -1,3 +1,23 @@
+// --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('sidebarToggle');
+    function isMobile() {
+        return window.innerWidth <= 900;
+    }
+    if (sidebar && menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+            if (isMobile()) {
+                sidebar.classList.toggle('active');
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (isMobile() && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuBtn) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+});
 document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('fixed-expense-modal');
         const closeBtn = document.querySelector('.modal-close');
@@ -93,6 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="btn-delete" data-id="${expense.id}">🗑️</button>
                     </div>
                 `;
+                // Elimina cualquier botón '+ Añadir' que pudiera quedar por error
+                const addBtn = card.querySelector('.btn-add-fijos-inline');
+                if (addBtn) addBtn.remove();
                 list.appendChild(card);
             });
 
@@ -106,9 +129,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderList();
                 });
             });
+            // Botones editar
+            list.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = parseInt(btn.dataset.id);
+                    const expenses = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
+                    const expense = expenses.find(e => e.id === id);
+                    if (!expense) return;
+                    document.getElementById('expense-name').value = expense.name;
+                    document.getElementById('expense-amount').value = expense.amount;
+                    expenseMethodSelect.value = expense.methodIndex;
+                    form.setAttribute('data-edit-id', id);
+                    loadPaymentMethods();
+                    modal.classList.add('active');
+                });
+            });
         }
 
-        // Guardar gasto fijo
+        // Guardar o editar gasto fijo
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('expense-name').value;
@@ -120,21 +158,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const fixedExpense = {
-                id: Date.now(),
-                name,
-                amount,
-                methodIndex,
-                createdAt: new Date().toISOString()
-            };
+            const editId = form.getAttribute('data-edit-id');
+            let gastosFijos = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
 
-            const gastosFijos = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
-            gastosFijos.push(fixedExpense);
+            if (editId) {
+                // Editar gasto existente
+                gastosFijos = gastosFijos.map(gasto => {
+                    if (gasto.id === parseInt(editId)) {
+                        return {
+                            ...gasto,
+                            name,
+                            amount,
+                            methodIndex
+                        };
+                    }
+                    return gasto;
+                });
+                form.removeAttribute('data-edit-id');
+            } else {
+                // Nuevo gasto
+                const fixedExpense = {
+                    id: Date.now(),
+                    name,
+                    amount,
+                    methodIndex,
+                    createdAt: new Date().toISOString()
+                };
+                gastosFijos.push(fixedExpense);
+            }
+
             localStorage.setItem('gastosFijos', JSON.stringify(gastosFijos));
 
             modal.classList.remove('active');
             form.reset();
             renderList();
+        });
+
+        // Cerrar modal (modificado para limpiar edición)
+        closeBtn.addEventListener('click', () => { 
+            modal.classList.remove('active'); 
+            form.reset(); 
+            form.removeAttribute('data-edit-id');
+        });
+        cancelBtn.addEventListener('click', () => { 
+            modal.classList.remove('active'); 
+            form.reset(); 
+            form.removeAttribute('data-edit-id');
+        });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) { 
+                modal.classList.remove('active'); 
+                form.reset(); 
+                form.removeAttribute('data-edit-id');
+            }
         });
 
         // Cargar al iniciar

@@ -1,235 +1,133 @@
-// js/dashboard.js
-// Clave unificada con bienvenida.js
-const STORAGE_KEY = 'estuFinPaymentMethods';
-
-/* ══════════════════════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════════════════════ */
-function getMethods() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-}
-
-function saveMethods(methods) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(methods));
-}
-
-function formatCOP(num) {
-    return Number(num).toLocaleString('es-CO');
-}
-
-function escapeHtml(str) {
-    return String(str).replace(/[&<>"']/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[c]));
-}
-
-/* ══════════════════════════════════════════════════════════
-   RENDERIZAR CHIPS (tarjeta azul)
-══════════════════════════════════════════════════════════ */
-function renderChips() {
-    const container = document.getElementById('methodsChips');
-    if (!container) return; // Si no estamos en el dashboard, salir
-
-    const methods   = getMethods();
-    container.innerHTML = '';
-
-    if (methods.length === 0) {
-        container.innerHTML = `
-            <span style="opacity:.7; font-size:13px;">
-                No tienes métodos de pago aún.
-            </span>`;
-    } else {
-        methods.forEach(m => {
-            const chip = document.createElement('div');
-            chip.className = 'method-chip';
-            chip.innerHTML = `
-                <span class="chip-name">${escapeHtml(m.name || m.nombre)}</span>
-                <span class="chip-amount">$${formatCOP(m.saldo !== undefined ? m.saldo : (m.amount !== undefined ? m.amount : 0))}</span>
-            `;
-            container.appendChild(chip);
+    // --- MENÚ DESPLEGABLE PARA MÓVIL CON OVERLAY ---
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    function isMobile() {
+        return window.innerWidth <= 900;
+    }
+    if (sidebar && menuBtn && overlay) {
+        menuBtn.addEventListener('click', (e) => {
+            if (isMobile()) {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
         });
-    }
-
-    // Actualizar saldo total usando saldo si existe, sino amount
-    const total = methods.reduce((acc, m) => acc + Number(m.saldo !== undefined ? m.saldo : (m.amount !== undefined ? m.amount : 0)), 0);
-    const totalBalance = document.getElementById('totalBalance');
-    if (totalBalance) totalBalance.textContent = `$${formatCOP(total)}`;
-}
-
-/* ══════════════════════════════════════════════════════════
-   RENDERIZAR LISTA DETALLADA (sección "Mis Métodos")
-══════════════════════════════════════════════════════════ */
-function renderMethodsList() {
-    const list    = document.getElementById('methodsList');
-    if (!list) return;
-
-    const methods = getMethods();
-    list.innerHTML = '';
-
-    if (methods.length === 0) {
-        list.innerHTML = `
-            <p class="method-list-empty">
-                Aún no tienes métodos de pago configurados.
-            </p>`;
-        return;
-    }
-
-    methods.forEach(m => {
-        const item = document.createElement('div');
-        item.className = 'method-list-item';
-        item.innerHTML = `
-            <span class="m-name">${escapeHtml(m.name || m.nombre)}</span>
-            <span class="m-amount">$${formatCOP(m.amount !== undefined ? m.amount : m.saldo)} COP</span>
-        `;
-        list.appendChild(item);
-    });
-}
-
-/* ══════════════════════════════════════════════════════════
-   NOMBRE DE USUARIO
-══════════════════════════════════════════════════════════ */
-function loadUserName() {
-    const user = JSON.parse(localStorage.getItem('estuFinCurrentUser')) || JSON.parse(localStorage.getItem('usuarioActual')) || {};
-    const el   = document.getElementById('userNameDisplay');
-    if (el) el.textContent = user.name || user.nombre || user.email || 'Usuario';
-}
-
-/* ══════════════════════════════════════════════════════════
-   MODAL — AGREGAR MÉTODO DESDE DASHBOARD
-══════════════════════════════════════════════════════════ */
-function initModal() {
-    const modal      = document.getElementById('addMethodModal');
-    if (!modal) return;
-
-    const form       = document.getElementById('modalPaymentForm');
-    const nameInput  = document.getElementById('modalMethodName');
-    const amtInput   = document.getElementById('modalMethodAmount');
-    const errorDiv   = document.getElementById('modalError');
-
-    // Botones que abren el modal
-    ['openAddMethodModal', 'openAddMethodModal2'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.addEventListener('click', () => openModal());
-    });
-
-    // Botones que cierran el modal
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    document.getElementById('cancelModal').addEventListener('click', closeModal);
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-
-    // Guardar nuevo método
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        errorDiv.classList.add('hidden');
-
-        const name   = nameInput.value.trim();
-        const amount = parseFloat(amtInput.value);
-
-        if (!name) {
-            showModalError('Escribe un nombre para el método.');
-            return;
-        }
-        if (isNaN(amount) || amount < 0) {
-            showModalError('Ingresa un monto válido (puede ser 0).');
-            return;
-        }
-
-        const methods = getMethods();
-        methods.push({ id: Date.now(), name, amount });
-        saveMethods(methods);
-
-        renderChips();
-        renderMethodsList();
-        closeModal();
-    });
-
-    function openModal() {
-        nameInput.value  = '';
-        amtInput.value   = '';
-        errorDiv.classList.add('hidden');
-        modal.classList.remove('hidden');
-    }
-
-    function closeModal() {
-        modal.classList.add('hidden');
-    }
-
-    function showModalError(msg) {
-        errorDiv.textContent = msg;
-        errorDiv.classList.remove('hidden');
-    }
-}
-
-/* ══════════════════════════════════════════════════════════
-   NUEVO: MENÚ HAMBURGUESA PARA CELULARES
-══════════════════════════════════════════════════════════ */
-function initMobileMenu() {
-    const header = document.querySelector('.top-header');
-    const sidebar = document.querySelector('.sidebar');
-    
-    // Si la página tiene un header y un sidebar, aplicamos la magia
-    if (header && sidebar) {
-        
-        // 1. Crear el botón hamburguesa
-        const menuBtn = document.createElement('button');
-        menuBtn.className = 'mobile-menu-btn';
-        menuBtn.innerHTML = `
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        `;
-        
-        // Lo inyectamos al principio de la cabecera (al lado del título)
-        const leftDiv = header.querySelector('div:first-child');
-        if (leftDiv) {
-            leftDiv.style.display = 'flex';
-            leftDiv.style.alignItems = 'center';
-            leftDiv.insertBefore(menuBtn, leftDiv.firstChild);
-        } else {
-            header.insertBefore(menuBtn, header.firstChild);
-        }
-
-        // 2. Crear el fondo negro semi-transparente
-        const overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
-
-        // 3. Darle funcionalidad al botón para abrir/cerrar
-        menuBtn.addEventListener('click', () => {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-            // Evitar que la página de fondo haga scroll cuando el menú está abierto
-            document.body.style.overflow = 'hidden'; 
-        });
-
-        // 4. Cerrar al hacer clic en el fondo negro
         overlay.addEventListener('click', () => {
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Devolver el scroll
         });
-        
-        // Cerrar al hacer clic en un enlace del menú
-        const navLinks = sidebar.querySelectorAll('.nav-item');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
+        // Cierra el menú si se redimensiona a escritorio
+        window.addEventListener('resize', () => {
+            if (!isMobile()) {
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            });
+            }
         });
     }
-}
-
-/* ══════════════════════════════════════════════════════════
-   INIT GENERAL
-══════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-    loadUserName();
-    renderChips();
-    renderMethodsList();
-    initModal();
-    initMobileMenu(); // <- Activamos el menú móvil en todas las páginas
+    // 1. VARIABLES Y ESTADO INICIAL
+    const STORAGE_KEY = 'estuFinPaymentMethods';
+    const USER_STORAGE_KEY = 'usuarioActual'; // La llave que usas en auth.js
+
+    let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+       
+    ];
+
+   
+    // 3. UTILIDADES (Formato de moneda)
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency', 
+            currency: 'COP', 
+            maximumFractionDigits: 0
+        }).format(value);
+    };
+
+    // 4. RENDERIZADO DEL DASHBOARD
+    const renderDashboard = () => {
+        const listContainer = document.getElementById('methodsList');
+        const totalDisplay = document.getElementById('totalBalance');
+        
+        if (!listContainer || !totalDisplay) return; // Evita errores si no existen los IDs
+
+        listContainer.innerHTML = '';
+        let currentTotal = 0;
+
+        paymentMethods.forEach((method, index) => {
+            currentTotal += method.amount;
+            const card = document.createElement('div');
+            card.className = 'method-card';
+            card.innerHTML = `
+                <div class="method-info">
+                    <h4>${method.name}</h4>
+                    <p>${formatCurrency(method.amount)}</p>
+                </div>
+                <div class="method-actions">
+                    <button class="btn-edit" onclick="handleEdit(${index})">Editar</button>
+                    <button class="btn-delete" onclick="handleDelete(${index})">Eliminar</button>
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+
+        totalDisplay.innerText = formatCurrency(currentTotal);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(paymentMethods));
+    };
+
+    // 5. FUNCIONES GLOBALES (Edit y Delete)
+    window.handleDelete = (index) => {
+        if (confirm(`¿Deseas eliminar "${paymentMethods[index].name}"?`)) {
+            paymentMethods.splice(index, 1);
+            renderDashboard();
+        }
+    };
+
+    window.handleEdit = (index) => {
+        const newAmount = prompt(`Nuevo saldo para ${paymentMethods[index].name}:`, paymentMethods[index].amount);
+        if (newAmount !== null && !isNaN(newAmount) && newAmount.trim() !== "") {
+            paymentMethods[index].amount = parseFloat(newAmount);
+            renderDashboard();
+        }
+    };
+
+    // 6. LÓGICA DEL MODAL
+    const modal = document.getElementById('addMethodModal');
+    const errorMsg = document.getElementById('errorMessage');
+    const openBtn = document.getElementById('openAddModal');
+    const closeBtn = document.getElementById('closeModal');
+    const addForm = document.getElementById('addMethodForm');
+
+    if (openBtn) {
+        openBtn.onclick = () => {
+            modal.classList.remove('hidden');
+            errorMsg.classList.add('hidden');
+        };
+    }
+
+    if (closeBtn) {
+        closeBtn.onclick = () => modal.classList.add('hidden');
+    }
+
+    if (addForm) {
+        addForm.onsubmit = (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('newMethodName').value.trim();
+            const amountInput = parseFloat(document.getElementById('newMethodAmount').value);
+            
+            const exists = paymentMethods.some(m => m.name.toLowerCase() === nameInput.toLowerCase());
+
+            if (exists) {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            paymentMethods.push({ name: nameInput, amount: amountInput });
+            renderDashboard();
+            modal.classList.add('hidden');
+            e.target.reset();
+        };
+    }
+
+    // 7. EJECUCIÓN INICIAL
+    renderDashboard();
 });

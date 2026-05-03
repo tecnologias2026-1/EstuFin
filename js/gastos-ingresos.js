@@ -1,3 +1,23 @@
+// --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('sidebarToggle');
+    function isMobile() {
+        return window.innerWidth <= 900;
+    }
+    if (sidebar && menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+            if (isMobile()) {
+                sidebar.classList.toggle('active');
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (isMobile() && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuBtn) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+});
 document.addEventListener('DOMContentLoaded', () => {
             const addButton = document.querySelector('.btn-primary-dash');
             if (addButton) {
@@ -31,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Limpiar la lista
             transactionsList.innerHTML = '';
 
-            transactions.forEach((transaction, index) => {
+            // Mostrar el último movimiento primero
+            transactions.slice().reverse().forEach((transaction, index) => {
                 const item = document.createElement('div');
                 item.className = 'transaction-item';
                 item.innerHTML = `
@@ -70,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             detailsContainer.innerHTML = `
                 <div class="details-card">
+                    <button class="details-close" aria-label="Cerrar detalles">×</button>
                     <div class="details-item">
                         <h4>Tipo</h4>
                         <p>${typeLabel}</p>
@@ -92,6 +114,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
+            // Add event listener to the new close button
+            const closeButton = detailsContainer.querySelector('.details-close');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    hideTransactionDetails();
+                });
+            }
         }
 
         function hideTransactionDetails() {

@@ -1,3 +1,46 @@
+#fixed-expenses-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0;
+    padding-right: 60px;
+}
+.quick-expense-card-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 10px 0 10px;
+}
+.quick-expense-card-actions {
+    display: flex;
+    gap: 2px;
+}
+.quick-expense-edit-btn, .quick-expense-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 6px;
+    margin-left: 4px;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.quick-expense-edit-btn:hover {
+    background: #E0E7FF;
+}
+.quick-expense-delete-btn:hover {
+    background: #FEE2E2;
+}
+.quick-expense-edit-icon {
+    font-size: 0.95rem;
+}
+.quick-expense-delete-icon {
+    font-size: 0.95rem;
+}
 /* ── Responsive Design ───────────────────────────────────── */
 @media (max-width: 900px) {
     .dashboard-grid {
@@ -139,8 +182,18 @@
 
 .empty-state {
     text-align: center;
-    padding: 2rem 0;
+    background: #fff;
     color: var(--text-gray);
+    margin-top: -160px;
+    width: 100%;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2.2rem 1.5rem 2.2rem 1.5rem;
+    border-radius: 22px;
+    box-shadow: 0 6px 24px rgba(15,23,42,0.08);
+    word-break: break-word;
+    box-sizing: border-box;
 }
 
 .profile-card {
@@ -215,18 +268,6 @@
 }
 .btn-add-top:hover { background: #1D4ED8; }
 
-.total-card {
-    background: linear-gradient(135deg, #7C3AED, #9333EA);
-    border-radius: 18px;
-    padding: 1.5rem 1.8rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.2rem;
-    color: white;
-}
-.total-label { font-size: 0.9rem; opacity: 0.9; margin: 0 0 0.4rem; }
-.total-amount { font-size: 2rem; font-weight: 700; margin: 0; }
 .total-icon {
     background: rgba(255,255,255,0.2);
     border-radius: 14px;
@@ -405,4 +446,68 @@
     border-radius: 14px;
     padding: 13px 28px;
     box-shadow: 0 2px 8px rgba(37,99,235,0.12);
+}
+
+/* Tarjeta de gasto rápido personalizada */
+.quick-expense-card-custom {
+    background: #FFF7ED;
+    border: 2px solid #FFE0B2;
+    border-radius: 16px;
+    margin: 0 28px 28px 0;
+    box-shadow: 0 2px 8px 0 #0002;
+    max-width: 340px;
+    min-width: 210px;
+    display: inline-block;
+    vertical-align: top;
+    transition: box-shadow 0.2s;
+}
+.quick-expense-card-custom:hover {
+    box-shadow: 0 4px 16px 0 #0003;
+}
+/* Estilos internos de la tarjeta de gasto rápido */
+.quick-expense-card-content {
+    padding: 10px 12px 0 12px;
+}
+.quick-expense-card-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin: 0 0 2px 0;
+    color: #222;
+}
+.quick-expense-card-method {
+    color: #4B5563;
+    font-size: 0.92rem;
+    margin-bottom: 2px;
+}
+.quick-expense-card-category {
+    color: #E65100;
+    font-size: 0.92rem;
+    margin-bottom: 8px;
+}
+.quick-expense-card-amount {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #E65100;
+    margin-bottom: 10px;
+}
+.quick-expense-card-footer {
+    padding: 0 12px 12px 12px;
+}
+.quick-expense-card-btn {
+    width: 100%;
+    background: #F4511E;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+}
+.quick-expense-card-icon {
+    font-size: 1.1rem;
 }

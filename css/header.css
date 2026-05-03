@@ -2,12 +2,16 @@
    css/header.css
    ================================================ */
 
+:root {
+    --primary-blue: #1A56FF;
+}
+
 /* ── user-info: contenedor horizontal ── */
 .user-info {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 /* ── header-right-group: agrupa user-info + botón de acción ── */
@@ -143,10 +147,27 @@
     gap: 8px;
 }
 
+/* ── Círculo de avatar (inicial del usuario) ── */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary-blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(26, 86, 255, 0.2);
+    flex-shrink: 0;
+}
+
 .user-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
+    color: #1B254B;
+    text-transform: capitalize;
     white-space: nowrap;
 }
 
@@ -171,6 +192,23 @@
     font-size: 15px;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
+}
+
+/* ── Botón Nueva Meta ── */
+.btn-nueva-meta {
+    background-color: #EBF1FF;
+    color: var(--primary-blue);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-nueva-meta:hover {
+    background-color: var(--primary-blue);
+    color: white;
 }
 
 /* ── Dropdown Usuario ── */
@@ -252,11 +290,12 @@
 .user-dropdown-item:hover { background: #F8FAFC; }
 
 .user-dropdown-logout { color: #EF4444; }
+
 .user-dropdown-logout:hover { background: #FFF5F5; }
 
 /* ── Botón Menú Hamburguesa Móvil ── */
 .mobile-menu-btn {
-    display: none; /* Oculto en PC */
+    display: none;
     background: none;
     border: none;
     color: var(--text-dark);
@@ -274,29 +313,43 @@
 /* ── Responsive Header ── */
 @media (max-width: 900px) {
     .mobile-menu-btn {
-        display: flex; /* Visible en celular */
+        display: flex;
         align-items: center;
         justify-content: center;
     }
-    
+
     .user-info, .header-right-group {
         gap: 6px !important;
         flex-direction: row !important;
         font-size: 13px !important;
     }
+
     .header-avatar-wrap, .header-bell-wrap {
         gap: 4px !important;
     }
+
     .header-bell-btn, .header-avatar-btn {
         width: 32px !important;
         height: 32px !important;
         font-size: 13px !important;
     }
+
+    .avatar-circle {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 13px !important;
+    }
+
     .user-name {
         font-size: 12px !important;
         max-width: 80px;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .btn-nueva-meta {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 }
 
@@ -305,12 +358,24 @@
         gap: 3px !important;
         font-size: 11px !important;
     }
+
     .header-avatar-btn, .header-bell-btn {
         width: 26px !important;
         height: 26px !important;
         font-size: 11px !important;
     }
+
+    .avatar-circle {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 12px !important;
+    }
+
     .user-name {
-        display: none; /* Ocultamos el nombre en pantallas super chiquitas para dar espacio */
+        display: none;
+    }
+
+    .btn-nueva-meta {
+        display: none;
     }
 }

@@ -1,21 +1,33 @@
 /* ── Responsive Design ───────────────────────────────────── */
 @media (max-width: 900px) {
+    .main-content {
+        padding: 60px 6px 16px 6px !important; /* espacio para el botón menú */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
     .dashboard-grid {
         grid-template-columns: 1fr !important;
         gap: 16px !important;
         width: 100% !important;
-    }
-    .main-content {
-        padding: 16px 6px !important;
+        margin: 0 auto !important;
+        justify-items: center;
     }
     .transactions-panel, .details-panel, .welcome-banner {
         padding: 14px 8px !important;
         border-radius: 14px !important;
+        width: 100%;
+        max-width: 480px;
+        box-sizing: border-box;
     }
     .top-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+        width: 100%;
+        max-width: 480px;
     }
 }
 @media (max-width: 600px) {
