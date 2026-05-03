@@ -225,8 +225,15 @@
 .details-panel {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0;
     min-height: 280px;
+}
+#transaction-details-content {
+    margin-top: 2rem !important;
+    padding-top: 0 !important;
+}
+.details-card {
+    margin-top: 0 !important;
 }
 
 .details-header {
@@ -289,6 +296,14 @@
     box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
     display: grid;
     gap: 16px;
+    position: relative;
+}
+
+.details-card .details-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
 }
 
 .details-item {

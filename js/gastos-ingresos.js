@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Limpiar la lista
             transactionsList.innerHTML = '';
 
-            transactions.forEach((transaction, index) => {
+            // Mostrar el último movimiento primero
+            transactions.slice().reverse().forEach((transaction, index) => {
                 const item = document.createElement('div');
                 item.className = 'transaction-item';
                 item.innerHTML = `
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             detailsContainer.innerHTML = `
                 <div class="details-card">
+                    <button class="details-close" aria-label="Cerrar detalles">×</button>
                     <div class="details-item">
                         <h4>Tipo</h4>
                         <p>${typeLabel}</p>
@@ -92,6 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
+            // Add event listener to the new close button
+            const closeButton = detailsContainer.querySelector('.details-close');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    hideTransactionDetails();
+                });
+            }
         }
 
         function hideTransactionDetails() {
