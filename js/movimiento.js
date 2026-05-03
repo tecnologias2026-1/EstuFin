@@ -1,98 +1,157 @@
 // --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
 document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('sidebarToggle');
-    function isMobile() {
-        return window.innerWidth <= 900;
-    }
-    if (sidebar && menuBtn) {
-        menuBtn.addEventListener('click', (e) => {
-            if (isMobile()) {
-                sidebar.classList.toggle('active');
-            }
-        });
-        document.addEventListener('click', (e) => {
-            if (isMobile() && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuBtn) {
-                sidebar.classList.remove('active');
-            }
-        });
-    }
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('sidebarToggle');
+    function isMobile() {
+        return window.innerWidth <= 900;
+    }
+    if (sidebar && menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+            if (isMobile()) {
+                sidebar.classList.toggle('active');
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (isMobile() && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuBtn) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
 });
-// js/movimiento.js
+
+// --- LÓGICA DE MOVIMIENTOS CON SUPABASE ---
 document.addEventListener('DOMContentLoaded', () => {
-    const paymentSelect = document.getElementById('payment-method');
-    const incomeBtn = document.querySelector('.income');
-    const expenseBtn = document.querySelector('.expense');
-    const submitBtn = document.querySelector('.submit-btn');
-    let currentType = 'income';
+    const paymentSelect = document.getElementById('payment-method');
+    const incomeBtn = document.querySelector('.income');
+    const expenseBtn = document.querySelector('.expense');
+    const submitBtn = document.querySelector('.submit-btn');
+    let currentType = 'income';
 
-    function loadPaymentMethods() {
-        paymentSelect.innerHTML = '<option value="">Selecciona un método</option>';
-        let methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
-        methods.forEach((method, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            // Mostramos el saldo actual en el select para que el usuario lo vea
-            option.textContent = `${method.name} (Saldo: $${method.amount.toLocaleString('es-CO')})`;
-            paymentSelect.appendChild(option);
-        });
-        paymentSelect.disabled = methods.length === 0;
-    }
+    // 1. Cargar los métodos de pago desde Supabase
+    async function loadPaymentMethods() {
+        paymentSelect.innerHTML = '<option value="">Cargando métodos...</option>';
+        paymentSelect.disabled = true;
 
-    loadPaymentMethods();
+        // Obtenemos el usuario que inició sesión
+        const { data: { user } } = await supabase.auth.getUser();
 
-    incomeBtn.addEventListener('click', () => { currentType = 'income'; updateUI(); });
-    expenseBtn.addEventListener('click', () => { currentType = 'expense'; updateUI(); });
+        if (!user) {
+            paymentSelect.innerHTML = '<option value="">Inicia sesión primero</option>';
+            return;
+        }
 
-    function updateUI() {
-        incomeBtn.classList.toggle('active', currentType === 'income');
-        expenseBtn.classList.toggle('active', currentType === 'expense');
-        submitBtn.textContent = currentType === 'income' ? 'Registrar Ingreso' : 'Registrar Gasto';
-        submitBtn.className = `submit-btn ${currentType === 'income' ? 'income-btn' : 'expense-btn'}`;
-    }
+        // Buscamos los métodos de pago de este usuario específico
+        const { data: metodos, error } = await supabase
+            .from('metodos_pago')
+            .select('*')
+            .eq('usuario_email', user.email);
 
-    submitBtn.addEventListener('click', () => {
-        const amountValue = parseFloat(document.getElementById('amount').value);
-        const methodIndex = paymentSelect.value;
-        const date = document.getElementById('date').value;
-        const description = document.getElementById('description').value;
+        if (error) {
+            console.error("Error al cargar métodos:", error);
+            paymentSelect.innerHTML = '<option value="">Error de conexión</option>';
+            return;
+        }
 
-        if (!amountValue || methodIndex === '' || !date || !description) {
-            alert('Completa todos los campos.');
-            return;
-        }
+        paymentSelect.innerHTML = '<option value="">Selecciona un método</option>';
 
-        let methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
-        let selectedMethod = methods[methodIndex];
+        // Llenamos el select si encontramos métodos de pago
+        if (metodos && metodos.length > 0) {
+            metodos.forEach((metodo) => {
+                const option = document.createElement('option');
+                option.value = metodo.id; // Guardamos el ID para actualizar el saldo luego
+                
+                // Guardamos datos extra escondidos en la opción para usarlos al guardar el movimiento
+                option.dataset.saldo = metodo.saldo;
+                option.dataset.nombre = metodo.nombre;
+                
+                // Lo que ve el usuario (Ej: Nequi (Saldo: $50.000))
+                option.textContent = `${metodo.nombre} (Saldo: $${metodo.saldo.toLocaleString('es-CO')})`;
+                paymentSelect.appendChild(option);
+            });
+            paymentSelect.disabled = false;
+        } else {
+            paymentSelect.innerHTML = '<option value="">No tienes métodos registrados</option>';
+            paymentSelect.disabled = true;
+        }
+    }
 
-        // SOLUCIÓN PUNTO 4: No permitir valores negativos (Gasto > Saldo)
-        if (currentType === 'expense' && amountValue > selectedMethod.amount) {
-            alert(`¡Fondos insuficientes en ${selectedMethod.name}! Tu saldo actual es $${selectedMethod.amount.toLocaleString('es-CO')}.`);
-            return;
-        }
+    loadPaymentMethods();
 
-        // Actualizar saldo
-        if (currentType === 'income') {
-            methods[methodIndex].amount += amountValue;
-        } else {
-            methods[methodIndex].amount -= amountValue;
-        }
+    // 2. Control de los botones visuales Ingreso / Gasto
+    incomeBtn.addEventListener('click', () => { currentType = 'income'; updateUI(); });
+    expenseBtn.addEventListener('click', () => { currentType = 'expense'; updateUI(); });
 
-        localStorage.setItem('estuFinPaymentMethods', JSON.stringify(methods));
+    function updateUI() {
+        incomeBtn.classList.toggle('active', currentType === 'income');
+        expenseBtn.classList.toggle('active', currentType === 'expense');
+        submitBtn.textContent = currentType === 'income' ? 'Registrar Ingreso' : 'Registrar Gasto';
+        submitBtn.className = `submit-btn ${currentType === 'income' ? 'income-btn' : 'expense-btn'}`;
+    }
 
-        // Guardar la transacción para el historial
-        const transactions = JSON.parse(localStorage.getItem('transacciones') || '[]');
-        transactions.push({
-            type: currentType,
-            amount: amountValue,
-            methodName: selectedMethod.name,
-            date,
-            description,
-            id: Date.now()
-        });
-        localStorage.setItem('transacciones', JSON.stringify(transactions));
+    // 3. Guardar el movimiento en la Base de Datos
+    submitBtn.addEventListener('click', async (e) => {
+        e.preventDefault(); // Evita que la página se recargue por defecto
 
-        alert('¡Movimiento registrado con éxito!');
-        window.location.href = 'dashboard.html'; // Redirigir para ver el saldo actualizado
-    });
+        const amountValue = parseFloat(document.getElementById('amount').value);
+        const methodId = paymentSelect.value;
+        const date = document.getElementById('date').value;
+        const description = document.getElementById('description').value;
+
+        if (!amountValue || methodId === '' || !date || !description) {
+            alert('Completa todos los campos.');
+            return;
+        }
+
+        // Sacamos los datos de la opción que el usuario seleccionó en la lista
+        const selectedOption = paymentSelect.options[paymentSelect.selectedIndex];
+        const currentSaldo = parseFloat(selectedOption.dataset.saldo);
+        const methodName = selectedOption.dataset.nombre;
+
+        // No permitir valores negativos (Gasto > Saldo)
+        if (currentType === 'expense' && amountValue > currentSaldo) {
+            alert(`¡Fondos insuficientes en ${methodName}! Tu saldo actual es $${currentSaldo.toLocaleString('es-CO')}.`);
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Guardando en la nube...';
+
+        const { data: { user } } = await supabase.auth.getUser();
+        const nuevoSaldo = currentType === 'income' ? currentSaldo + amountValue : currentSaldo - amountValue;
+        const tipoMovimiento = currentType === 'income' ? 'ingreso' : 'gasto';
+
+        try {
+            // A. Guardar en la tabla de Movimientos
+            const { error: errorMov } = await supabase.from('movimientos').insert([
+                {
+                    usuario_email: user.email,
+                    tipo: tipoMovimiento,
+                    monto: amountValue,
+                    categoria: 'General',
+                    fecha: date,
+                    metodo_pago: methodName,
+                    descripcion: description
+                }
+            ]);
+
+            if (errorMov) throw errorMov;
+
+            // B. Actualizar el saldo restante en la tabla de Métodos de Pago
+            const { error: errorSaldo } = await supabase
+                .from('metodos_pago')
+                .update({ saldo: nuevoSaldo })
+                .eq('id', methodId);
+
+            if (errorSaldo) throw errorSaldo;
+
+            alert('¡Movimiento registrado con éxito!');
+            window.location.href = 'dashboard.html';
+
+        } catch (error) {
+            console.error("Error al registrar:", error);
+            alert("Hubo un error al guardar el movimiento. Revisa la consola.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = currentType === 'income' ? 'Registrar Ingreso' : 'Registrar Gasto';
+        }
+    });
 });
