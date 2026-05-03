@@ -1,3 +1,29 @@
+    // --- MENÚ DESPLEGABLE PARA MÓVIL CON OVERLAY ---
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    function isMobile() {
+        return window.innerWidth <= 900;
+    }
+    if (sidebar && menuBtn && overlay) {
+        menuBtn.addEventListener('click', (e) => {
+            if (isMobile()) {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        // Cierra el menú si se redimensiona a escritorio
+        window.addEventListener('resize', () => {
+            if (!isMobile()) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+    }
 document.addEventListener('DOMContentLoaded', () => {
     // 1. VARIABLES Y ESTADO INICIAL
     const STORAGE_KEY = 'estuFinPaymentMethods';

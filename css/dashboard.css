@@ -1,3 +1,85 @@
+/* Overlay oscuro para menú móvil */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    z-index: 2999;
+    transition: opacity 0.25s;
+    opacity: 0;
+}
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        transition: transform 0.25s cubic-bezier(.4,1,.4,1);
+        box-shadow: 2px 0 16px rgba(0,0,0,0.10);
+    }
+    .sidebar:not(.active) {
+        transform: translateX(-100%);
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+}
+/* Mostrar el botón de menú solo en móvil */
+/* Botón de menú móvil más pequeño */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 3000;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 4px 7px;
+    border-radius: 7px;
+    font-size: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+@media (max-width: 900px) {
+    .sidebar-toggle {
+        display: block;
+    }
+}
+/* --- MOBILE RESPONSIVE IMPROVEMENTS --- */
+@media (max-width: 900px) {
+    .dashboard-container { flex-direction: column; }
+    .main-content { padding: 18px 6px; }
+    .top-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .balance-card-primary { padding: 30px 12px; border-radius: 18px; margin-bottom: 24px; }
+    .methods-grid { grid-template-columns: 1fr; gap: 12px; }
+    .method-card { padding: 16px; border-radius: 14px; }
+    .btn-add-large { padding: 12px; border-radius: 12px; font-size: 15px; }
+}
+
+@media (max-width: 600px) {
+    .main-content { padding: 8px 2px; }
+    .balance-card-primary { padding: 18px 6px; border-radius: 12px; }
+    .methods-grid { gap: 8px; }
+    .method-card { padding: 10px; border-radius: 10px; }
+    .btn-add-large { font-size: 13px; padding: 8px; border-radius: 8px; }
+    .top-header { margin-bottom: 16px; }
+}
+
+@media (max-width: 768px) {
+    .sidebar { display: none; position: fixed; left: 0; top: 0; width: 220px; height: 100vh; z-index: 4000; background: var(--white); box-shadow: 2px 0 12px rgba(0,0,0,0.08); padding: 30px 12px; transition: transform 0.3s; transform: translateX(-100%); }
+    .sidebar.active { display: block; transform: translateX(0); }
+    .mobile-menu-btn { display: block; position: fixed; top: 20px; left: 20px; z-index: 5000; background: white; border: 1px solid #ddd; padding: 8px; border-radius: 8px; }
+    .dashboard-container { min-height: unset; }
+}
+
+@media (max-width: 400px) {
+    .main-content { padding: 2px 0; }
+    .balance-card-primary { padding: 8px 2px; font-size: 1.1rem; }
+    .method-card { padding: 6px; }
+}
 :root {
     --blue-primary: #1A56FF;
     --blue-dark: #0035CC;
