@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('usuarioActual', JSON.stringify({ nombre: usuario.name, email: usuario.email }));
 
         // Redirigir a bienvenida
-        window.location.href = 'bienvenida.html';
+        window.location.href = 'dashboard.html';
     });
 
     function mostrarError(mensaje) {
