@@ -1,12 +1,17 @@
+/* ================================================
+   js/dashboard.js
+   Lógica del Dashboard y Métodos de Pago
+   ================================================ */
+
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. VARIABLES Y ESTADO INICIAL (Sincronizado con Pagos)
+    // 1. VARIABLES Y ESTADO INICIAL
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
     const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
     const STORAGE_KEY = 'metodosPago' + sufijoUsuario; // Misma clave que en proximos-pagos
 
     let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-    // 3. UTILIDADES
+    // 2. UTILIDADES
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('es-CO', {
             style: 'currency', 
@@ -15,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).format(value);
     };
 
-    // 4. RENDERIZADO DEL DASHBOARD
+    // 3. RENDERIZADO DEL DASHBOARD
     const renderDashboard = () => {
         const listContainer = document.getElementById('methodsList');
         const totalDisplay = document.getElementById('totalBalance');
@@ -46,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(paymentMethods));
     };
 
-    // 5. FUNCIONES GLOBALES
+    // 4. FUNCIONES GLOBALES (Editar y Eliminar)
     window.handleDelete = (index) => {
         if (confirm(`¿Deseas eliminar "${paymentMethods[index].name}"?`)) {
             paymentMethods.splice(index, 1);
@@ -62,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 6. LÓGICA DEL MODAL
+    // 5. LÓGICA DEL MODAL Y GUARDADO EN SUPABASE
     const modal = document.getElementById('addMethodModal');
     const errorMsg = document.getElementById('errorMessage');
     const openBtn = document.getElementById('openAddModal');
@@ -79,7 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtn) closeBtn.onclick = () => modal.classList.add('hidden');
 
     if (addForm) {
-        addForm.onsubmit = (e) => {
+        // Le agregamos 'async' para poder comunicarnos con Supabase
+        addForm.onsubmit = async (e) => {
             e.preventDefault();
             const nameInput = document.getElementById('newMethodName').value.trim();
             const amountInput = parseFloat(document.getElementById('newMethodAmount').value);
@@ -91,6 +97,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // --- 🚀 INICIO CÓDIGO SUPABASE ---
+            // Obtenemos el email del usuario logueado
+            const emailGuardar = usuarioActual ? usuarioActual.email : 'sin_correo@test.com';
+
+            const { data, error } = await db
+                .from('metodos_pago')
+                .insert([
+                    { 
+                        usuario_email: emailGuardar, 
+                        nombre: nameInput, 
+                        saldo: amountInput 
+                    }
+                ]);
+
+            if (error) {
+                console.error("Error guardando en Supabase:", error);
+                alert("Hubo un error al guardar en la nube. Revisa la consola para más detalles.");
+                return; // Detenemos la función si hubo error
+            }
+            // --- 🚀 FIN CÓDIGO SUPABASE ---
+
+            // Si todo salió bien en la nube, actualizamos la vista localmente
             paymentMethods.push({ name: nameInput, amount: amountInput });
             renderDashboard();
             modal.classList.add('hidden');
@@ -98,5 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // Inicializar la vista al cargar la página
     renderDashboard();
 });
