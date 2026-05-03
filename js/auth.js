@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('estuFinUsers', JSON.stringify(usuarios));
             localStorage.setItem('estuFinCurrentUser', JSON.stringify({ name, email }));
             localStorage.setItem('usuarioActual', JSON.stringify({ nombre: name, email }));
-            window.location.href = 'bienvenida.html';
+            window.location.href = 'dashboard.html'; 
         });
     }
 

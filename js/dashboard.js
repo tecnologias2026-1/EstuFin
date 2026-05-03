@@ -1,40 +1,12 @@
-    // --- MENÚ DESPLEGABLE PARA MÓVIL CON OVERLAY ---
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('sidebarToggle');
-    const overlay = document.getElementById('sidebarOverlay');
-    function isMobile() {
-        return window.innerWidth <= 900;
-    }
-    if (sidebar && menuBtn && overlay) {
-        menuBtn.addEventListener('click', (e) => {
-            if (isMobile()) {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
-            }
-        });
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-        // Cierra el menú si se redimensiona a escritorio
-        window.addEventListener('resize', () => {
-            if (!isMobile()) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            }
-        });
-    }
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. VARIABLES Y ESTADO INICIAL
-    const STORAGE_KEY = 'estuFinPaymentMethods';
-    const USER_STORAGE_KEY = 'usuarioActual'; // La llave que usas en auth.js
+    // 1. VARIABLES Y ESTADO INICIAL (Sincronizado con Pagos)
+    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+    const STORAGE_KEY = 'metodosPago' + sufijoUsuario; // Misma clave que en proximos-pagos
 
-    let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-       
-    ];
+    let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-   
-    // 3. UTILIDADES (Formato de moneda)
+    // 3. UTILIDADES
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('es-CO', {
             style: 'currency', 
@@ -48,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listContainer = document.getElementById('methodsList');
         const totalDisplay = document.getElementById('totalBalance');
         
-        if (!listContainer || !totalDisplay) return; // Evita errores si no existen los IDs
+        if (!listContainer || !totalDisplay) return;
 
         listContainer.innerHTML = '';
         let currentTotal = 0;
@@ -74,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(paymentMethods));
     };
 
-    // 5. FUNCIONES GLOBALES (Edit y Delete)
+    // 5. FUNCIONES GLOBALES
     window.handleDelete = (index) => {
         if (confirm(`¿Deseas eliminar "${paymentMethods[index].name}"?`)) {
             paymentMethods.splice(index, 1);
@@ -104,9 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    if (closeBtn) {
-        closeBtn.onclick = () => modal.classList.add('hidden');
-    }
+    if (closeBtn) closeBtn.onclick = () => modal.classList.add('hidden');
 
     if (addForm) {
         addForm.onsubmit = (e) => {
@@ -128,6 +98,5 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // 7. EJECUCIÓN INICIAL
     renderDashboard();
 });

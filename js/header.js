@@ -130,13 +130,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ── 5. Cargar notificaciones desde localStorage ──────────
+    
+    // VARIABLES CLAVE PARA MULTIUSUARIO
+    const sufijoUsuario = email ? '_' + email : '';
+    const KEY_NOTIF = 'notificaciones' + sufijoUsuario;
+    const KEY_PAGOS = 'pagosPendientes' + sufijoUsuario;
+
     cargarNotificaciones();
 
     function cargarNotificaciones() {
         // Revisamos si hay pagos vencidos cada vez que carga cualquier página
         revisarNotificacionesGlobales();
 
-        const notifs = JSON.parse(localStorage.getItem('notificaciones') || '[]');
+        // USAMOS LA LLAVE ESPECÍFICA DEL USUARIO
+        const notifs = JSON.parse(localStorage.getItem(KEY_NOTIF) || '[]');
         const badge  = document.getElementById('bellBadge');
         const body   = document.getElementById('notifBody');
 
@@ -173,8 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Función para actualizar las alertas en todas las pestañas ──
     function revisarNotificacionesGlobales() {
-        const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
-        let notificaciones = JSON.parse(localStorage.getItem('notificaciones') || '[]');
+        // USAMOS LAS LLAVES ESPECÍFICAS DEL USUARIO
+        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
+        let notificaciones = JSON.parse(localStorage.getItem(KEY_NOTIF) || '[]');
 
         // Limpiar automáticas antiguas para no duplicar datos
         notificaciones = notificaciones.filter(n => !n.isAutoPago);
@@ -206,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        localStorage.setItem('notificaciones', JSON.stringify(notificaciones));
+        // GUARDAMOS EN LA LLAVE DEL USUARIO
+        localStorage.setItem(KEY_NOTIF, JSON.stringify(notificaciones));
     }
 });
