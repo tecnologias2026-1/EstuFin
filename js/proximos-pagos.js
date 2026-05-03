@@ -4,6 +4,19 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ── 0. Identificar al usuario actual (Camino Profesional) ──
+    // Asumimos que al iniciar sesión guardas un objeto con el email del usuario
+    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    
+    // Creamos un sufijo único. Si el correo es juan@gmail.com, el sufijo será "_juan@gmail.com"
+    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+
+    // Claves dinámicas exclusivas para este usuario
+    const KEY_METODOS = 'metodosPago' + sufijoUsuario;
+    const KEY_PAGOS   = 'pagosPendientes' + sufijoUsuario;
+    const KEY_NOTIF   = 'notificaciones' + sufijoUsuario;
+
+
     // ── Referencias DOM ──────────────────────────────────────
     const btnAbrirForm      = document.getElementById('btnAbrirForm');
     const formInline        = document.getElementById('formInlinePago');
@@ -21,9 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaHistorial    = document.getElementById('listaHistorial');
     const emptyHistorial    = document.getElementById('emptyHistorial');
 
-    // ── Cargar métodos de pago desde localStorage ────────────
-    let methods = JSON.parse(localStorage.getItem('metodosPago') || '[]');
+    // ── Cargar métodos de pago del usuario desde localStorage ──
+    let methods = JSON.parse(localStorage.getItem(KEY_METODOS) || '[]');
 
+    // Si el usuario no tiene métodos, le damos unos por defecto (guardados en SU perfil)
     if (methods.length === 0) {
         methods = [
             { nombre: 'Efectivo', tipo: 'Físico' },
@@ -32,9 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: 'Tarjeta de Crédito', tipo: 'Bancario' },
             { nombre: 'Transferencia', tipo: 'Bancario' }
         ];
-        localStorage.setItem('metodosPago', JSON.stringify(methods));
+        localStorage.setItem(KEY_METODOS, JSON.stringify(methods));
     }
 
+    // LIMPIAMOS el select primero para evitar que queden opciones "basura" del HTML
+    selectMetodo.innerHTML = '<option value="" disabled selected>Selecciona un método...</option>';
+
+    // Llenamos con los métodos del usuario
     methods.forEach((method, index) => {
         const option = document.createElement('option');
         option.value = index;
@@ -44,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     selectMetodo.disabled = false;
 
-    // ── CAMBIO: Función para abrir el formulario  ────────────
+    // ── Función para abrir el formulario  ────────────
     function abrirFormulario() {
         formInline.classList.remove('hidden');
         inputNombre.focus();
@@ -82,9 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
             estado: 'pendiente'
         };
 
-        const pagosPendientes = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
+        // Usamos la clave dinámica KEY_PAGOS
+        const pagosPendientes = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
         pagosPendientes.push(nuevoPago);
-        localStorage.setItem('pagosPendientes', JSON.stringify(pagosPendientes));
+        localStorage.setItem(KEY_PAGOS, JSON.stringify(pagosPendientes));
 
         formInline.classList.add('hidden');
         limpiarForm();
@@ -95,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Render Pagos Pendientes ───────────────────────────────
     function renderPagosPendientes() {
-        const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
+        // Usamos la clave dinámica KEY_PAGOS
+        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
         const pendientes = pagos.filter(p => p.estado === 'pendiente');
 
         const items = listaPendientes.querySelectorAll('.pago-item');
@@ -132,7 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Render Historial ──────────────────────────────────────
     function renderHistorial() {
-        const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
+        // Usamos la clave dinámica KEY_PAGOS
+        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
         const pagados = pagos.filter(p => p.estado === 'pagado');
 
         const items = listaHistorial.querySelectorAll('.historial-item');
@@ -156,11 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Marcar como pagado ────────────────────────────────────
     function marcarPagado(id) {
-        const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
+        // Usamos la clave dinámica KEY_PAGOS
+        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
         const index = pagos.findIndex(p => p.id === id);
         if (index !== -1) {
             pagos[index].estado = 'pagado';
-            localStorage.setItem('pagosPendientes', JSON.stringify(pagos));
+            localStorage.setItem(KEY_PAGOS, JSON.stringify(pagos));
             renderPagosPendientes();
             renderHistorial();
             revisarNotificacionesPagos();
@@ -169,8 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Lógica de Notificaciones de Vencimiento ───────────────
     function revisarNotificacionesPagos() {
-        const pagos = JSON.parse(localStorage.getItem('pagosPendientes') || '[]');
-        let notificaciones = JSON.parse(localStorage.getItem('notificaciones') || '[]');
+        // Usamos las claves dinámicas KEY_PAGOS y KEY_NOTIF
+        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
+        let notificaciones = JSON.parse(localStorage.getItem(KEY_NOTIF) || '[]');
 
         notificaciones = notificaciones.filter(n => !n.isAutoPago);
 
@@ -202,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        localStorage.setItem('notificaciones', JSON.stringify(notificaciones));
+        localStorage.setItem(KEY_NOTIF, JSON.stringify(notificaciones));
         actualizarCampanaDOM(notificaciones);
     }
 
