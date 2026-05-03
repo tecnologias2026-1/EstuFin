@@ -106,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .insert([
                     { 
                         usuario_email: emailGuardar, 
-                        nombre: nameInput, 
-                        saldo: amountInput 
+                        nombre_metodo: nameInput, 
+                        saldo_metodo: amountInput 
                     }
                 ]);
 
