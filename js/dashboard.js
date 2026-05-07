@@ -1,30 +1,34 @@
 /* ================================================
    js/dashboard.js
    Lógica del Dashboard y Métodos de Pago
+   Solo localStorage — sin Supabase
    ================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. VARIABLES Y ESTADO INICIAL
+
+    // ── 1. USUARIO Y CLAVES ──────────────────────────────────
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
     const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const STORAGE_KEY = 'metodosPago' + sufijoUsuario; // Misma clave que en proximos-pagos
+
+    // Clave unificada — usada también en gastos-fijos y gastos-rapidos
+    const STORAGE_KEY = 'metodosPago' + sufijoUsuario;
 
     let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-    // 2. UTILIDADES
+    // ── 2. FORMATO DE MONEDA ─────────────────────────────────
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('es-CO', {
-            style: 'currency', 
-            currency: 'COP', 
+            style: 'currency',
+            currency: 'COP',
             maximumFractionDigits: 0
         }).format(value);
     };
 
-    // 3. RENDERIZADO DEL DASHBOARD
+    // ── 3. RENDERIZAR DASHBOARD ──────────────────────────────
     const renderDashboard = () => {
         const listContainer = document.getElementById('methodsList');
-        const totalDisplay = document.getElementById('totalBalance');
-        
+        const totalDisplay  = document.getElementById('totalBalance');
+
         if (!listContainer || !totalDisplay) return;
 
         listContainer.innerHTML = '';
@@ -40,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>${formatCurrency(method.amount)}</p>
                 </div>
                 <div class="method-actions">
-                    <button class="btn-edit" onclick="handleEdit(${index})">Editar</button>
+                    <button class="btn-edit"   onclick="handleEdit(${index})">Editar</button>
                     <button class="btn-delete" onclick="handleDelete(${index})">Eliminar</button>
                 </div>
             `;
@@ -48,10 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         totalDisplay.innerText = formatCurrency(currentTotal);
+
+        // Guardar siempre que se re-renderiza
         localStorage.setItem(STORAGE_KEY, JSON.stringify(paymentMethods));
     };
 
-    // 4. FUNCIONES GLOBALES (Editar y Eliminar)
+    // ── 4. EDITAR Y ELIMINAR (globales para onclick inline) ──
     window.handleDelete = (index) => {
         if (confirm(`¿Deseas eliminar "${paymentMethods[index].name}"?`)) {
             paymentMethods.splice(index, 1);
@@ -60,19 +66,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.handleEdit = (index) => {
-        const newAmount = prompt(`Nuevo saldo para ${paymentMethods[index].name}:`, paymentMethods[index].amount);
-        if (newAmount !== null && !isNaN(newAmount) && newAmount.trim() !== "") {
+        const newAmount = prompt(
+            `Nuevo saldo para ${paymentMethods[index].name}:`,
+            paymentMethods[index].amount
+        );
+        if (newAmount !== null && !isNaN(newAmount) && newAmount.trim() !== '') {
             paymentMethods[index].amount = parseFloat(newAmount);
             renderDashboard();
         }
     };
 
-    // 5. LÓGICA DEL MODAL Y GUARDADO EN SUPABASE
-    const modal = document.getElementById('addMethodModal');
+    // ── 5. MODAL AGREGAR MÉTODO ──────────────────────────────
+    const modal    = document.getElementById('addMethodModal');
     const errorMsg = document.getElementById('errorMessage');
-    const openBtn = document.getElementById('openAddModal');
+    const openBtn  = document.getElementById('openAddModal');
     const closeBtn = document.getElementById('closeModal');
-    const addForm = document.getElementById('addMethodForm');
+    const addForm  = document.getElementById('addMethodForm');
 
     if (openBtn) {
         openBtn.onclick = () => {
@@ -81,51 +90,36 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    if (closeBtn) closeBtn.onclick = () => modal.classList.add('hidden');
+    if (closeBtn) {
+        closeBtn.onclick = () => modal.classList.add('hidden');
+    }
 
     if (addForm) {
-        // Le agregamos 'async' para poder comunicarnos con Supabase
-        addForm.onsubmit = async (e) => {
+        addForm.onsubmit = (e) => {
             e.preventDefault();
-            const nameInput = document.getElementById('newMethodName').value.trim();
+
+            const nameInput   = document.getElementById('newMethodName').value.trim();
             const amountInput = parseFloat(document.getElementById('newMethodAmount').value);
-            
-            const exists = paymentMethods.some(m => m.name.toLowerCase() === nameInput.toLowerCase());
+
+            // Validar nombre duplicado
+            const exists = paymentMethods.some(
+                m => m.name.toLowerCase() === nameInput.toLowerCase()
+            );
 
             if (exists) {
                 errorMsg.classList.remove('hidden');
                 return;
             }
 
-            // --- 🚀 INICIO CÓDIGO SUPABASE ---
-            // Obtenemos el email del usuario logueado
-            const emailGuardar = usuarioActual ? usuarioActual.email : 'sin_correo@test.com';
-
-            const { data, error } = await db
-                .from('metodos_pago')
-                .insert([
-                    { 
-                        usuario_email: emailGuardar, 
-                        nombre_metodo: nameInput, 
-                        saldo_metodo: amountInput 
-                    }
-                ]);
-
-            if (error) {
-                console.error("Error guardando en Supabase:", error);
-                alert("Hubo un error al guardar en la nube. Revisa la consola para más detalles.");
-                return; // Detenemos la función si hubo error
-            }
-            // --- 🚀 FIN CÓDIGO SUPABASE ---
-
-            // Si todo salió bien en la nube, actualizamos la vista localmente
+            // Guardar solo en localStorage
             paymentMethods.push({ name: nameInput, amount: amountInput });
             renderDashboard();
+
             modal.classList.add('hidden');
             e.target.reset();
         };
     }
 
-    // Inicializar la vista al cargar la página
+    // ── 6. INICIALIZAR ───────────────────────────────────────
     renderDashboard();
 });
