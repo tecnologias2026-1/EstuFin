@@ -21,7 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- LÓGICA DE MOVIMIENTOS CON SUPABASE ---
 document.addEventListener('DOMContentLoaded', () => {
-    const paymentSelect = document.getElementById('payment-method');
+    const paymentSelect = document.getElementById('metodo_pago'); // ✅ Línea corregida
+    // ...
+
     const incomeBtn = document.querySelector('.income');
     const expenseBtn = document.querySelector('.expense');
     const submitBtn = document.querySelector('.submit-btn');
