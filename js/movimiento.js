@@ -1,15 +1,12 @@
 /* ================================================
-   js/movimiento.js
-   Registrar Movimiento — solo localStorage
+   js/movimiento.js — keys por usuario
    ================================================ */
 
 // --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('sidebarToggle');
-
     function isMobile() { return window.innerWidth <= 900; }
-
     if (sidebar && menuBtn) {
         menuBtn.addEventListener('click', () => {
             if (isMobile()) sidebar.classList.toggle('active');
@@ -23,16 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- LÓGICA DE MOVIMIENTOS ---
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Usuario y claves ──────────────────────────────────────
-    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const STORAGE_KEY_METODOS = 'metodosPago' + sufijoUsuario;
-    const STORAGE_KEY_MOV     = 'transacciones'; // clave global de transacciones
+    // ── Usuario y claves por usuario ──────────────────────────
+    const usuarioActual       = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    const sufijoUsuario       = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+    const STORAGE_KEY_METODOS = 'metodosPago'   + sufijoUsuario;
+    const KEY_TRANSACCIONES   = 'transacciones' + sufijoUsuario;
 
-    // ── Referencias DOM ───────────────────────────────────────
     const paymentSelect = document.getElementById('metodo_pago');
     const incomeBtn     = document.querySelector('.income');
     const expenseBtn    = document.querySelector('.expense');
@@ -41,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentType = 'income';
 
-    // ── 1. Cargar métodos de pago ─────────────────────────────
+    // ── Cargar métodos de pago ────────────────────────────────
     function loadPaymentMethods() {
         if (!usuarioActual) {
             paymentSelect.innerHTML = '<option value="">Inicia sesión primero</option>';
@@ -50,16 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const metodos = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
-
         paymentSelect.innerHTML = '<option value="">Selecciona un método</option>';
 
         if (metodos.length > 0) {
             metodos.forEach((metodo, index) => {
                 const option = document.createElement('option');
-                option.value             = index;
-                option.dataset.saldo     = metodo.amount;
-                option.dataset.nombre    = metodo.name;
-                option.textContent       = `${metodo.name} (Saldo: $${Number(metodo.amount).toLocaleString('es-CO')})`;
+                option.value          = index;
+                option.dataset.saldo  = metodo.amount;
+                option.dataset.nombre = metodo.name;
+                option.textContent    = `${metodo.name} (Saldo: $${Number(metodo.amount).toLocaleString('es-CO')})`;
                 paymentSelect.appendChild(option);
             });
             paymentSelect.disabled = false;
@@ -71,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadPaymentMethods();
 
-    // ── 2. Botones Ingreso / Gasto ────────────────────────────
+    // ── Botones Ingreso / Gasto ───────────────────────────────
     incomeBtn.addEventListener('click',  () => { currentType = 'income';  updateUI(); });
     expenseBtn.addEventListener('click', () => { currentType = 'expense'; updateUI(); });
 
@@ -81,24 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = currentType === 'income' ? 'Registrar Ingreso' : 'Registrar Gasto';
         submitBtn.className   = `submit-btn ${currentType === 'income' ? 'income-btn' : 'expense-btn'}`;
     }
-
-    // Activar estado inicial
     updateUI();
 
-    // ── 3. Cancelar ───────────────────────────────────────────
     if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => {
-            window.location.href = 'dashboard.html';
-        });
+        cancelBtn.addEventListener('click', () => window.location.href = 'dashboard.html');
     }
 
-    // ── 4. Registrar movimiento ───────────────────────────────
+    // ── Registrar movimiento ──────────────────────────────────
     submitBtn.addEventListener('click', () => {
-
-        const amountValue   = parseFloat(document.getElementById('amount').value);
-        const methodIndex   = paymentSelect.value;
-        const date          = document.getElementById('date').value;
-        const description   = document.getElementById('description').value.trim();
+        const amountValue = parseFloat(document.getElementById('amount').value);
+        const methodIndex = paymentSelect.value;
+        const date        = document.getElementById('date').value;
+        const description = document.getElementById('description').value.trim();
 
         if (!amountValue || amountValue <= 0 || methodIndex === '' || !date || !description) {
             alert('Por favor, completa todos los campos correctamente.');
@@ -109,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentSaldo   = parseFloat(selectedOption.dataset.saldo);
         const methodName     = selectedOption.dataset.nombre;
 
-        // Validar fondos suficientes en gastos
         if (currentType === 'expense' && amountValue > currentSaldo) {
             alert(`¡Fondos insuficientes en ${methodName}!\nTu saldo actual es $${currentSaldo.toLocaleString('es-CO')}.`);
             return;
@@ -120,12 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const nuevoSaldo = currentType === 'income'
             ? currentSaldo + amountValue
             : currentSaldo - amountValue;
-
         metodos[parseInt(methodIndex)].amount = nuevoSaldo;
         localStorage.setItem(STORAGE_KEY_METODOS, JSON.stringify(metodos));
 
-        // B. Guardar transacción en el historial
-        const transacciones = JSON.parse(localStorage.getItem(STORAGE_KEY_MOV)) || [];
+        // B. Guardar transacción con key por usuario
+        const transacciones = JSON.parse(localStorage.getItem(KEY_TRANSACCIONES)) || [];
         transacciones.push({
             id:          Date.now(),
             type:        currentType,
@@ -135,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             description: description,
             categoria:   'General'
         });
-        localStorage.setItem(STORAGE_KEY_MOV, JSON.stringify(transacciones));
+        localStorage.setItem(KEY_TRANSACCIONES, JSON.stringify(transacciones));
 
         alert('¡Movimiento registrado con éxito!');
         window.location.href = 'dashboard.html';

@@ -1,6 +1,5 @@
 /* ================================================
-   js/gastos-rapidos.js
-   Solo localStorage — descuenta saldo al registrar
+   js/gastos-rapidos.js — keys por usuario
    ================================================ */
 
 // --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
@@ -23,10 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Usuario y claves ──────────────────────────────────────
-    const usuarioActual   = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario   = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const STORAGE_KEY_METODOS = 'metodosPago' + sufijoUsuario;
+    // ── Usuario y claves por usuario ──────────────────────────
+    const usuarioActual       = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    const sufijoUsuario       = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+    const STORAGE_KEY_METODOS = 'metodosPago'    + sufijoUsuario;
+    const KEY_RAPIDOS         = 'gastosRapidos'  + sufijoUsuario;
+    const KEY_TRANSACCIONES   = 'transacciones'  + sufijoUsuario;
 
     const modal               = document.getElementById('fixed-expense-modal');
     const closeBtn            = document.querySelector('.modal-close');
@@ -38,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let editingId = null;
 
-    // ── Cargar métodos de pago en el select ───────────────────
     function loadPaymentMethods() {
         expenseMethodSelect.innerHTML = '<option value="">Selecciona un método</option>';
         const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
@@ -53,10 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadPaymentMethods();
 
-    // ── Abrir / cerrar modal ──────────────────────────────────
     const btnTop   = document.getElementById('add-fixed-expense-top');
     const btnEmpty = document.getElementById('add-fixed-expense');
-
     if (btnTop)   btnTop.addEventListener('click',   () => { loadPaymentMethods(); modal.classList.add('active'); });
     if (btnEmpty) btnEmpty.addEventListener('click', () => { loadPaymentMethods(); modal.classList.add('active'); });
 
@@ -66,19 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modal) { modal.classList.remove('active'); form.reset(); editingId = null; }
     });
 
-    // ── Actualizar total en la barra azul ────────────────────
     function updateTotal() {
         const totalEl = document.getElementById('total-amount');
         if (!totalEl) return;
-        // Suma todos los gastos rápidos guardados (no los registrados, sino los configurados)
-        const gastos = JSON.parse(localStorage.getItem('gastosRapidos')) || [];
+        const gastos = JSON.parse(localStorage.getItem(KEY_RAPIDOS)) || [];
         const total  = gastos.reduce((sum, g) => sum + (g.amount || 0), 0);
         totalEl.textContent = '$' + total.toLocaleString('es-CO');
     }
 
-    // ── Renderizar tarjetas ───────────────────────────────────
     function renderList() {
-        const expenses = JSON.parse(localStorage.getItem('gastosRapidos')) || [];
+        const expenses = JSON.parse(localStorage.getItem(KEY_RAPIDOS)) || [];
         list.innerHTML = '';
 
         if (expenses.length === 0) {
@@ -120,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             list.appendChild(card);
 
-            // ── REGISTRAR: descuenta saldo y guarda transacción ──
+            // REGISTRAR: descuenta saldo y guarda transacción
             card.querySelector('.quick-expense-card-btn').addEventListener('click', () => {
                 const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
                 const idx     = parseInt(expense.methodIndex);
@@ -130,18 +125,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('El método de pago ya no existe. Edita el gasto y elige otro.');
                     return;
                 }
-
                 if (expense.amount > method.amount) {
                     alert(`¡Fondos insuficientes en ${method.name}!\nSaldo actual: $${method.amount.toLocaleString('es-CO')}`);
                     return;
                 }
 
-                // 1. Descontar saldo del método de pago
                 methods[idx].amount -= expense.amount;
                 localStorage.setItem(STORAGE_KEY_METODOS, JSON.stringify(methods));
 
-                // 2. Guardar transacción en el historial
-                const transactions = JSON.parse(localStorage.getItem('transacciones')) || [];
+                const transactions = JSON.parse(localStorage.getItem(KEY_TRANSACCIONES)) || [];
                 transactions.push({
                     id:          Date.now(),
                     type:        'expense',
@@ -151,24 +143,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: expense.name,
                     categoria:   expense.category || 'General'
                 });
-                localStorage.setItem('transacciones', JSON.stringify(transactions));
+                localStorage.setItem(KEY_TRANSACCIONES, JSON.stringify(transactions));
 
                 alert(`✅ $${expense.amount.toLocaleString('es-CO')} descontado de ${method.name}.\nNuevo saldo: $${methods[idx].amount.toLocaleString('es-CO')}`);
             });
 
-            // ── ELIMINAR ──────────────────────────────────────────
+            // ELIMINAR
             card.querySelector('.quick-expense-delete-btn').addEventListener('click', (e) => {
                 const id = parseInt(e.currentTarget.dataset.id);
-                let gastos = JSON.parse(localStorage.getItem('gastosRapidos')) || [];
+                let gastos = JSON.parse(localStorage.getItem(KEY_RAPIDOS)) || [];
                 gastos = gastos.filter(ex => ex.id !== id);
-                localStorage.setItem('gastosRapidos', JSON.stringify(gastos));
+                localStorage.setItem(KEY_RAPIDOS, JSON.stringify(gastos));
                 renderList();
             });
 
-            // ── EDITAR ────────────────────────────────────────────
+            // EDITAR
             card.querySelector('.quick-expense-edit-btn').addEventListener('click', (e) => {
                 const id     = parseInt(e.currentTarget.dataset.id);
-                const gastos = JSON.parse(localStorage.getItem('gastosRapidos')) || [];
+                const gastos = JSON.parse(localStorage.getItem(KEY_RAPIDOS)) || [];
                 const gasto  = gastos.find(g => g.id === id);
                 if (gasto) {
                     document.getElementById('expense-name').value   = gasto.name;
@@ -185,10 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── Guardar / editar gasto rápido ─────────────────────────
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-
         const name        = document.getElementById('expense-name').value.trim();
         const amount      = parseFloat(document.getElementById('expense-amount').value);
         const methodIndex = expenseMethodSelect.value;
@@ -200,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let gastosRapidos = JSON.parse(localStorage.getItem('gastosRapidos')) || [];
+        let gastosRapidos = JSON.parse(localStorage.getItem(KEY_RAPIDOS)) || [];
 
         if (editingId) {
             gastosRapidos = gastosRapidos.map(g =>
@@ -214,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        localStorage.setItem('gastosRapidos', JSON.stringify(gastosRapidos));
+        localStorage.setItem(KEY_RAPIDOS, JSON.stringify(gastosRapidos));
         modal.classList.remove('active');
         form.reset();
         renderList();

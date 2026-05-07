@@ -1,26 +1,25 @@
 /* ================================================
-   js/gastos-fijos.js
-   Solo localStorage — key unificada metodosPago
+   js/gastos-fijos.js — keys por usuario
    ================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Usuario y clave unificada de métodos ──────────────────
-    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const STORAGE_KEY_METODOS = 'metodosPago' + sufijoUsuario;
+    // ── Usuario y claves por usuario ──────────────────────────
+    const usuarioActual       = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    const sufijoUsuario       = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+    const STORAGE_KEY_METODOS = 'metodosPago'  + sufijoUsuario;
+    const KEY_FIJOS           = 'gastosFijos'  + sufijoUsuario;
 
-    const modal              = document.getElementById('fixed-expense-modal');
-    const closeBtn           = document.querySelector('.modal-close');
-    const cancelBtn          = document.getElementById('modal-cancel');
-    const form               = document.getElementById('fixed-expense-form');
+    const modal               = document.getElementById('fixed-expense-modal');
+    const closeBtn            = document.querySelector('.modal-close');
+    const cancelBtn           = document.getElementById('modal-cancel');
+    const form                = document.getElementById('fixed-expense-form');
     const expenseMethodSelect = document.getElementById('expense-method');
-    const emptyState         = document.getElementById('empty-state');
-    const list               = document.getElementById('fixed-expenses-list');
-    const totalCard          = document.getElementById('total-card');
-    const totalAmountEl      = document.getElementById('total-amount');
+    const emptyState          = document.getElementById('empty-state');
+    const list                = document.getElementById('fixed-expenses-list');
+    const totalCard           = document.getElementById('total-card');
+    const totalAmountEl       = document.getElementById('total-amount');
 
-    // ── Cargar métodos de pago en el select ───────────────────
     function loadPaymentMethods() {
         expenseMethodSelect.innerHTML = '<option value="">Selecciona un método</option>';
         const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
@@ -35,23 +34,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadPaymentMethods();
 
-    // ── Abrir modal ───────────────────────────────────────────
     const btnTop   = document.getElementById('add-fixed-expense-top');
     const btnEmpty = document.getElementById('add-fixed-expense');
-
     if (btnTop)   btnTop.addEventListener('click',   () => { loadPaymentMethods(); modal.classList.add('active'); });
     if (btnEmpty) btnEmpty.addEventListener('click', () => { loadPaymentMethods(); modal.classList.add('active'); });
 
-    // ── Cerrar modal ──────────────────────────────────────────
     closeBtn.addEventListener('click',  () => { modal.classList.remove('active'); form.reset(); });
     cancelBtn.addEventListener('click', () => { modal.classList.remove('active'); form.reset(); });
     modal.addEventListener('click', (e) => {
         if (e.target === modal) { modal.classList.remove('active'); form.reset(); }
     });
 
-    // ── Renderizar lista de gastos fijos ──────────────────────
     function renderList() {
-        const expenses = JSON.parse(localStorage.getItem('gastosFijos')) || [];
+        const expenses = JSON.parse(localStorage.getItem(KEY_FIJOS)) || [];
         list.innerHTML = '';
 
         if (expenses.length === 0) {
@@ -89,22 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
             list.appendChild(card);
         });
 
-        // Botones eliminar
         list.querySelectorAll('.btn-delete').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = parseInt(btn.dataset.id);
-                let expenses = JSON.parse(localStorage.getItem('gastosFijos')) || [];
+                let expenses = JSON.parse(localStorage.getItem(KEY_FIJOS)) || [];
                 expenses = expenses.filter(e => e.id !== id);
-                localStorage.setItem('gastosFijos', JSON.stringify(expenses));
+                localStorage.setItem(KEY_FIJOS, JSON.stringify(expenses));
                 renderList();
             });
         });
     }
 
-    // ── Guardar gasto fijo ────────────────────────────────────
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-
         const name        = document.getElementById('expense-name').value.trim();
         const amount      = parseFloat(document.getElementById('expense-amount').value);
         const methodIndex = expenseMethodSelect.value;
@@ -114,15 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const fixedExpenses = JSON.parse(localStorage.getItem('gastosFijos')) || [];
+        const fixedExpenses = JSON.parse(localStorage.getItem(KEY_FIJOS)) || [];
         fixedExpenses.push({
-            id:          Date.now(),
-            name,
-            amount,
-            methodIndex,
-            createdAt:   new Date().toISOString()
+            id: Date.now(), name, amount, methodIndex,
+            createdAt: new Date().toISOString()
         });
-        localStorage.setItem('gastosFijos', JSON.stringify(fixedExpenses));
+        localStorage.setItem(KEY_FIJOS, JSON.stringify(fixedExpenses));
 
         modal.classList.remove('active');
         form.reset();

@@ -1,59 +1,58 @@
+/* ================================================
+   js/mis-metas.js — keys por usuario
+   ================================================ */
+
 // --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('sidebarToggle');
-    function isMobile() {
-        return window.innerWidth <= 900;
-    }
+    function isMobile() { return window.innerWidth <= 900; }
     if (sidebar && menuBtn) {
         menuBtn.addEventListener('click', (e) => {
-            if (isMobile()) {
-                sidebar.classList.toggle('active');
-            }
+            if (isMobile()) sidebar.classList.toggle('active');
         });
         document.addEventListener('click', (e) => {
-            if (isMobile() && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuBtn) {
+            if (isMobile() && sidebar.classList.contains('active') &&
+                !sidebar.contains(e.target) && e.target !== menuBtn) {
                 sidebar.classList.remove('active');
             }
         });
     }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Referencias DOM ──────────────────────────────────────
-    const btnNuevaMeta      = document.getElementById('btnNuevaMeta');
-    const btnCrearPrimera   = document.getElementById('btnCrearPrimera');
-    const formInline        = document.getElementById('formInlineMeta');
-    const btnCancelar       = document.getElementById('cancelInlineMeta');
-    const btnGuardar        = document.getElementById('guardarInlineMeta');
-    const fabMetas          = document.getElementById('fabMetas');
+    // ── Usuario y clave por usuario ───────────────────────────
+    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+    const KEY_METAS     = 'misMetas' + sufijoUsuario;
 
-    const inputNombre       = document.getElementById('metaNombre');
-    const inputMonto        = document.getElementById('metaMonto');
-    const inputDias         = document.getElementById('metaDias');
+    const btnNuevaMeta    = document.getElementById('btnNuevaMeta');
+    const btnCrearPrimera = document.getElementById('btnCrearPrimera');
+    const formInline      = document.getElementById('formInlineMeta');
+    const btnCancelar     = document.getElementById('cancelInlineMeta');
+    const btnGuardar      = document.getElementById('guardarInlineMeta');
+    const fabMetas        = document.getElementById('fabMetas');
+    const inputNombre     = document.getElementById('metaNombre');
+    const inputMonto      = document.getElementById('metaMonto');
+    const inputDias       = document.getElementById('metaDias');
+    const emptyMetas      = document.getElementById('emptyMetas');
+    const listaMetas      = document.getElementById('listaMetas');
 
-    const emptyMetas        = document.getElementById('emptyMetas');
-    const listaMetas        = document.getElementById('listaMetas');
-
-    // ── Abrir formulario ─────────────────────────────────────
     function abrirForm() {
         formInline.classList.remove('hidden');
         inputNombre.focus();
     }
 
-    // ── Eventos de apertura ──────────────────────────────────
     btnNuevaMeta.addEventListener('click', abrirForm);
     btnCrearPrimera.addEventListener('click', abrirForm);
-    // El FAB en móvil ahora también abre el formulario
-    fabMetas.addEventListener('click', abrirForm); 
+    fabMetas.addEventListener('click', abrirForm);
 
-    // ── Cancelar formulario ──────────────────────────────────
     btnCancelar.addEventListener('click', () => {
         formInline.classList.add('hidden');
         limpiarForm();
     });
 
-    // ── Guardar nueva meta ───────────────────────────────────
     btnGuardar.addEventListener('click', () => {
         const nombre = inputNombre.value.trim();
         const monto  = parseFloat(inputMonto.value);
@@ -64,28 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const nuevaMeta = {
-            id:        Date.now(),
-            nombre,
-            monto,
-            dias,
-            ahorrado:  0
-        };
-
         const metas = getMetas();
-        metas.push(nuevaMeta);
+        metas.push({ id: Date.now(), nombre, monto, dias, ahorrado: 0 });
         saveMetas(metas);
-
         formInline.classList.add('hidden');
         limpiarForm();
         renderMetas();
     });
 
-    // ── Render de todas las metas ────────────────────────────
     function renderMetas() {
         const metas = getMetas();
         listaMetas.innerHTML = '';
-
         if (metas.length === 0) {
             emptyMetas.classList.remove('hidden');
         } else {
@@ -94,31 +82,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ── Crear tarjeta de meta ────────────────────────────────
     function crearTarjetaMeta(meta) {
-        const porcentaje = Math.min(100, Math.round((meta.ahorrado / meta.monto) * 100));
-        const falta      = Math.max(0, meta.monto - meta.ahorrado);
+        const porcentaje   = Math.min(100, Math.round((meta.ahorrado / meta.monto) * 100));
+        const falta        = Math.max(0, meta.monto - meta.ahorrado);
         const ahorroDiario = Math.ceil(falta / meta.dias);
 
         const card = document.createElement('div');
         card.classList.add('meta-card');
         card.dataset.id = meta.id;
-
         card.innerHTML = `
             <div class="meta-card-header">
                 <p class="meta-nombre">${meta.nombre}</p>
                 <button class="btn-eliminar-meta" title="Eliminar meta">🗑</button>
             </div>
             <p class="meta-monto-total">$${meta.monto.toLocaleString('es-CO')}</p>
-
             <div class="meta-progreso-label">
-                <span>Progreso</span>
-                <span>${porcentaje}%</span>
+                <span>Progreso</span><span>${porcentaje}%</span>
             </div>
             <div class="meta-progreso-bar">
                 <div class="meta-progreso-fill" style="width: ${porcentaje}%"></div>
             </div>
-
             <div class="meta-stats">
                 <div class="meta-stat-box">
                     <span class="meta-stat-label">Ahorrado</span>
@@ -129,31 +112,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="meta-stat-valor">$${falta.toLocaleString('es-CO')}</span>
                 </div>
             </div>
-
             <div class="meta-ahorro-diario">
                 <span class="meta-ahorro-diario-label">Ahorro diario recomendado</span>
                 <span class="meta-ahorro-diario-valor">$${ahorroDiario.toLocaleString('es-CO')}/día</span>
             </div>
-
-            <button class="btn-agregar-ahorro">
-                📈 Agregar Ahorro
-            </button>
-
+            <button class="btn-agregar-ahorro">📈 Agregar Ahorro</button>
             <div class="ahorro-input-row hidden">
                 <input type="number" placeholder="Monto" min="0" class="input-ahorro">
                 <button class="btn-confirmar-ahorro" title="Confirmar">✓</button>
-                <button class="btn-cancelar-ahorro" title="Cancelar">✕</button>
+                <button class="btn-cancelar-ahorro"  title="Cancelar">✕</button>
             </div>
         `;
 
-        // Botón eliminar
         card.querySelector('.btn-eliminar-meta').addEventListener('click', () => {
-            if (confirm(`¿Eliminar la meta "${meta.nombre}"?`)) {
-                eliminarMeta(meta.id);
-            }
+            if (confirm(`¿Eliminar la meta "${meta.nombre}"?`)) eliminarMeta(meta.id);
         });
 
-        // Botón agregar ahorro → muestra input
         const btnAhorro    = card.querySelector('.btn-agregar-ahorro');
         const inputRow     = card.querySelector('.ahorro-input-row');
         const inputAhorro  = card.querySelector('.input-ahorro');
@@ -165,23 +139,16 @@ document.addEventListener('DOMContentLoaded', () => {
             inputRow.classList.remove('hidden');
             inputAhorro.focus();
         });
-
         btnCancelarA.addEventListener('click', () => {
             inputRow.classList.add('hidden');
             btnAhorro.classList.remove('hidden');
             inputAhorro.value = '';
         });
-
         btnConfirmar.addEventListener('click', () => {
             const valor = parseFloat(inputAhorro.value);
-            if (!valor || valor <= 0) {
-                alert('Ingresa un monto válido.');
-                return;
-            }
+            if (!valor || valor <= 0) { alert('Ingresa un monto válido.'); return; }
             agregarAhorro(meta.id, valor);
         });
-
-        // También confirmar con Enter
         inputAhorro.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') btnConfirmar.click();
         });
@@ -189,42 +156,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
-    // ── Agregar ahorro a una meta ────────────────────────────
     function agregarAhorro(id, valor) {
         const metas = getMetas();
         const index = metas.findIndex(m => m.id === id);
         if (index !== -1) {
-            metas[index].ahorrado = Math.min(
-                metas[index].monto,
-                metas[index].ahorrado + valor
-            );
+            metas[index].ahorrado = Math.min(metas[index].monto, metas[index].ahorrado + valor);
             saveMetas(metas);
             renderMetas();
         }
     }
 
-    // ── Eliminar meta ────────────────────────────────────────
     function eliminarMeta(id) {
-        const metas = getMetas().filter(m => m.id !== id);
-        saveMetas(metas);
+        saveMetas(getMetas().filter(m => m.id !== id));
         renderMetas();
     }
 
-    // ── localStorage helpers ─────────────────────────────────
-    function getMetas() {
-        return JSON.parse(localStorage.getItem('misMetas') || '[]');
-    }
+    function getMetas()        { return JSON.parse(localStorage.getItem(KEY_METAS) || '[]'); }
+    function saveMetas(metas)  { localStorage.setItem(KEY_METAS, JSON.stringify(metas)); }
+    function limpiarForm()     { inputNombre.value = ''; inputMonto.value = ''; inputDias.value = ''; }
 
-    function saveMetas(metas) {
-        localStorage.setItem('misMetas', JSON.stringify(metas));
-    }
-
-    function limpiarForm() {
-        inputNombre.value = '';
-        inputMonto.value  = '';
-        inputDias.value   = '';
-    }
-
-    // ── Inicializar ──────────────────────────────────────────
     renderMetas();
 });
