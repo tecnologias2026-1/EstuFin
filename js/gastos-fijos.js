@@ -19,6 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.addEventListener('DOMContentLoaded', () => {
+
+        // --- Lógica igual a gastos rápidos para métodos de pago por usuario ---
+        const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+        const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+        const STORAGE_KEY_METODOS = 'metodosPago' + sufijoUsuario;
+
         const modal = document.getElementById('fixed-expense-modal');
         const closeBtn = document.querySelector('.modal-close');
         const cancelBtn = document.getElementById('modal-cancel');
@@ -29,11 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalCard = document.getElementById('total-card');
         const totalAmountEl = document.getElementById('total-amount');
 
-
-        // Función para cargar métodos de pago en el select
         function loadPaymentMethods() {
             expenseMethodSelect.innerHTML = '<option value="">Selecciona un método</option>';
-            const methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
+            const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
             methods.forEach((method, index) => {
                 const option = document.createElement('option');
                 option.value = index;
@@ -60,11 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Abrir modal (botón header)
         document.getElementById('add-fixed-expense-top').addEventListener('click', () => {
+            loadPaymentMethods();
             modal.classList.add('active');
         });
 
         // Abrir modal (botón empty state)
         document.getElementById('add-fixed-expense').addEventListener('click', () => {
+            loadPaymentMethods();
             modal.classList.add('active');
         });
 
@@ -92,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const total = expenses.reduce((sum, e) => sum + e.amount, 0);
             totalAmountEl.textContent = '$' + total.toLocaleString('es-CO');
 
-            // Obtener métodos actualizados para mostrar el nombre correcto
-            const methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
+            // Obtener métodos actualizados para mostrar el nombre correcto (por usuario)
+            const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS) || '[]');
 
             expenses.forEach((expense) => {
                 let methodName = 'Sin método';
