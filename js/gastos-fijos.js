@@ -1,5 +1,7 @@
 // --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
 document.addEventListener('DOMContentLoaded', () => {
+    // BORRAR gastos fijos del localStorage al cargar la página (solo para pruebas)
+    localStorage.removeItem('gastosFijos');
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('sidebarToggle');
     function isMobile() {
