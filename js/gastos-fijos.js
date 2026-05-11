@@ -1,12 +1,5 @@
 // --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
 document.addEventListener('DOMContentLoaded', () => {
-    // BORRAR gastos fijos del localStorage al cargar la página (solo para pruebas)
-    localStorage.removeItem('gastosFijos');
-
-    // Obtener usuario actual y clave personalizada para métodos de pago
-    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const STORAGE_KEY_METODOS = 'metodosPago' + sufijoUsuario;
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('sidebarToggle');
     function isMobile() {
@@ -37,24 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalAmountEl = document.getElementById('total-amount');
 
 
-        // Función para cargar métodos de pago en el select SOLO los del usuario actual
+        // Función para cargar métodos de pago en el select
         function loadPaymentMethods() {
             expenseMethodSelect.innerHTML = '<option value="">Selecciona un método</option>';
-            const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS) || '[]');
-            const saveBtn = document.querySelector('.btn-save');
-            if (methods.length === 0) {
-                expenseMethodSelect.disabled = true;
-                if (saveBtn) saveBtn.disabled = true;
-            } else {
-                expenseMethodSelect.disabled = false;
-                if (saveBtn) saveBtn.disabled = false;
-                methods.forEach((method, index) => {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    option.textContent = method.name;
-                    expenseMethodSelect.appendChild(option);
-                });
-            }
+            const methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
+            methods.forEach((method, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = method.name;
+                expenseMethodSelect.appendChild(option);
+            });
             return methods;
         }
 
@@ -107,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const total = expenses.reduce((sum, e) => sum + e.amount, 0);
             totalAmountEl.textContent = '$' + total.toLocaleString('es-CO');
 
-            // Obtener métodos actualizados para mostrar el nombre correcto SOLO del usuario actual
-            const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS) || '[]');
+            // Obtener métodos actualizados para mostrar el nombre correcto
+            const methods = JSON.parse(localStorage.getItem('estuFinPaymentMethods') || '[]');
 
             expenses.forEach((expense) => {
                 let methodName = 'Sin método';
