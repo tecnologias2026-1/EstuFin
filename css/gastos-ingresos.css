@@ -1,3 +1,7 @@
+.transactions-list {
+    max-height: 350px;
+    overflow-y: auto;
+}
 /* ── Responsive Design ───────────────────────────────────── */
 @media (max-width: 900px) {
     .main-content {
@@ -325,14 +329,17 @@
 }
 
 .transaction-detail-amount {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 0.85rem 1rem;
     border-radius: 18px;
     background: #F8FAFC;
     font-size: 1.3rem;
     font-weight: 700;
+    text-align: center;
+    width: 100%;
 }
 
 .transaction-detail-amount.income {
