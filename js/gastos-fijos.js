@@ -41,12 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
         function loadPaymentMethods() {
             expenseMethodSelect.innerHTML = '<option value="">Selecciona un método</option>';
             const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS) || '[]');
-            methods.forEach((method, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = method.name;
-                expenseMethodSelect.appendChild(option);
-            });
+            const saveBtn = document.querySelector('.btn-save');
+            if (methods.length === 0) {
+                expenseMethodSelect.disabled = true;
+                if (saveBtn) saveBtn.disabled = true;
+            } else {
+                expenseMethodSelect.disabled = false;
+                if (saveBtn) saveBtn.disabled = false;
+                methods.forEach((method, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = method.name;
+                    expenseMethodSelect.appendChild(option);
+                });
+            }
             return methods;
         }
 
