@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuBtn = document.getElementById('sidebarToggle');
     function isMobile() { return window.innerWidth <= 900; }
     if (sidebar && menuBtn) {
-        menuBtn.addEventListener('click', (e) => {
+        menuBtn.addEventListener('click', () => {
             if (isMobile()) sidebar.classList.toggle('active');
         });
         document.addEventListener('click', (e) => {
@@ -16,68 +16,65 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
-    // ── Usuario y clave por usuario ───────────────────────────
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const KEY_TRANSACCIONES = 'transacciones' + sufijoUsuario;
+    if (!usuarioActual) return;
+    const userEmail = usuarioActual.email;
 
     const addButton = document.querySelector('.btn-primary-dash');
-    if (addButton) {
-        addButton.addEventListener('click', () => {
-            window.location.href = 'movimiento.html';
-        });
-    }
+    if (addButton) addButton.addEventListener('click', () => window.location.href = 'movimiento.html');
 
     const closeButton = document.querySelector('.details-close');
-    if (closeButton) {
-        closeButton.addEventListener('click', () => hideTransactionDetails());
-    }
+    if (closeButton) closeButton.addEventListener('click', () => hideTransactionDetails());
 
-    loadTransactions();
+    // ── Cargar movimientos desde backend ─────────────────────
+    async function loadTransactions() {
+        try {
+            const res = await fetch(`${API_BASE}/movimientos.php?email=${userEmail}`);
+            const transactions = await res.json();
 
-    function loadTransactions() {
-        const transactions = JSON.parse(localStorage.getItem(KEY_TRANSACCIONES) || '[]');
-        const transactionsList = document.getElementById('transactions-list');
-        const totalEl = document.getElementById('total-transactions');
+            const transactionsList = document.getElementById('transactions-list');
+            const totalEl = document.getElementById('total-transactions');
 
-        totalEl.textContent = `${transactions.length} total`;
+            totalEl.textContent = `${transactions.length} total`;
+            if (transactions.length === 0) return;
 
-        if (transactions.length === 0) return;
+            transactionsList.innerHTML = '';
 
-        transactionsList.innerHTML = '';
-
-        transactions.slice().reverse().forEach((transaction) => {
-            const item = document.createElement('div');
-            item.className = 'transaction-item';
-            item.innerHTML = `
-                <div class="transaction-info">
-                    <div class="transaction-icon ${transaction.type}">
-                        ${transaction.type === 'income' ? '+' : '-'}
+            transactions.forEach((t) => {
+                const item = document.createElement('div');
+                item.className = 'transaction-item';
+                item.innerHTML = `
+                    <div class="transaction-info">
+                        <div class="transaction-icon ${t.tipo === 'ingreso' ? 'income' : 'expense'}">
+                            ${t.tipo === 'ingreso' ? '+' : '-'}
+                        </div>
+                        <div class="transaction-details">
+                            <h4>${t.descripcion}</h4>
+                            <p>${t.metodo_pago} • ${new Date(t.fecha).toLocaleDateString('es-CO')}</p>
+                        </div>
                     </div>
-                    <div class="transaction-details">
-                        <h4>${transaction.description}</h4>
-                        <p>${transaction.method.nombre} • ${new Date(transaction.date).toLocaleDateString('es-CO')}</p>
+                    <div class="transaction-amount ${t.tipo === 'ingreso' ? 'income' : 'expense'}">
+                        ${t.tipo === 'ingreso' ? '+' : '-'}$${Number(t.monto).toLocaleString('es-CO')}
                     </div>
-                </div>
-                <div class="transaction-amount ${transaction.type === 'income' ? 'income' : 'expense'}">
-                    ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toLocaleString('es-CO')}
-                </div>
-            `;
-            item.addEventListener('click', () => {
-                document.querySelectorAll('.transaction-item').forEach(el => el.classList.remove('selected'));
-                item.classList.add('selected');
-                showTransactionDetails(transaction);
+                `;
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.transaction-item').forEach(el => el.classList.remove('selected'));
+                    item.classList.add('selected');
+                    showTransactionDetails(t);
+                });
+                transactionsList.appendChild(item);
             });
-            transactionsList.appendChild(item);
-        });
+        } catch (e) {
+            console.error('Error cargando movimientos:', e);
+        }
     }
 
-    function showTransactionDetails(transaction) {
+    function showTransactionDetails(t) {
         const detailsContainer = document.getElementById('transaction-details-content');
-        const typeLabel = transaction.type === 'income' ? 'Ingreso' : 'Gasto';
-        const formattedDate = new Date(transaction.date).toLocaleDateString('es-CO', {
+        const typeLabel = t.tipo === 'ingreso' ? 'Ingreso' : 'Gasto';
+        const formattedDate = new Date(t.fecha).toLocaleDateString('es-CO', {
             day: 'numeric', month: 'long', year: 'numeric'
         });
         detailsContainer.innerHTML = `
@@ -86,13 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="details-item"><h4>Tipo</h4><p>${typeLabel}</p></div>
                 <div class="details-item">
                     <h4>Monto</h4>
-                    <p class="transaction-detail-amount ${transaction.type}">
-                        ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toLocaleString('es-CO')}
+                    <p class="transaction-detail-amount ${t.tipo}">
+                        ${t.tipo === 'ingreso' ? '+' : '-'}$${Number(t.monto).toLocaleString('es-CO')}
                     </p>
                 </div>
                 <div class="details-item"><h4>Fecha</h4><p>${formattedDate}</p></div>
-                <div class="details-item"><h4>Método de Pago</h4><p>${transaction.method.nombre}</p></div>
-                <div class="details-item"><h4>Descripción</h4><p>${transaction.description}</p></div>
+                <div class="details-item"><h4>Método de Pago</h4><p>${t.metodo_pago}</p></div>
+                <div class="details-item"><h4>Descripción</h4><p>${t.descripcion}</p></div>
             </div>
         `;
         detailsContainer.querySelector('.details-close').addEventListener('click', () => hideTransactionDetails());
@@ -105,4 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         document.querySelectorAll('.transaction-item').forEach(el => el.classList.remove('selected'));
     }
+
+    await loadTransactions();
 });

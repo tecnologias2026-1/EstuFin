@@ -1,32 +1,13 @@
 /* ================================================
-   js/movimiento.js — keys por usuario
+   js/movimiento.js — conectado al backend PHP
    ================================================ */
 
-// --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
-document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('sidebarToggle');
-    function isMobile() { return window.innerWidth <= 900; }
-    if (sidebar && menuBtn) {
-        menuBtn.addEventListener('click', () => {
-            if (isMobile()) sidebar.classList.toggle('active');
-        });
-        document.addEventListener('click', (e) => {
-            if (isMobile() && sidebar.classList.contains('active') &&
-                !sidebar.contains(e.target) && e.target !== menuBtn) {
-                sidebar.classList.remove('active');
-            }
-        });
-    }
-});
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
-    // ── Usuario y claves por usuario ──────────────────────────
-    const usuarioActual       = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario       = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const STORAGE_KEY_METODOS = 'metodosPago'   + sufijoUsuario;
-    const KEY_TRANSACCIONES   = 'transacciones' + sufijoUsuario;
+    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    if (!usuarioActual) return;
+    const userEmail = usuarioActual.email;
 
     const paymentSelect = document.getElementById('metodo_pago');
     const incomeBtn     = document.querySelector('.income');
@@ -35,35 +16,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelBtn     = document.querySelector('.cancel-btn');
 
     let currentType = 'income';
+    let metodos = [];
 
-    // ── Cargar métodos de pago ────────────────────────────────
-    function loadPaymentMethods() {
-        if (!usuarioActual) {
-            paymentSelect.innerHTML = '<option value="">Inicia sesión primero</option>';
-            paymentSelect.disabled = true;
-            return;
-        }
+    // ── Cargar métodos de pago desde backend ─────────────────
+    async function cargarMetodos() {
+        try {
+            const res = await fetch(`${API_BASE}/metodos_pago.php?email=${userEmail}`);
+            metodos = await res.json();
 
-        const metodos = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
-        paymentSelect.innerHTML = '<option value="">Selecciona un método</option>';
+            paymentSelect.innerHTML = '<option value="">Selecciona un método</option>';
 
-        if (metodos.length > 0) {
-            metodos.forEach((metodo, index) => {
-                const option = document.createElement('option');
-                option.value          = index;
-                option.dataset.saldo  = metodo.amount;
-                option.dataset.nombre = metodo.name;
-                option.textContent    = `${metodo.name} (Saldo: $${Number(metodo.amount).toLocaleString('es-CO')})`;
-                paymentSelect.appendChild(option);
-            });
-            paymentSelect.disabled = false;
-        } else {
-            paymentSelect.innerHTML = '<option value="">No tienes métodos registrados</option>';
-            paymentSelect.disabled = true;
+            if (metodos.length > 0) {
+                metodos.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value          = m.id;
+                    option.dataset.saldo  = m.saldo;
+                    option.dataset.nombre = m.nombre_metodo;
+                    option.textContent    = `${m.nombre_metodo} (Saldo: $${Number(m.saldo).toLocaleString('es-CO')})`;
+                    paymentSelect.appendChild(option);
+                });
+                paymentSelect.disabled = false;
+            } else {
+                paymentSelect.innerHTML = '<option value="">No tienes métodos registrados</option>';
+                paymentSelect.disabled = true;
+            }
+        } catch (e) {
+            console.error('Error cargando métodos:', e);
         }
     }
 
-    loadPaymentMethods();
+    await cargarMetodos();
 
     // ── Botones Ingreso / Gasto ───────────────────────────────
     incomeBtn.addEventListener('click',  () => { currentType = 'income';  updateUI(); });
@@ -77,53 +59,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateUI();
 
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => window.location.href = 'dashboard.html');
-    }
+    if (cancelBtn) cancelBtn.addEventListener('click', () => window.location.href = 'dashboard.html');
 
     // ── Registrar movimiento ──────────────────────────────────
-    submitBtn.addEventListener('click', () => {
-        const amountValue = parseFloat(document.getElementById('amount').value);
-        const methodIndex = paymentSelect.value;
-        const date        = document.getElementById('date').value;
-        const description = document.getElementById('description').value.trim();
+    submitBtn.addEventListener('click', async () => {
+        const monto       = parseFloat(document.getElementById('amount').value);
+        const metodoPagoId = paymentSelect.value;
+        const fecha       = document.getElementById('date').value;
+        const descripcion = document.getElementById('description').value.trim();
 
-        if (!amountValue || amountValue <= 0 || methodIndex === '' || !date || !description) {
+        if (!monto || monto <= 0 || !metodoPagoId || !fecha || !descripcion) {
             alert('Por favor, completa todos los campos correctamente.');
             return;
         }
 
         const selectedOption = paymentSelect.options[paymentSelect.selectedIndex];
-        const currentSaldo   = parseFloat(selectedOption.dataset.saldo);
-        const methodName     = selectedOption.dataset.nombre;
+        const saldoActual    = parseFloat(selectedOption.dataset.saldo);
+        const nombreMetodo   = selectedOption.dataset.nombre;
 
-        if (currentType === 'expense' && amountValue > currentSaldo) {
-            alert(`¡Fondos insuficientes en ${methodName}!\nTu saldo actual es $${currentSaldo.toLocaleString('es-CO')}.`);
+        if (currentType === 'expense' && monto > saldoActual) {
+            alert(`¡Fondos insuficientes en ${nombreMetodo}!\nSaldo actual: $${saldoActual.toLocaleString('es-CO')}`);
             return;
         }
 
-        // A. Actualizar saldo del método de pago
-        const metodos    = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
-        const nuevoSaldo = currentType === 'income'
-            ? currentSaldo + amountValue
-            : currentSaldo - amountValue;
-        metodos[parseInt(methodIndex)].amount = nuevoSaldo;
-        localStorage.setItem(STORAGE_KEY_METODOS, JSON.stringify(metodos));
+        try {
+            // A. Guardar movimiento
+            await fetch(`${API_BASE}/movimientos.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    usuario_email: userEmail,
+                    tipo:          currentType === 'income' ? 'ingreso' : 'gasto',
+                    monto,
+                    categoria:     'General',
+                    fecha,
+                    metodo_pago:   nombreMetodo,
+                    descripcion
+                })
+            });
 
-        // B. Guardar transacción con key por usuario
-        const transacciones = JSON.parse(localStorage.getItem(KEY_TRANSACCIONES)) || [];
-        transacciones.push({
-            id:          Date.now(),
-            type:        currentType,
-            amount:      amountValue,
-            method:      { nombre: methodName },
-            date:        date,
-            description: description,
-            categoria:   'General'
-        });
-        localStorage.setItem(KEY_TRANSACCIONES, JSON.stringify(transacciones));
+            // B. Actualizar saldo del método de pago
+            const nuevoSaldo = currentType === 'income'
+                ? saldoActual + monto
+                : saldoActual - monto;
 
-        alert('¡Movimiento registrado con éxito!');
-        window.location.href = 'dashboard.html';
+            await fetch(`${API_BASE}/metodos_pago.php`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: parseInt(metodoPagoId), saldo: nuevoSaldo })
+            });
+
+            alert('¡Movimiento registrado con éxito!');
+            window.location.href = 'dashboard.html';
+
+        } catch (e) {
+            console.error('Error registrando movimiento:', e);
+            alert('Hubo un error al registrar el movimiento.');
+        }
     });
 });

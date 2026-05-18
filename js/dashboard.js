@@ -1,125 +1,134 @@
 /* ================================================
-   js/dashboard.js
-   Lógica del Dashboard y Métodos de Pago
-   Solo localStorage — sin Supabase
+   js/dashboard.js — conectado al backend PHP
    ================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+const API_BASE = 'http://localhost/back-estuFin/api';
 
-    // ── 1. USUARIO Y CLAVES ──────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+
+    // ── 1. USUARIO ───────────────────────────────────────────
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+    if (!usuarioActual) return;
 
-    // Clave unificada — usada también en gastos-fijos y gastos-rapidos
-    const STORAGE_KEY = 'metodosPago' + sufijoUsuario;
-
-    let paymentMethods = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const userEmail = usuarioActual.email;
 
     // ── 2. FORMATO DE MONEDA ─────────────────────────────────
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            maximumFractionDigits: 0
-        }).format(value);
-    };
+    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', {
+        style: 'currency', currency: 'COP', maximumFractionDigits: 0
+    }).format(value);
 
-    // ── 3. RENDERIZAR DASHBOARD ──────────────────────────────
+    // ── 3. CARGAR MÉTODOS DESDE EL BACKEND ──────────────────
+    let paymentMethods = [];
+
+    async function cargarMetodos() {
+        try {
+            const res = await fetch(`${API_BASE}/metodos_pago.php?email=${userEmail}`);
+            paymentMethods = await res.json();
+            // Guardar en localStorage como respaldo
+            localStorage.setItem('metodosPago_' + userEmail, JSON.stringify(
+                paymentMethods.map(m => ({ name: m.nombre_metodo, amount: m.saldo, id: m.id }))
+            ));
+            renderDashboard();
+        } catch (e) {
+            console.error('Error cargando métodos:', e);
+        }
+    }
+
+    // ── 4. RENDERIZAR ────────────────────────────────────────
     const renderDashboard = () => {
         const listContainer = document.getElementById('methodsList');
         const totalDisplay  = document.getElementById('totalBalance');
-
         if (!listContainer || !totalDisplay) return;
 
         listContainer.innerHTML = '';
         let currentTotal = 0;
 
-        paymentMethods.forEach((method, index) => {
-            currentTotal += method.amount;
+        paymentMethods.forEach((method) => {
+            currentTotal += parseFloat(method.saldo);
             const card = document.createElement('div');
             card.className = 'method-card';
             card.innerHTML = `
                 <div class="method-info">
-                    <h4>${method.name}</h4>
-                    <p>${formatCurrency(method.amount)}</p>
+                    <h4>${method.nombre_metodo}</h4>
+                    <p>${formatCurrency(method.saldo)}</p>
                 </div>
                 <div class="method-actions">
-                    <button class="btn-edit"   onclick="handleEdit(${index})">Editar</button>
-                    <button class="btn-delete" onclick="handleDelete(${index})">Eliminar</button>
+                    <button class="btn-edit"   onclick="handleEdit(${method.id}, ${method.saldo}, '${method.nombre_metodo}')">Editar</button>
+                    <button class="btn-delete" onclick="handleDelete(${method.id})">Eliminar</button>
                 </div>
             `;
             listContainer.appendChild(card);
         });
 
         totalDisplay.innerText = formatCurrency(currentTotal);
-
-        // Guardar siempre que se re-renderiza
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(paymentMethods));
     };
 
-    // ── 4. EDITAR Y ELIMINAR (globales para onclick inline) ──
-    window.handleDelete = (index) => {
-        if (confirm(`¿Deseas eliminar "${paymentMethods[index].name}"?`)) {
-            paymentMethods.splice(index, 1);
-            renderDashboard();
+    // ── 5. ELIMINAR ──────────────────────────────────────────
+    window.handleDelete = async (id) => {
+        if (!confirm('¿Deseas eliminar este método?')) return;
+        try {
+            await fetch(`${API_BASE}/metodos_pago.php?id=${id}`, { method: 'DELETE' });
+            await cargarMetodos();
+        } catch (e) {
+            console.error('Error eliminando:', e);
         }
     };
 
-    window.handleEdit = (index) => {
-        const newAmount = prompt(
-            `Nuevo saldo para ${paymentMethods[index].name}:`,
-            paymentMethods[index].amount
-        );
-        if (newAmount !== null && !isNaN(newAmount) && newAmount.trim() !== '') {
-            paymentMethods[index].amount = parseFloat(newAmount);
-            renderDashboard();
+    // ── 6. EDITAR ────────────────────────────────────────────
+    window.handleEdit = async (id, saldoActual, nombre) => {
+        const newAmount = prompt(`Nuevo saldo para ${nombre}:`, saldoActual);
+        if (newAmount === null || isNaN(newAmount) || newAmount.trim() === '') return;
+        try {
+            await fetch(`${API_BASE}/metodos_pago.php`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, saldo: parseFloat(newAmount) })
+            });
+            await cargarMetodos();
+        } catch (e) {
+            console.error('Error editando:', e);
         }
     };
 
-    // ── 5. MODAL AGREGAR MÉTODO ──────────────────────────────
+    // ── 7. AGREGAR MÉTODO ────────────────────────────────────
     const modal    = document.getElementById('addMethodModal');
     const errorMsg = document.getElementById('errorMessage');
     const openBtn  = document.getElementById('openAddModal');
     const closeBtn = document.getElementById('closeModal');
     const addForm  = document.getElementById('addMethodForm');
 
-    if (openBtn) {
-        openBtn.onclick = () => {
-            modal.classList.remove('hidden');
-            errorMsg.classList.add('hidden');
-        };
-    }
-
-    if (closeBtn) {
-        closeBtn.onclick = () => modal.classList.add('hidden');
-    }
+    if (openBtn) openBtn.onclick = () => {
+        modal.classList.remove('hidden');
+        errorMsg.classList.add('hidden');
+    };
+    if (closeBtn) closeBtn.onclick = () => modal.classList.add('hidden');
 
     if (addForm) {
-        addForm.onsubmit = (e) => {
+        addForm.onsubmit = async (e) => {
             e.preventDefault();
+            const nombre = document.getElementById('newMethodName').value.trim();
+            const saldo  = parseFloat(document.getElementById('newMethodAmount').value);
 
-            const nameInput   = document.getElementById('newMethodName').value.trim();
-            const amountInput = parseFloat(document.getElementById('newMethodAmount').value);
-
-            // Validar nombre duplicado
-            const exists = paymentMethods.some(
-                m => m.name.toLowerCase() === nameInput.toLowerCase()
+            const existe = paymentMethods.some(
+                m => m.nombre_metodo.toLowerCase() === nombre.toLowerCase()
             );
+            if (existe) { errorMsg.classList.remove('hidden'); return; }
 
-            if (exists) {
-                errorMsg.classList.remove('hidden');
-                return;
+            try {
+                await fetch(`${API_BASE}/metodos_pago.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario_email: userEmail, nombre_metodo: nombre, saldo })
+                });
+                modal.classList.add('hidden');
+                e.target.reset();
+                await cargarMetodos();
+            } catch (err) {
+                console.error('Error guardando:', err);
             }
-
-            // Guardar solo en localStorage
-            paymentMethods.push({ name: nameInput, amount: amountInput });
-            renderDashboard();
-
-            modal.classList.add('hidden');
-            e.target.reset();
         };
     }
 
-    // ── 6. INICIALIZAR ───────────────────────────────────────
-    renderDashboard();
+    // ── 8. INICIALIZAR ───────────────────────────────────────
+    await cargarMetodos();
 });
