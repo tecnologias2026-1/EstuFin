@@ -1,104 +1,123 @@
-document.addEventListener('DOMContentLoaded', () => {
+/* ================================================
+   js/proximos-pagos.js — Conectado al backend
+   ================================================ */
 
-    // ── 0. Identificar al usuario actual ──
-    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
+const API_PAGOS   = 'http://localhost:8080/back-estuFin/api/proximos_pagos.php';
+const API_METODOS = 'http://localhost:8080/back-estuFin/api/metodos_pago.php';
 
-    const KEY_METODOS = 'metodosPago' + sufijoUsuario;
-    const KEY_PAGOS   = 'pagosPendientes' + sufijoUsuario;
-    const KEY_NOTIF   = 'notificaciones' + sufijoUsuario;
+document.addEventListener('DOMContentLoaded', async () => {
 
-    // ── Referencias DOM ──
-    const btnAbrirForm = document.getElementById('btnAbrirForm'); // <-- ¡Faltaba esto!
-    const btnCancelar = document.getElementById('cancelInlinePago'); // <-- ¡Y esto!
-    const fabPago = document.getElementById('fabPago'); 
+    const usuarioActual  = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    const userEmail      = usuarioActual?.email || '';
 
-    const selectMetodo = document.getElementById('pagoMetodo');
-    const inputNombre = document.getElementById('pagoNombre');
-    const inputMonto = document.getElementById('pagoMonto');
-    const inputFecha = document.getElementById('pagoFecha');
-    const formInline = document.getElementById('formInlinePago');
+    // Referencias DOM
+    const btnAbrirForm    = document.getElementById('btnAbrirForm');
+    const btnCancelar     = document.getElementById('cancelInlinePago');
+    const btnGuardar      = document.getElementById('guardarInlinePago');
+    const fabPago         = document.getElementById('fabPago');
+    const formInline      = document.getElementById('formInlinePago');
+    const selectMetodo    = document.getElementById('pagoMetodo');
+    const inputNombre     = document.getElementById('pagoNombre');
+    const inputMonto      = document.getElementById('pagoMonto');
+    const inputFecha      = document.getElementById('pagoFecha');
     const listaPendientes = document.getElementById('listaPagosPendientes');
-    const emptyPagos = document.getElementById('emptyPagos');
-    const listaHistorial = document.getElementById('listaHistorial');
-    const emptyHistorial = document.getElementById('emptyHistorial');
+    const emptyPagos      = document.getElementById('emptyPagos');
+    const listaHistorial  = document.getElementById('listaHistorial');
+    const emptyHistorial  = document.getElementById('emptyHistorial');
 
-    // ── Lógica para Abrir y Cerrar el Formulario ──
+    // Menú móvil
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('sidebarToggle');
+    function isMobile() { return window.innerWidth <= 900; }
+    if (sidebar && menuBtn) {
+        menuBtn.addEventListener('click', () => {
+            if (isMobile()) sidebar.classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (isMobile() && sidebar.classList.contains('active') &&
+                !sidebar.contains(e.target) && e.target !== menuBtn) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+
+    // Abrir / cerrar formulario
     function abrirFormulario() {
         formInline.classList.remove('hidden');
         inputNombre.focus();
     }
 
     if (btnAbrirForm) btnAbrirForm.addEventListener('click', abrirFormulario);
-    if (fabPago) fabPago.addEventListener('click', abrirFormulario);
+    if (fabPago)      fabPago.addEventListener('click', abrirFormulario);
+    if (btnCancelar)  btnCancelar.addEventListener('click', () => {
+        formInline.classList.add('hidden');
+        limpiarForm();
+    });
 
-    if (btnCancelar) {
-        btnCancelar.addEventListener('click', () => {
-            formInline.classList.add('hidden');
-            limpiarForm();
-        });
+    // Cargar métodos de pago desde el backend
+    async function cargarMetodos() {
+        try {
+            const res     = await fetch(`${API_METODOS}?email=${encodeURIComponent(userEmail)}`);
+            const metodos = await res.json();
+            selectMetodo.innerHTML = '<option value="" disabled selected>Selecciona un método...</option>';
+            if (metodos.length === 0) {
+                const opt  = document.createElement('option');
+                opt.textContent = 'No hay métodos (regístralos en el Dashboard)';
+                opt.disabled = true;
+                selectMetodo.appendChild(opt);
+            } else {
+                metodos.forEach(m => {
+                    const opt   = document.createElement('option');
+                    opt.value   = m.nombre_metodo;
+                    opt.textContent = m.nombre_metodo;
+                    selectMetodo.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error('Error al cargar métodos:', err);
+        }
     }
 
-    // ── Cargar métodos de pago REALES del Dashboard ──
-    let methods = JSON.parse(localStorage.getItem(KEY_METODOS) || '[]');
-
-    // Limpiamos y llenamos el select
-    selectMetodo.innerHTML = '<option value="" disabled selected>Selecciona un método...</option>';
-
-    if (methods.length === 0) {
-        const option = document.createElement('option');
-        option.textContent = "No hay métodos (regístralos en el Dashboard)";
-        option.disabled = true;
-        selectMetodo.appendChild(option);
-    } else {
-        methods.forEach((method, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            option.textContent = method.name; // Usamos .name como en el dashboard
-            selectMetodo.appendChild(option);
-        });
-    }
-
-    // ── Guardar Pago ──
-    const btnGuardar = document.getElementById('guardarInlinePago');
+    // Guardar pago
     if (btnGuardar) {
-        btnGuardar.addEventListener('click', () => {
+        btnGuardar.addEventListener('click', async () => {
             const nombre = inputNombre.value.trim();
-            const monto = parseFloat(inputMonto.value);
-            const fecha = inputFecha.value;
-            const metodoIndex = selectMetodo.value;
+            const monto  = parseFloat(inputMonto.value);
+            const fecha  = inputFecha.value;
+            const metodo = selectMetodo.value;
 
-            if (!nombre || !monto || !fecha || metodoIndex === '') {
+            if (!nombre || !monto || !fecha || !metodo) {
                 alert('Por favor, completa todos los campos.');
                 return;
             }
 
-            const selectedMethod = methods[parseInt(metodoIndex)];
-            const nuevoPago = {
-                id: Date.now(),
-                descripcion: nombre,
-                monto,
-                fecha,
-                metodo: selectedMethod,
-                estado: 'pendiente'
-            };
-
-            const pagosPendientes = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
-            pagosPendientes.push(nuevoPago);
-            localStorage.setItem(KEY_PAGOS, JSON.stringify(pagosPendientes));
-
-            formInline.classList.add('hidden');
-            limpiarForm();
-            renderPagosPendientes();
-            if (typeof revisarNotificacionesPagos === 'function') {
-                revisarNotificacionesPagos(); 
+            try {
+                const res = await fetch(API_PAGOS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        usuario_email:    userEmail,
+                        nombre_pago:      nombre,
+                        monto:            monto,
+                        fecha_vencimiento: fecha,
+                        estado:           'pendiente',
+                        es_recurrente:    false,
+                        metodo_pago:      metodo
+                    })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                formInline.classList.add('hidden');
+                limpiarForm();
+                await renderTodo();
+            } catch (err) {
+                alert('Error al guardar pago: ' + err.message);
             }
         });
     }
 
-    // ── Renderizar Pagos Pendientes ──
-    function renderPagosPendientes() {
-        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
+    // Renderizar pagos pendientes
+    async function renderPagosPendientes(pagos) {
         const pendientes = pagos.filter(p => p.estado === 'pendiente');
         const items = listaPendientes.querySelectorAll('.pago-item');
         items.forEach(i => i.remove());
@@ -113,68 +132,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.dataset.id = pago.id;
                 item.innerHTML = `
                     <div class="pago-item-info">
-                        <span class="pago-nombre">${pago.descripcion}</span>
-                        <span class="pago-fecha">Vence: ${formatearFecha(pago.fecha)}</span>
+                        <span class="pago-nombre">${pago.nombre_pago}</span>
+                        <span class="pago-fecha">Vence: ${formatearFecha(pago.fecha_vencimiento)}</span>
                     </div>
                     <div class="pago-item-right">
-                        <span class="pago-monto">$${pago.monto.toLocaleString('es-CO')}</span>
-                        <button class="btn-pagar" data-id="${pago.id}">Marcar pagado</button>
+                        <span class="pago-monto">$${parseFloat(pago.monto).toLocaleString('es-CO')}</span>
+                        <button class="btn-pagar" data-id="${pago.id}" data-monto="${pago.monto}" data-metodo="${pago.metodo_pago}">
+                            Marcar pagado
+                        </button>
                     </div>
                 `;
                 listaPendientes.appendChild(item);
             });
-            
-            // Asignar evento al botón "Marcar pagado"
+
             listaPendientes.querySelectorAll('.btn-pagar').forEach(btn => {
-                btn.addEventListener('click', (e) => marcarPagado(parseInt(e.target.dataset.id)));
+                btn.addEventListener('click', () => marcarPagado(
+                    btn.dataset.id,
+                    parseFloat(btn.dataset.monto),
+                    btn.dataset.metodo
+                ));
             });
         }
     }
 
-// ── Marcar como Pagado, Restar Saldo y Renderizar Historial ──
-    function marcarPagado(id) {
-        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
-        const index = pagos.findIndex(p => p.id === id);
-        
-        if (index !== -1) {
-            const pagoRealizado = pagos[index];
+    // Marcar como pagado y descontar saldo del método
+    async function marcarPagado(id, monto, nombreMetodo) {
+        try {
+            // 1. Marcar el pago como pagado en el backend
+            await fetch(`${API_PAGOS}?action=pagar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
 
-            // 1. OBTENER LOS MÉTODOS DE PAGO DEL DASHBOARD
-            let methods = JSON.parse(localStorage.getItem(KEY_METODOS) || '[]');
-            
-            // 2. BUSCAR EL MÉTODO EXACTO QUE SE USÓ PARA ESTE PAGO
-            const indexMetodo = methods.findIndex(m => m.name === pagoRealizado.metodo.name);
+            // 2. Descontar saldo del método de pago en el backend
+            const resMetodos = await fetch(`${API_METODOS}?email=${encodeURIComponent(userEmail)}`);
+            const metodos    = await resMetodos.json();
+            const metodo     = metodos.find(m => m.nombre_metodo === nombreMetodo);
 
-            if (indexMetodo !== -1) {
-                // 3. RESTAR EL MONTO AL SALDO DEL DASHBOARD
-                methods[indexMetodo].amount -= pagoRealizado.monto;
-                
-                // (Opcional) Si no quieres que queden saldos negativos, puedes dejarlo en cero así:
-                // if (methods[indexMetodo].amount < 0) methods[indexMetodo].amount = 0;
-
-                // 4. GUARDAR EL NUEVO SALDO
-                localStorage.setItem(KEY_METODOS, JSON.stringify(methods));
-            } else {
-                alert("Atención: El método de pago original ya no existe en tu Dashboard, por lo que no se pudo descontar el saldo.");
+            if (metodo) {
+                await fetch(API_METODOS, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id:    metodo.id,
+                        saldo: Math.max(0, parseFloat(metodo.saldo) - monto)
+                    })
+                });
             }
 
-            // 5. MARCAR EL PAGO COMO COMPLETADO
-            pagoRealizado.estado = 'pagado';
-            localStorage.setItem(KEY_PAGOS, JSON.stringify(pagos));
-            
-            // 6. ACTUALIZAR LAS VISTAS
-            renderPagosPendientes();
-            renderHistorial();
-            if (typeof revisarNotificacionesPagos === 'function') {
-                revisarNotificacionesPagos();
-            }
+            await renderTodo();
+        } catch (err) {
+            alert('Error al marcar como pagado: ' + err.message);
         }
     }
 
-    function renderHistorial() {
-        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
+    // Renderizar historial
+    function renderHistorial(pagos) {
         const pagados = pagos.filter(p => p.estado === 'pagado');
-        const items = listaHistorial.querySelectorAll('.historial-item');
+        const items   = listaHistorial.querySelectorAll('.historial-item');
         items.forEach(i => i.remove());
 
         if (pagados.length === 0) {
@@ -185,19 +201,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const item = document.createElement('div');
                 item.classList.add('historial-item');
                 item.innerHTML = `
-                    <span class="h-nombre">${pago.descripcion}</span>
-                    <span class="h-monto">$${pago.monto.toLocaleString('es-CO')}</span>
+                    <span class="h-nombre">${pago.nombre_pago}</span>
+                    <span class="h-monto">$${parseFloat(pago.monto).toLocaleString('es-CO')}</span>
                 `;
                 listaHistorial.appendChild(item);
             });
         }
     }
 
-    // ── Helpers ──
+    // Cargar todo de una vez
+    async function renderTodo() {
+        try {
+            const res  = await fetch(`${API_PAGOS}?email=${encodeURIComponent(userEmail)}`);
+            const pagos = await res.json();
+            await renderPagosPendientes(pagos);
+            renderHistorial(pagos);
+        } catch (err) {
+            console.error('Error al cargar pagos:', err);
+        }
+    }
+
     function limpiarForm() {
-        inputNombre.value = ''; 
-        inputMonto.value = ''; 
-        inputFecha.value = '';
+        inputNombre.value = '';
+        inputMonto.value  = '';
+        inputFecha.value  = '';
         selectMetodo.selectedIndex = 0;
     }
 
@@ -208,6 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Inicializar
-    renderPagosPendientes();
-    renderHistorial();
+    await cargarMetodos();
+    await renderTodo();
 });

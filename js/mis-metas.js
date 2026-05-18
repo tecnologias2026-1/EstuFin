@@ -1,14 +1,16 @@
 /* ================================================
-   js/mis-metas.js — keys por usuario
+   js/mis-metas.js — Conectado al backend
    ================================================ */
 
-// --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
+const API_METAS = 'http://localhost:8080/back-estuFin/api/metas_financieras.php';
+
+// Menú móvil
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('sidebarToggle');
     function isMobile() { return window.innerWidth <= 900; }
     if (sidebar && menuBtn) {
-        menuBtn.addEventListener('click', (e) => {
+        menuBtn.addEventListener('click', () => {
             if (isMobile()) sidebar.classList.toggle('active');
         });
         document.addEventListener('click', (e) => {
@@ -22,10 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── Usuario y clave por usuario ───────────────────────────
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-    const KEY_METAS     = 'misMetas' + sufijoUsuario;
+    const userEmail     = usuarioActual?.email || '';
 
     const btnNuevaMeta    = document.getElementById('btnNuevaMeta');
     const btnCrearPrimera = document.getElementById('btnCrearPrimera');
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarForm();
     });
 
-    btnGuardar.addEventListener('click', () => {
+    btnGuardar.addEventListener('click', async () => {
         const nombre = inputNombre.value.trim();
         const monto  = parseFloat(inputMonto.value);
         const dias   = parseInt(inputDias.value);
@@ -63,39 +63,59 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const metas = getMetas();
-        metas.push({ id: Date.now(), nombre, monto, dias, ahorrado: 0 });
-        saveMetas(metas);
-        formInline.classList.add('hidden');
-        limpiarForm();
-        renderMetas();
+        try {
+            const res = await fetch(API_METAS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    usuario_email:  userEmail,
+                    nombre_meta:    nombre,
+                    monto_objetivo: monto,
+                    monto_ahorrado: 0,
+                    fecha_limite:   diasAFecha(dias)
+                })
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            formInline.classList.add('hidden');
+            limpiarForm();
+            await renderMetas();
+        } catch (err) {
+            alert('Error al crear meta: ' + err.message);
+        }
     });
 
-    function renderMetas() {
-        const metas = getMetas();
-        listaMetas.innerHTML = '';
-        if (metas.length === 0) {
-            emptyMetas.classList.remove('hidden');
-        } else {
-            emptyMetas.classList.add('hidden');
-            metas.forEach(meta => listaMetas.appendChild(crearTarjetaMeta(meta)));
+    async function renderMetas() {
+        try {
+            const res   = await fetch(`${API_METAS}?email=${encodeURIComponent(userEmail)}`);
+            const metas = await res.json();
+            listaMetas.innerHTML = '';
+            if (metas.length === 0) {
+                emptyMetas.classList.remove('hidden');
+            } else {
+                emptyMetas.classList.add('hidden');
+                metas.forEach(meta => listaMetas.appendChild(crearTarjetaMeta(meta)));
+            }
+        } catch (err) {
+            console.error('Error al cargar metas:', err);
         }
     }
 
     function crearTarjetaMeta(meta) {
-        const porcentaje   = Math.min(100, Math.round((meta.ahorrado / meta.monto) * 100));
-        const falta        = Math.max(0, meta.monto - meta.ahorrado);
-        const ahorroDiario = Math.ceil(falta / meta.dias);
+        const diasRestantes = fechaADias(meta.fecha_limite);
+        const porcentaje    = Math.min(100, Math.round((meta.monto_ahorrado / meta.monto_objetivo) * 100));
+        const falta         = Math.max(0, meta.monto_objetivo - meta.monto_ahorrado);
+        const ahorroDiario  = diasRestantes > 0 ? Math.ceil(falta / diasRestantes) : falta;
 
         const card = document.createElement('div');
         card.classList.add('meta-card');
         card.dataset.id = meta.id;
         card.innerHTML = `
             <div class="meta-card-header">
-                <p class="meta-nombre">${meta.nombre}</p>
+                <p class="meta-nombre">${meta.nombre_meta}</p>
                 <button class="btn-eliminar-meta" title="Eliminar meta">🗑</button>
             </div>
-            <p class="meta-monto-total">$${meta.monto.toLocaleString('es-CO')}</p>
+            <p class="meta-monto-total">$${parseFloat(meta.monto_objetivo).toLocaleString('es-CO')}</p>
             <div class="meta-progreso-label">
                 <span>Progreso</span><span>${porcentaje}%</span>
             </div>
@@ -105,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="meta-stats">
                 <div class="meta-stat-box">
                     <span class="meta-stat-label">Ahorrado</span>
-                    <span class="meta-stat-valor">$${meta.ahorrado.toLocaleString('es-CO')}</span>
+                    <span class="meta-stat-valor">$${parseFloat(meta.monto_ahorrado).toLocaleString('es-CO')}</span>
                 </div>
                 <div class="meta-stat-box">
                     <span class="meta-stat-label">Falta</span>
@@ -125,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         card.querySelector('.btn-eliminar-meta').addEventListener('click', () => {
-            if (confirm(`¿Eliminar la meta "${meta.nombre}"?`)) eliminarMeta(meta.id);
+            if (confirm(`¿Eliminar la meta "${meta.nombre_meta}"?`)) eliminarMeta(meta.id);
         });
 
         const btnAhorro    = card.querySelector('.btn-agregar-ahorro');
@@ -147,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnConfirmar.addEventListener('click', () => {
             const valor = parseFloat(inputAhorro.value);
             if (!valor || valor <= 0) { alert('Ingresa un monto válido.'); return; }
-            agregarAhorro(meta.id, valor);
+            agregarAhorro(meta, valor);
         });
         inputAhorro.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') btnConfirmar.click();
@@ -156,24 +176,63 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
-    function agregarAhorro(id, valor) {
-        const metas = getMetas();
-        const index = metas.findIndex(m => m.id === id);
-        if (index !== -1) {
-            metas[index].ahorrado = Math.min(metas[index].monto, metas[index].ahorrado + valor);
-            saveMetas(metas);
-            renderMetas();
+    async function agregarAhorro(meta, valor) {
+        const nuevoAhorrado = Math.min(
+            parseFloat(meta.monto_objetivo),
+            parseFloat(meta.monto_ahorrado) + valor
+        );
+        try {
+            const res = await fetch(API_METAS, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id:             meta.id,
+                    nombre_meta:    meta.nombre_meta,
+                    monto_objetivo: meta.monto_objetivo,
+                    monto_ahorrado: nuevoAhorrado,
+                    fecha_limite:   meta.fecha_limite
+                })
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            await renderMetas();
+        } catch (err) {
+            alert('Error al agregar ahorro: ' + err.message);
         }
     }
 
-    function eliminarMeta(id) {
-        saveMetas(getMetas().filter(m => m.id !== id));
-        renderMetas();
+    async function eliminarMeta(id) {
+        try {
+            const res  = await fetch(`${API_METAS}?id=${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            await renderMetas();
+        } catch (err) {
+            alert('Error al eliminar meta: ' + err.message);
+        }
     }
 
-    function getMetas()        { return JSON.parse(localStorage.getItem(KEY_METAS) || '[]'); }
-    function saveMetas(metas)  { localStorage.setItem(KEY_METAS, JSON.stringify(metas)); }
-    function limpiarForm()     { inputNombre.value = ''; inputMonto.value = ''; inputDias.value = ''; }
+    // Convierte días desde hoy a fecha YYYY-MM-DD
+    function diasAFecha(dias) {
+        const fecha = new Date();
+        fecha.setDate(fecha.getDate() + parseInt(dias));
+        return fecha.toISOString().split('T')[0];
+    }
+
+    // Convierte una fecha YYYY-MM-DD a días restantes
+    function fechaADias(fechaStr) {
+        if (!fechaStr) return 0;
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        const limite = new Date(fechaStr);
+        return Math.max(0, Math.ceil((limite - hoy) / (1000 * 60 * 60 * 24)));
+    }
+
+    function limpiarForm() {
+        inputNombre.value = '';
+        inputMonto.value  = '';
+        inputDias.value   = '';
+    }
 
     renderMetas();
 });
