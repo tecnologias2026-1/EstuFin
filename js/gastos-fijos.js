@@ -1,224 +1,131 @@
-// --- MENÚ DESPLEGABLE SOLO EN MÓVIL ---
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('sidebarToggle');
-    function isMobile() {
-        return window.innerWidth <= 900;
-    }
+    function isMobile() { return window.innerWidth <= 900; }
     if (sidebar && menuBtn) {
-        menuBtn.addEventListener('click', (e) => {
-            if (isMobile()) {
-                sidebar.classList.toggle('active');
-            }
-        });
+        menuBtn.addEventListener('click', () => { if (isMobile()) sidebar.classList.toggle('active'); });
         document.addEventListener('click', (e) => {
-            if (isMobile() && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuBtn) {
+            if (isMobile() && sidebar.classList.contains('active') &&
+                !sidebar.contains(e.target) && e.target !== menuBtn)
                 sidebar.classList.remove('active');
-            }
         });
     }
 });
-document.addEventListener('DOMContentLoaded', () => {
 
-        // --- Lógica igual a gastos rápidos para métodos de pago por usuario ---
-        const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-        const sufijoUsuario = (usuarioActual && usuarioActual.email) ? '_' + usuarioActual.email : '';
-        const STORAGE_KEY_METODOS = 'metodosPago' + sufijoUsuario;
+document.addEventListener('DOMContentLoaded', async () => {
+    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    if (!usuarioActual) return;
+    const userEmail = usuarioActual.email;
 
-        const modal = document.getElementById('fixed-expense-modal');
-        const closeBtn = document.querySelector('.modal-close');
-        const cancelBtn = document.getElementById('modal-cancel');
-        const form = document.getElementById('fixed-expense-form');
-        const expenseMethodSelect = document.getElementById('expense-method');
-        const emptyState = document.getElementById('empty-state');
-        const list = document.getElementById('fixed-expenses-list');
-        const totalCard = document.getElementById('total-card');
-        const totalAmountEl = document.getElementById('total-amount');
+    const modal             = document.getElementById('fixed-expense-modal');
+    const closeBtn          = document.querySelector('.modal-close');
+    const cancelBtn         = document.getElementById('modal-cancel');
+    const form              = document.getElementById('fixed-expense-form');
+    const expenseMethodSelect = document.getElementById('expense-method');
+    const emptyState        = document.getElementById('empty-state');
+    const list              = document.getElementById('fixed-expenses-list');
+    const totalCard         = document.getElementById('total-card');
+    const totalAmountEl     = document.getElementById('total-amount');
 
-        function loadPaymentMethods() {
+    // ── Cargar métodos de pago desde BD ──────────────────────
+    async function cargarMetodos() {
+        try {
+            const res     = await fetch(`${API_BASE}/metodos_pago.php?email=${userEmail}`);
+            const metodos = await res.json();
             expenseMethodSelect.innerHTML = '<option value="">Selecciona un método</option>';
-            const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS)) || [];
-            methods.forEach((method, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = method.name;
-                expenseMethodSelect.appendChild(option);
+            metodos.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value       = m.nombre_metodo;
+                opt.textContent = m.nombre_metodo;
+                expenseMethodSelect.appendChild(opt);
             });
-            return methods;
+        } catch (e) {
+            console.error('Error cargando métodos:', e);
         }
+    }
 
-        // Inicializar métodos de pago al cargar la página (opcional, para que el select no esté vacío)
-        loadPaymentMethods();
+    // ── Cargar y renderizar gastos fijos desde BD ─────────────
+    async function renderList() {
+        try {
+            const res      = await fetch(`${API_BASE}/gastos_fijos.php?email=${userEmail}`);
+            const gastos   = await res.json();
 
-        // Abrir modal (botón header)
-        document.getElementById('add-fixed-expense-top').addEventListener('click', () => {
-            loadPaymentMethods();
-            modal.classList.add('active');
-        });
-
-        // Abrir modal (botón empty state)
-        document.getElementById('add-fixed-expense').addEventListener('click', () => {
-            loadPaymentMethods();
-            modal.classList.add('active');
-        });
-
-        // Abrir modal (botón header)
-        document.getElementById('add-fixed-expense-top').addEventListener('click', () => {
-            loadPaymentMethods();
-            modal.classList.add('active');
-        });
-
-        // Abrir modal (botón empty state)
-        document.getElementById('add-fixed-expense').addEventListener('click', () => {
-            loadPaymentMethods();
-            modal.classList.add('active');
-        });
-
-        // Cerrar modal
-        closeBtn.addEventListener('click', () => { modal.classList.remove('active'); form.reset(); });
-        cancelBtn.addEventListener('click', () => { modal.classList.remove('active'); form.reset(); });
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) { modal.classList.remove('active'); form.reset(); }
-        });
-
-        // Renderizar lista
-        function renderList() {
-            const expenses = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
             list.innerHTML = '';
 
-            if (expenses.length === 0) {
+            if (!gastos.length) {
                 emptyState.style.display = 'block';
-                totalCard.style.display = 'none';
+                totalCard.style.display  = 'none';
                 return;
             }
 
             emptyState.style.display = 'none';
-            totalCard.style.display = 'flex';
+            totalCard.style.display  = 'flex';
 
-            const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const total = gastos.reduce((sum, g) => sum + parseFloat(g.monto), 0);
             totalAmountEl.textContent = '$' + total.toLocaleString('es-CO');
 
-            // Obtener métodos actualizados para mostrar el nombre correcto (por usuario)
-            const methods = JSON.parse(localStorage.getItem(STORAGE_KEY_METODOS) || '[]');
-
-            expenses.forEach((expense) => {
-                let methodName = 'Sin método';
-                if (methods[expense.methodIndex] && methods[expense.methodIndex].name) {
-                    methodName = methods[expense.methodIndex].name;
-                }
+            gastos.forEach(g => {
                 const card = document.createElement('div');
                 card.className = 'expense-item-card';
                 card.innerHTML = `
                     <div class="expense-info">
-                        <p class="expense-name">${expense.name}</p>
-                        <p class="expense-method">${methodName}</p>
+                        <p class="expense-name">${g.nombre}</p>
+                        <p class="expense-method">${g.metodo_pago}</p>
                     </div>
                     <div class="expense-actions">
-                        <span class="expense-amount">$${expense.amount.toLocaleString('es-CO')}</span>
-                        <button class="btn-edit" data-id="${expense.id}">✏️</button>
-                        <button class="btn-delete" data-id="${expense.id}">🗑️</button>
+                        <span class="expense-amount">$${Number(g.monto).toLocaleString('es-CO')}</span>
+                        <button class="btn-delete" data-id="${g.id}">🗑️</button>
                     </div>
                 `;
-                // Elimina cualquier botón '+ Añadir' que pudiera quedar por error
-                const addBtn = card.querySelector('.btn-add-fijos-inline');
-                if (addBtn) addBtn.remove();
                 list.appendChild(card);
             });
 
-            // Botones eliminar
+            // Eliminar
             list.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = parseInt(btn.dataset.id);
-                    let expenses = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
-                    expenses = expenses.filter(e => e.id !== id);
-                    localStorage.setItem('gastosFijos', JSON.stringify(expenses));
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    await fetch(`${API_BASE}/gastos_fijos.php?id=${id}`, { method: 'DELETE' });
                     renderList();
                 });
             });
-            // Botones editar
-            list.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = parseInt(btn.dataset.id);
-                    const expenses = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
-                    const expense = expenses.find(e => e.id === id);
-                    if (!expense) return;
-                    document.getElementById('expense-name').value = expense.name;
-                    document.getElementById('expense-amount').value = expense.amount;
-                    expenseMethodSelect.value = expense.methodIndex;
-                    form.setAttribute('data-edit-id', id);
-                    loadPaymentMethods();
-                    modal.classList.add('active');
-                });
-            });
+
+        } catch (e) {
+            console.error('Error cargando gastos fijos:', e);
+        }
+    }
+
+    // ── Abrir / cerrar modal ──────────────────────────────────
+    function abrirModal() { cargarMetodos(); modal.classList.add('active'); }
+    function cerrarModal() { modal.classList.remove('active'); form.reset(); form.removeAttribute('data-edit-id'); }
+
+    document.getElementById('add-fixed-expense-top').addEventListener('click', abrirModal);
+    document.getElementById('add-fixed-expense').addEventListener('click', abrirModal);
+    closeBtn.addEventListener('click', cerrarModal);
+    cancelBtn.addEventListener('click', cerrarModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) cerrarModal(); });
+
+    // ── Guardar gasto fijo ────────────────────────────────────
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nombre      = document.getElementById('expense-name').value.trim();
+        const monto       = parseFloat(document.getElementById('expense-amount').value);
+        const metodo_pago = expenseMethodSelect.value;
+
+        if (!nombre || !monto || !metodo_pago) {
+            alert('Por favor, completa todos los campos.');
+            return;
         }
 
-        // Guardar o editar gasto fijo
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('expense-name').value;
-            const amount = parseFloat(document.getElementById('expense-amount').value);
-            const methodIndex = expenseMethodSelect.value;
-
-            if (!name || !amount || methodIndex === '') {
-                alert('Por favor, completa todos los campos.');
-                return;
-            }
-
-            const editId = form.getAttribute('data-edit-id');
-            let gastosFijos = JSON.parse(localStorage.getItem('gastosFijos') || '[]');
-
-            if (editId) {
-                // Editar gasto existente
-                gastosFijos = gastosFijos.map(gasto => {
-                    if (gasto.id === parseInt(editId)) {
-                        return {
-                            ...gasto,
-                            name,
-                            amount,
-                            methodIndex
-                        };
-                    }
-                    return gasto;
-                });
-                form.removeAttribute('data-edit-id');
-            } else {
-                // Nuevo gasto
-                const fixedExpense = {
-                    id: Date.now(),
-                    name,
-                    amount,
-                    methodIndex,
-                    createdAt: new Date().toISOString()
-                };
-                gastosFijos.push(fixedExpense);
-            }
-
-            localStorage.setItem('gastosFijos', JSON.stringify(gastosFijos));
-
-            modal.classList.remove('active');
-            form.reset();
-            renderList();
+        await fetch(`${API_BASE}/gastos_fijos.php`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ usuario_email: userEmail, nombre, monto, metodo_pago })
         });
 
-        // Cerrar modal (modificado para limpiar edición)
-        closeBtn.addEventListener('click', () => { 
-            modal.classList.remove('active'); 
-            form.reset(); 
-            form.removeAttribute('data-edit-id');
-        });
-        cancelBtn.addEventListener('click', () => { 
-            modal.classList.remove('active'); 
-            form.reset(); 
-            form.removeAttribute('data-edit-id');
-        });
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) { 
-                modal.classList.remove('active'); 
-                form.reset(); 
-                form.removeAttribute('data-edit-id');
-            }
-        });
-
-        // Cargar al iniciar
+        cerrarModal();
         renderList();
     });
+
+    await cargarMetodos();
+    await renderList();
+});

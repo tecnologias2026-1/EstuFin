@@ -2,7 +2,6 @@
    js/dashboard.js — conectado al backend PHP
    ================================================ */
 
-const API_BASE = 'http://localhost/back-estuFin/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
 

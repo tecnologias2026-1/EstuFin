@@ -1,65 +1,69 @@
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
-    const loginForm = document.getElementById('loginForm');
+    const loginForm    = document.getElementById('loginForm');
 
-    // --- LÓGICA DE REGISTRO ---
+    // ── REGISTRO ──────────────────────────────────────────────
     if (registerForm) {
-        registerForm.addEventListener('submit', (e) => {
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
+            const nombre   = document.getElementById('name').value.trim();
+            const email    = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            if (name.length < 3) return mostrarError(registerForm, 'El nombre es muy corto.');
+            if (nombre.length < 3) return mostrarError(registerForm, 'El nombre es muy corto.');
             if (password.length < 6) return mostrarError(registerForm, 'La contraseña debe tener 6+ caracteres.');
 
-            const usuarios = JSON.parse(localStorage.getItem('estuFinUsers')) || [];
-            if (usuarios.find(u => u.email === email)) {
-                return mostrarError(registerForm, 'El correo ya está registrado.');
-            }
+            try {
+                const res  = await fetch(`http://localhost/back-estuFin/api/usuarios.php?action=registro`, {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ nombre, email, password })
+                });
+                const data = await res.json();
 
-            usuarios.push({ name, email, password: btoa(password) });
-            localStorage.setItem('estuFinUsers', JSON.stringify(usuarios));
-            localStorage.setItem('estuFinCurrentUser', JSON.stringify({ name, email }));
-            localStorage.setItem('usuarioActual', JSON.stringify({ nombre: name, email }));
-            window.location.href = 'dashboard.html'; 
+                if (data.error) return mostrarError(registerForm, data.error);
+
+                // Guardar sesión y redirigir
+                localStorage.setItem('usuarioActual', JSON.stringify({ nombre, email }));
+                window.location.href = 'dashboard.html';
+
+            } catch (err) {
+                mostrarError(registerForm, 'Error de conexión con el servidor.');
+            }
         });
     }
 
-    // --- LÓGICA DE LOGIN ---
+    // ── LOGIN ─────────────────────────────────────────────────
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value.trim();
+            const email    = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            const usuarios = JSON.parse(localStorage.getItem('estuFinUsers')) || [];
-            const usuario = usuarios.find(u => u.email === email && u.password === btoa(password));
+            try {
+                const res  = await fetch(`http://localhost/back-estuFin/api/usuarios.php?action=login`, {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ email, password })
+                });
+                const data = await res.json();
 
-            if (!usuario) {
-                return mostrarError(loginForm, 'Credenciales incorrectas.');
+                if (data.error) return mostrarError(loginForm, data.error);
+
+                // Guardar sesión y redirigir
+                localStorage.setItem('usuarioActual', JSON.stringify({
+                    nombre: data.usuario.nombre,
+                    email:  data.usuario.email
+                }));
+                window.location.href = 'dashboard.html';
+
+            } catch (err) {
+                mostrarError(loginForm, 'Error de conexión con el servidor.');
             }
-
-            localStorage.setItem('estuFinCurrentUser', JSON.stringify({ name: usuario.name, email: usuario.email }));
-            localStorage.setItem('usuarioActual', JSON.stringify({ nombre: usuario.name, email: usuario.email }));
-            window.location.href = 'dashboard.html'; // O bienvenida si prefieres
         });
     }
 
-    // --- FUNCIONES COMPARTIDAS ---
-    function mostrarError(formulario, mensaje) {
-        const existing = formulario.querySelector('.error-message');
-        if (existing) existing.remove();
-
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.textContent = mensaje;
-        formulario.insertBefore(errorDiv, formulario.querySelector('.btn-full'));
-
-        setTimeout(() => errorDiv.remove(), 4000);
-    }
-
-    // Toggle Password para cualquier formulario
+    // ── TOGGLE CONTRASEÑA ─────────────────────────────────────
     const btnToggle = document.getElementById('togglePass');
     if (btnToggle) {
         btnToggle.addEventListener('click', () => {
@@ -68,5 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
             input.type = isPass ? 'text' : 'password';
             btnToggle.textContent = isPass ? '🙈' : '👁️';
         });
+    }
+
+    function mostrarError(formulario, mensaje) {
+        const existing = formulario.querySelector('.error-message');
+        if (existing) existing.remove();
+        const div = document.createElement('div');
+        div.className = 'error-message';
+        div.style.cssText = 'color:red;font-size:.85rem;margin-top:8px;text-align:center';
+        div.textContent = mensaje;
+        formulario.insertBefore(div, formulario.querySelector('.btn-full'));
+        setTimeout(() => div.remove(), 4000);
     }
 });
