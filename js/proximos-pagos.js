@@ -2,13 +2,13 @@
    js/proximos-pagos.js — Conectado al backend
    ================================================ */
 
-const API_PAGOS   = 'http://localhost:8080/back-estuFin/api/proximos_pagos.php';
-const API_METODOS = 'http://localhost:8080/back-estuFin/api/metodos_pago.php';
-
 document.addEventListener('DOMContentLoaded', async () => {
 
     const usuarioActual  = JSON.parse(localStorage.getItem('usuarioActual')) || null;
     const userEmail      = usuarioActual?.email || '';
+
+    const API_PAGOS   = `${API_BASE}/proximos_pagos.php`;
+    const API_METODOS = `${API_BASE}/metodos_pago.php`;
 
     // Referencias DOM
     const btnAbrirForm    = document.getElementById('btnAbrirForm');
@@ -54,21 +54,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         limpiarForm();
     });
 
-    // Cargar métodos de pago desde el backend
+    // Cargar métodos de pago
     async function cargarMetodos() {
         try {
             const res     = await fetch(`${API_METODOS}?email=${encodeURIComponent(userEmail)}`);
             const metodos = await res.json();
             selectMetodo.innerHTML = '<option value="" disabled selected>Selecciona un método...</option>';
             if (metodos.length === 0) {
-                const opt  = document.createElement('option');
+                const opt = document.createElement('option');
                 opt.textContent = 'No hay métodos (regístralos en el Dashboard)';
                 opt.disabled = true;
                 selectMetodo.appendChild(opt);
             } else {
                 metodos.forEach(m => {
-                    const opt   = document.createElement('option');
-                    opt.value   = m.nombre_metodo;
+                    const opt       = document.createElement('option');
+                    opt.value       = m.nombre_metodo;
                     opt.textContent = m.nombre_metodo;
                     selectMetodo.appendChild(opt);
                 });
@@ -78,9 +78,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Guardar pago
+    // Guardar pago — con protección anti-doble-click
     if (btnGuardar) {
         btnGuardar.addEventListener('click', async () => {
+
+            if (btnGuardar.disabled) return; // protección extra
+
             const nombre = inputNombre.value.trim();
             const monto  = parseFloat(inputMonto.value);
             const fecha  = inputFecha.value;
@@ -91,18 +94,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
+            btnGuardar.disabled = true; // bloquear mientras guarda
+
             try {
                 const res = await fetch(API_PAGOS, {
-                    method: 'POST',
+                    method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        usuario_email:    userEmail,
-                        nombre_pago:      nombre,
-                        monto:            monto,
+                        usuario_email:     userEmail,
+                        nombre_pago:       nombre,
+                        monto:             monto,
                         fecha_vencimiento: fecha,
-                        estado:           'pendiente',
-                        es_recurrente:    false,
-                        metodo_pago:      metodo
+                        estado:            'pendiente',
+                        es_recurrente:     false,
+                        metodo_pago:       metodo
                     })
                 });
                 const data = await res.json();
@@ -112,6 +117,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await renderTodo();
             } catch (err) {
                 alert('Error al guardar pago: ' + err.message);
+            } finally {
+                btnGuardar.disabled = false; // desbloquear siempre
             }
         });
     }
@@ -119,8 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Renderizar pagos pendientes
     async function renderPagosPendientes(pagos) {
         const pendientes = pagos.filter(p => p.estado === 'pendiente');
-        const items = listaPendientes.querySelectorAll('.pago-item');
-        items.forEach(i => i.remove());
+        listaPendientes.querySelectorAll('.pago-item').forEach(i => i.remove());
 
         if (pendientes.length === 0) {
             emptyPagos.classList.remove('hidden');
@@ -140,11 +146,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <button class="btn-pagar" data-id="${pago.id}" data-monto="${pago.monto}" data-metodo="${pago.metodo_pago}">
                             Marcar pagado
                         </button>
+                        <button class="btn-eliminar-pago" data-id="${pago.id}" title="Eliminar">🗑</button>
                     </div>
                 `;
                 listaPendientes.appendChild(item);
             });
 
+            // Evento marcar pagado
             listaPendientes.querySelectorAll('.btn-pagar').forEach(btn => {
                 btn.addEventListener('click', () => marcarPagado(
                     btn.dataset.id,
@@ -152,35 +160,42 @@ document.addEventListener('DOMContentLoaded', async () => {
                     btn.dataset.metodo
                 ));
             });
+
+            // Evento eliminar
+            listaPendientes.querySelectorAll('.btn-eliminar-pago').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm('¿Eliminar este pago?')) return;
+                    await fetch(`${API_PAGOS}?id=${btn.dataset.id}`, { method: 'DELETE' });
+                    await renderTodo();
+                });
+            });
         }
     }
 
-    // Marcar como pagado y descontar saldo del método
+    // Marcar como pagado
     async function marcarPagado(id, monto, nombreMetodo) {
         try {
-            // 1. Marcar el pago como pagado en el backend
             await fetch(`${API_PAGOS}?action=pagar`, {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
+                body:    JSON.stringify({ id })
             });
 
-            // 2. Descontar saldo del método de pago en el backend
+            // Descontar saldo del método
             const resMetodos = await fetch(`${API_METODOS}?email=${encodeURIComponent(userEmail)}`);
             const metodos    = await resMetodos.json();
             const metodo     = metodos.find(m => m.nombre_metodo === nombreMetodo);
 
             if (metodo) {
                 await fetch(API_METODOS, {
-                    method: 'PUT',
+                    method:  'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                    body:    JSON.stringify({
                         id:    metodo.id,
                         saldo: Math.max(0, parseFloat(metodo.saldo) - monto)
                     })
                 });
             }
-
             await renderTodo();
         } catch (err) {
             alert('Error al marcar como pagado: ' + err.message);
@@ -190,8 +205,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Renderizar historial
     function renderHistorial(pagos) {
         const pagados = pagos.filter(p => p.estado === 'pagado');
-        const items   = listaHistorial.querySelectorAll('.historial-item');
-        items.forEach(i => i.remove());
+        listaHistorial.querySelectorAll('.historial-item').forEach(i => i.remove());
 
         if (pagados.length === 0) {
             emptyHistorial.classList.remove('hidden');
@@ -209,10 +223,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Cargar todo de una vez
+    // Cargar todo
     async function renderTodo() {
         try {
-            const res  = await fetch(`${API_PAGOS}?email=${encodeURIComponent(userEmail)}`);
+            const res   = await fetch(`${API_PAGOS}?email=${encodeURIComponent(userEmail)}`);
             const pagos = await res.json();
             await renderPagosPendientes(pagos);
             renderHistorial(pagos);
@@ -237,4 +251,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Inicializar
     await cargarMetodos();
     await renderTodo();
-});
+}); 

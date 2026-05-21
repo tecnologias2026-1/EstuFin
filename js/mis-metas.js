@@ -2,7 +2,7 @@
    js/mis-metas.js — Conectado al backend
    ================================================ */
 
-const API_METAS = 'http://localhost:8080/back-estuFin/api/metas_financieras.php';
+const API_METAS = `${API_BASE}/metas_financieras.php`;
 
 // Menú móvil
 document.addEventListener('DOMContentLoaded', () => {
