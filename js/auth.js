@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (password.length < 6) return mostrarError(registerForm, 'La contraseña debe tener 6+ caracteres.');
 
             try {
-                const res  = await fetch(`http://localhost/back-estuFin/api/usuarios.php?action=registro`, {
+                const res  = await fetch(`${API_URL}/api/usuarios.php?action=registro`, {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify({ nombre, email, password })
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('password').value;
 
             try {
-                const res  = await fetch(`http://localhost/back-estuFin/api/usuarios.php?action=login`, {
+                const res  = await fetch(`${API_URL}/api/usuarios.php?action=login`, {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify({ email, password })
