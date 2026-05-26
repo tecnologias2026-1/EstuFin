@@ -2,13 +2,11 @@
    js/dashboard.js — conectado al backend PHP
    ================================================ */
 
-
 document.addEventListener('DOMContentLoaded', async () => {
 
     // ── 1. USUARIO ───────────────────────────────────────────
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
     if (!usuarioActual) return;
-
     const userEmail = usuarioActual.email;
 
     // ── 2. FORMATO DE MONEDA ─────────────────────────────────
@@ -23,7 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await fetch(`${API_BASE}/metodos_pago.php?email=${userEmail}`);
             paymentMethods = await res.json();
-            // Guardar en localStorage como respaldo
             localStorage.setItem('metodosPago_' + userEmail, JSON.stringify(
                 paymentMethods.map(m => ({ name: m.nombre_metodo, amount: m.saldo, id: m.id }))
             ));
@@ -79,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (newAmount === null || isNaN(newAmount) || newAmount.trim() === '') return;
         try {
             await fetch(`${API_BASE}/metodos_pago.php`, {
-                method: 'PUT',
+                method:  'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, saldo: parseFloat(newAmount) })
             });
@@ -114,14 +111,34 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (existe) { errorMsg.classList.remove('hidden'); return; }
 
             try {
+                // 1. Crear el método de pago
                 await fetch(`${API_BASE}/metodos_pago.php`, {
-                    method: 'POST',
+                    method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ usuario_email: userEmail, nombre_metodo: nombre, saldo })
                 });
+
+                // 2. Registrar saldo inicial como ingreso en Gastos e Ingresos
+                if (saldo > 0) {
+                    await fetch(`${API_BASE}/movimientos.php`, {
+                        method:  'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            usuario_email: userEmail,
+                            tipo:          'ingreso',
+                            monto:         saldo,
+                            categoria:     'Saldo Inicial',
+                            fecha:         new Date().toISOString().split('T')[0],
+                            metodo_pago:   nombre,
+                            descripcion:   `Saldo inicial de ${nombre}`
+                        })
+                    });
+                }
+
                 modal.classList.add('hidden');
                 e.target.reset();
                 await cargarMetodos();
+
             } catch (err) {
                 console.error('Error guardando:', err);
             }

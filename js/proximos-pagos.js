@@ -174,12 +174,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Marcar como pagado
     async function marcarPagado(id, monto, nombreMetodo) {
-        try {
-            await fetch(`${API_PAGOS}?action=pagar`, {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ id })
-            });
+    try {
+        // 1. Marcar como pagado
+        await fetch(`${API_PAGOS}?action=pagar`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ id })
+        });
+
+        // 2. Crear movimiento en gastos e ingresos ← NUEVO
+        await fetch(`${API_BASE}/movimientos.php`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_email: userEmail,
+                tipo:          'gasto',
+                monto:         monto,
+                categoria:     'Próximos Pagos',
+                fecha:         new Date().toISOString().split('T')[0],
+                metodo_pago:   nombreMetodo || 'Sin método',
+                descripcion:   'Pago registrado desde Próximos Pagos'
+            })
+        });
 
             // Descontar saldo del método
             const resMetodos = await fetch(`${API_METODOS}?email=${encodeURIComponent(userEmail)}`);
