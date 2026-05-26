@@ -136,85 +136,72 @@ document.addEventListener('DOMContentLoaded', () => {
     const KEY_NOTIF = 'notificaciones' + sufijoUsuario;
     const KEY_PAGOS = 'pagosPendientes' + sufijoUsuario;
 
+    // ── 5. Notificaciones desde el backend ──────────────────
     cargarNotificaciones();
 
-    function cargarNotificaciones() {
-        // Revisamos si hay pagos vencidos cada vez que carga cualquier página
-        revisarNotificacionesGlobales();
-
-        // USAMOS LA LLAVE ESPECÍFICA DEL USUARIO
-        const notifs = JSON.parse(localStorage.getItem(KEY_NOTIF) || '[]');
-        const badge  = document.getElementById('bellBadge');
-        const body   = document.getElementById('notifBody');
-
-        if (notifs.length === 0) {
-            badge.classList.add('hidden');
-            body.innerHTML = `
-                <div class="notif-empty">
-                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" opacity="0.3">
-                        <path d="M12 3a7 7 0 00-7 7v3.5L3 16h18l-2-2.5V10a7 7 0 00-7-7z"
-                              stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M10 19a2 2 0 004 0" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
-                    <p>No tienes notificaciones</p>
-                    <span>Aquí aparecerán tus alertas y recordatorios</span>
-                </div>
-            `;
-        } else {
-            badge.textContent = notifs.length;
-            badge.classList.remove('hidden');
-            body.innerHTML = notifs.map(n => {
-                // Si la notificación es generada por pagos, le damos un puntero y la redirección
-                const pointerStyle = n.isAutoPago ? 'cursor: pointer; transition: background 0.2s;' : '';
-                const clickAction  = n.isAutoPago ? `onclick="window.location.href='proximos-pagos.html'"` : '';
-                
-                return `
-                <div class="notif-item" style="${pointerStyle}" ${clickAction}>
-                    <p class="notif-item-texto">${n.texto}</p>
-                    <span class="notif-item-fecha">${n.fecha || ''}</span>
-                </div>
-                `;
-            }).join('');
-        }
+    async function cargarNotificaciones() {
+        await revisarNotificacionesGlobales();
     }
 
-    // ── Función para actualizar las alertas en todas las pestañas ──
-    function revisarNotificacionesGlobales() {
-        // USAMOS LAS LLAVES ESPECÍFICAS DEL USUARIO
-        const pagos = JSON.parse(localStorage.getItem(KEY_PAGOS) || '[]');
-        let notificaciones = JSON.parse(localStorage.getItem(KEY_NOTIF) || '[]');
+    async function revisarNotificacionesGlobales() {
+        const badge = document.getElementById('bellBadge');
+        const body  = document.getElementById('notifBody');
 
-        // Limpiar automáticas antiguas para no duplicar datos
-        notificaciones = notificaciones.filter(n => !n.isAutoPago);
+        if (!email) return;
 
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
+        try {
+            const res   = await fetch(`${API_BASE}/proximos_pagos.php?email=${encodeURIComponent(email)}`);
+            const pagos = await res.json();
 
-        pagos.forEach(pago => {
-            if (pago.estado === 'pendiente') {
-                const fechaPago = new Date(pago.fecha + 'T00:00:00'); 
-                const diferenciaTiempo = fechaPago.getTime() - hoy.getTime();
-                const diferenciaDias = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24));
+            const notificaciones = [];
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
 
-                if (diferenciaDias <= 5 && diferenciaDias >= 0) {
-                    notificaciones.push({
-                        id: 'auto_' + pago.id,
-                        texto: `⏳ El pago "${pago.descripcion}" vence en ${diferenciaDias} día(s).`,
-                        fecha: new Date().toLocaleDateString('es-CO'),
-                        isAutoPago: true
-                    });
-                } else if (diferenciaDias < 0) {
-                    notificaciones.push({
-                        id: 'auto_' + pago.id,
-                        texto: `⚠️ El pago "${pago.descripcion}" está VENCIDO.`,
-                        fecha: new Date().toLocaleDateString('es-CO'),
-                        isAutoPago: true
-                    });
+            pagos.forEach(pago => {
+                if (pago.estado === 'pendiente') {
+                    const fechaPago      = new Date(pago.fecha_vencimiento + 'T00:00:00');
+                    const diferenciaDias = Math.ceil((fechaPago - hoy) / (1000 * 3600 * 24));
+
+                    if (diferenciaDias <= 5 && diferenciaDias >= 0) {
+                        notificaciones.push({
+                            texto: `⏳ "${pago.nombre_pago}" vence en ${diferenciaDias} día(s).`,
+                            fecha: new Date().toLocaleDateString('es-CO')
+                        });
+                    } else if (diferenciaDias < 0) {
+                        notificaciones.push({
+                            texto: `⚠️ "${pago.nombre_pago}" está VENCIDO.`,
+                            fecha: new Date().toLocaleDateString('es-CO')
+                        });
+                    }
                 }
-            }
-        });
+            });
 
-        // GUARDAMOS EN LA LLAVE DEL USUARIO
-        localStorage.setItem(KEY_NOTIF, JSON.stringify(notificaciones));
+            if (notificaciones.length === 0) {
+                badge.classList.add('hidden');
+                body.innerHTML = `
+                    <div class="notif-empty">
+                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" opacity="0.3">
+                            <path d="M12 3a7 7 0 00-7 7v3.5L3 16h18l-2-2.5V10a7 7 0 00-7-7z"
+                                  stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M10 19a2 2 0 004 0" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        <p>No tienes notificaciones</p>
+                        <span>Aquí aparecerán tus alertas y recordatorios</span>
+                    </div>`;
+            } else {
+                badge.textContent = notificaciones.length;
+                badge.classList.remove('hidden');
+                body.innerHTML = notificaciones.map(n => `
+                    <div class="notif-item" style="cursor:pointer"
+                         onclick="window.location.href='proximos-pagos.html'">
+                        <p class="notif-item-texto">${n.texto}</p>
+                        <span class="notif-item-fecha">${n.fecha}</span>
+                    </div>
+                `).join('');
+            }
+
+        } catch (e) {
+            console.error('Error cargando notificaciones:', e);
+        }
     }
 });
