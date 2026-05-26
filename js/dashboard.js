@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function cargarMetodos() {
         try {
-            const res = await fetch(`${API_BASE}/metodos_pago.php?email=${userEmail}`);
+            const res = await fetch(`${API_URL}/api/metodos_pago?email=${userEmail}`);
             paymentMethods = await res.json();
             localStorage.setItem('metodosPago_' + userEmail, JSON.stringify(
                 paymentMethods.map(m => ({ name: m.nombre_metodo, amount: m.saldo, id: m.id }))
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.handleDelete = async (id) => {
         if (!confirm('¿Deseas eliminar este método?')) return;
         try {
-            await fetch(`${API_BASE}/metodos_pago.php?id=${id}`, { method: 'DELETE' });
+            await fetch(`${API_URL}/api/metodos_pago?id=${id}`, { method: 'DELETE' });
             await cargarMetodos();
         } catch (e) {
             console.error('Error eliminando:', e);
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const newAmount = prompt(`Nuevo saldo para ${nombre}:`, saldoActual);
         if (newAmount === null || isNaN(newAmount) || newAmount.trim() === '') return;
         try {
-            await fetch(`${API_BASE}/metodos_pago.php`, {
+            await fetch(`${API_URL}/api/metodos_pago`, {
                 method:  'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, saldo: parseFloat(newAmount) })
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             try {
                 // 1. Crear el método de pago
-                await fetch(`${API_BASE}/metodos_pago.php`, {
+                await fetch(`${API_URL}/api/metodos_pago`, {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ usuario_email: userEmail, nombre_metodo: nombre, saldo })
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // 2. Registrar saldo inicial como ingreso en Gastos e Ingresos
                 if (saldo > 0) {
-                    await fetch(`${API_BASE}/movimientos.php`, {
+                    await fetch(`${API_URL}/api/movimientos`, {
                         method:  'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
