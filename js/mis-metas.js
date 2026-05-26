@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
 
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
+    if (!usuarioActual) {
+    window.location.href = 'login.html';
+    return;
+}
     const userEmail     = usuarioActual?.email || '';
 
     const btnNuevaMeta    = document.getElementById('btnNuevaMeta');

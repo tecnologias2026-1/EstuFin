@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ── 1. USUARIO ───────────────────────────────────────────
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    if (!usuarioActual) return;
+    if (!usuarioActual) {
+    window.location.href = 'login.html';
+    return;
+}
     const userEmail = usuarioActual.email;
 
     // ── 2. FORMATO DE MONEDA ─────────────────────────────────

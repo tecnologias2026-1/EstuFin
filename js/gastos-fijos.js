@@ -14,7 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    if (!usuarioActual) return;
+    if (!usuarioActual) {
+    window.location.href = 'login.html';
+    return;
+}
     const userEmail = usuarioActual.email;
 
     const modal             = document.getElementById('fixed-expense-modal');

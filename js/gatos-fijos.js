@@ -5,7 +5,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
-    if (!usuarioActual) return;
+    if (!usuarioActual) {
+    window.location.href = 'login.html';
+    return;
+}
     const userEmail = usuarioActual.email;
 
     const API_FIJOS       = `${API_BASE}/gastos_fijos.php`;
