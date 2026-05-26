@@ -2,7 +2,9 @@
    js/mis-metas.js — Conectado al backend
    ================================================ */
 
-const API_METAS = `${API_BASE}/metas_financieras.php`;
+const API_METAS       = `${API_BASE}/metas_financieras.php`;
+const API_METODOS_M   = `${API_BASE}/metodos_pago.php`;
+const API_MOVIMIENTOS = `${API_BASE}/movimientos.php`;
 
 // Menú móvil
 document.addEventListener('DOMContentLoaded', () => {
@@ -101,6 +103,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Cargar métodos de pago en el select
+    async function cargarMetodosEnSelect(select) {
+        try {
+            const res     = await fetch(`${API_METODOS_M}?email=${encodeURIComponent(userEmail)}`);
+            const metodos = await res.json();
+            select.innerHTML = '<option value="">Método de pago...</option>';
+            metodos.forEach(m => {
+                const opt       = document.createElement('option');
+                opt.value       = m.nombre_metodo;
+                opt.textContent = `${m.nombre_metodo} ($${parseFloat(m.saldo).toLocaleString('es-CO')})`;
+                select.appendChild(opt);
+            });
+        } catch (e) {
+            console.error('Error cargando métodos:', e);
+        }
+    }
+
     function crearTarjetaMeta(meta) {
         const diasRestantes = fechaADias(meta.fecha_limite);
         const porcentaje    = Math.min(100, Math.round((meta.monto_ahorrado / meta.monto_objetivo) * 100));
@@ -138,9 +157,16 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <button class="btn-agregar-ahorro">📈 Agregar Ahorro</button>
             <div class="ahorro-input-row hidden">
-                <input type="number" placeholder="Monto" min="0" class="input-ahorro">
-                <button class="btn-confirmar-ahorro" title="Confirmar">✓</button>
-                <button class="btn-cancelar-ahorro"  title="Cancelar">✕</button>
+                <div class="ahorro-inputs-top">
+                    <input type="number" placeholder="Monto a ahorrar" min="0" class="input-ahorro">
+                    <select class="select-metodo-ahorro">
+                        <option value="">Cargando métodos...</option>
+                    </select>
+                </div>
+                <div class="ahorro-inputs-bottom">
+                    <button class="btn-confirmar-ahorro" title="Confirmar">✓ Confirmar</button>
+                    <button class="btn-cancelar-ahorro"  title="Cancelar">✕ Cancelar</button>
+                </div>
             </div>
         `;
 
@@ -151,24 +177,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnAhorro    = card.querySelector('.btn-agregar-ahorro');
         const inputRow     = card.querySelector('.ahorro-input-row');
         const inputAhorro  = card.querySelector('.input-ahorro');
+        const selectMetodo = card.querySelector('.select-metodo-ahorro');
         const btnConfirmar = card.querySelector('.btn-confirmar-ahorro');
         const btnCancelarA = card.querySelector('.btn-cancelar-ahorro');
 
-        btnAhorro.addEventListener('click', () => {
+        btnAhorro.addEventListener('click', async () => {
             btnAhorro.classList.add('hidden');
             inputRow.classList.remove('hidden');
+            await cargarMetodosEnSelect(selectMetodo); // cargar métodos al abrir
             inputAhorro.focus();
         });
+
         btnCancelarA.addEventListener('click', () => {
             inputRow.classList.add('hidden');
             btnAhorro.classList.remove('hidden');
-            inputAhorro.value = '';
+            inputAhorro.value    = '';
+            selectMetodo.value   = '';
         });
-        btnConfirmar.addEventListener('click', () => {
-            const valor = parseFloat(inputAhorro.value);
+
+        btnConfirmar.addEventListener('click', async () => {
+            const valor  = parseFloat(inputAhorro.value);
+            const metodo = selectMetodo.value;
+
             if (!valor || valor <= 0) { alert('Ingresa un monto válido.'); return; }
-            agregarAhorro(meta, valor);
+            if (!metodo) { alert('Selecciona un método de pago.'); return; }
+
+            await agregarAhorro(meta, valor, metodo);
+            inputRow.classList.add('hidden');
+            btnAhorro.classList.remove('hidden');
+            inputAhorro.value  = '';
+            selectMetodo.value = '';
         });
+
         inputAhorro.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') btnConfirmar.click();
         });
@@ -176,12 +216,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
-    async function agregarAhorro(meta, valor) {
-        const nuevoAhorrado = Math.min(
-            parseFloat(meta.monto_objetivo),
-            parseFloat(meta.monto_ahorrado) + valor
-        );
+    async function agregarAhorro(meta, valor, nombreMetodo) {
         try {
+            // 1. Verificar saldo del método
+            const resM      = await fetch(`${API_METODOS_M}?email=${encodeURIComponent(userEmail)}`);
+            const metodos   = await resM.json();
+            const metodoObj = metodos.find(m => m.nombre_metodo === nombreMetodo);
+
+            if (!metodoObj) {
+                alert('El método de pago no existe.');
+                return;
+            }
+            if (valor > parseFloat(metodoObj.saldo)) {
+                alert(`¡Fondos insuficientes en ${nombreMetodo}!\nSaldo: $${parseFloat(metodoObj.saldo).toLocaleString('es-CO')}`);
+                return;
+            }
+
+            // 2. Actualizar monto ahorrado en la meta
+            const nuevoAhorrado = Math.min(
+                parseFloat(meta.monto_objetivo),
+                parseFloat(meta.monto_ahorrado) + valor
+            );
             const res = await fetch(API_METAS, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -195,7 +250,34 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await res.json();
             if (data.error) throw new Error(data.error);
+
+            // 3. Descontar saldo del método de pago
+            await fetch(API_METODOS_M, {
+                method:  'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id:    metodoObj.id,
+                    saldo: Math.max(0, parseFloat(metodoObj.saldo) - valor)
+                })
+            });
+
+            // 4. Crear movimiento en Gastos e Ingresos
+            await fetch(API_MOVIMIENTOS, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    usuario_email: userEmail,
+                    tipo:          'gasto',
+                    monto:         valor,
+                    categoria:     'Metas',
+                    fecha:         new Date().toISOString().split('T')[0],
+                    metodo_pago:   nombreMetodo,
+                    descripcion:   `Ahorro para meta: ${meta.nombre_meta}`
+                })
+            });
+
             await renderMetas();
+
         } catch (err) {
             alert('Error al agregar ahorro: ' + err.message);
         }
@@ -212,14 +294,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Convierte días desde hoy a fecha YYYY-MM-DD
     function diasAFecha(dias) {
         const fecha = new Date();
         fecha.setDate(fecha.getDate() + parseInt(dias));
         return fecha.toISOString().split('T')[0];
     }
 
-    // Convierte una fecha YYYY-MM-DD a días restantes
     function fechaADias(fechaStr) {
         if (!fechaStr) return 0;
         const hoy = new Date();

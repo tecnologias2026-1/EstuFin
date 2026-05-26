@@ -359,3 +359,89 @@
         width: 100%;
     }
 }
+/* ── Ahorro con método de pago ─────────────────── */
+.ahorro-input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.ahorro-inputs-top {
+    display: flex;
+    gap: 8px;
+}
+
+.ahorro-inputs-top .input-ahorro {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.ahorro-inputs-top .input-ahorro:focus {
+    border-color: var(--primary-blue);
+}
+
+.select-metodo-ahorro {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    color: var(--text-dark);
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.select-metodo-ahorro:focus {
+    border-color: var(--primary-blue);
+}
+
+.ahorro-inputs-bottom {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-confirmar-ahorro {
+    flex: 1;
+    background: #10B981;
+    color: white;
+    border: none;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+.btn-confirmar-ahorro:hover { background: #059669; }
+
+.btn-cancelar-ahorro {
+    flex: 1;
+    background: #EDF2F7;
+    color: #4A5568;
+    border: none;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+.btn-cancelar-ahorro:hover { background: #E2E8F0; }
