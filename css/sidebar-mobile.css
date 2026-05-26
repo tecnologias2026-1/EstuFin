@@ -1,0 +1,87 @@
+/* ================================================
+   SIDEBAR MOBILE — agregar al FINAL de dashboard.css
+   ================================================ */
+
+/* Botón ☰ — visible solo en móvil */
+.sidebar-toggle,
+.mobile-menu-btn {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    /* Mostrar botón ☰ */
+    .sidebar-toggle,
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 1100;
+        width: 42px;
+        height: 42px;
+        background: #2563eb;   /* ← ajusta al color principal de tu app */
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.25rem;
+        cursor: pointer;
+        box-shadow: 0 3px 10px rgba(0,0,0,.22);
+    }
+
+    /* Sidebar: fuera de pantalla por defecto */
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: -280px;
+        width: 260px !important;
+        height: 100dvh !important;
+        z-index: 1050;
+        overflow-y: auto;
+        transition: left 0.28s cubic-bezier(.4, 0, .2, 1);
+        box-shadow: none;
+    }
+
+    /* Sidebar abierto (clase añadida por header.js) */
+    .sidebar.sidebar-open {
+        left: 0 !important;
+        box-shadow: 6px 0 28px rgba(0, 0, 0, .20);
+    }
+
+    /* Layout: una sola columna */
+    .dashboard-container {
+        display: block !important;
+        padding-left: 0 !important;
+    }
+
+    /* Contenido principal: espacio para el botón fijo */
+    .main-content {
+        margin-left: 0 !important;
+        padding-top: 68px !important;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+}
+
+/* ── Overlay oscuro detrás del sidebar ───────────── */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.46);
+    z-index: 1040;
+    transition: opacity 0.28s ease;
+}
+
+.sidebar-overlay.overlay-visible {
+    display: block;
+}
+
+/* En desktop el overlay jamás se muestra */
+@media (min-width: 769px) {
+    .sidebar-overlay {
+        display: none !important;
+    }
+}

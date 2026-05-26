@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/gastos-fijos.css">
+    <link rel="stylesheet" href="css/sidebar-mobile.css">
     <script src="js/config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -62,19 +63,19 @@
                 </div>
             </header>
 
-
-            <!-- Contenedor flex para alinear botón y total-card -->
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 6px;">
-                <div style="flex:1; min-width:0;">
-                    <div class="total-card" id="total-card">
-                        <div>
-                            <p class="total-label">Total Gastos Fijos Mensuales</p>
-                            <p class="total-amount" id="total-amount">$0</p>
-                        </div>
-                        <div class="total-icon">$</div>
-                    </div>
-                </div>
+            <!-- Botón añadir justo después del header, alineado a la derecha -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 18px; margin-top: -18px;">
                 <button class="btn-primary-dash btn-add-fijos" id="add-fixed-expense-top">+ Añadir</button>
+            </div>
+            <!-- Total-card debajo -->
+            <div style="margin-bottom: 6px;">
+                <div class="total-card" id="total-card">
+                    <div>
+                        <p class="total-label">Total Gastos Fijos Mensuales</p>
+                        <p class="total-amount" id="total-amount">$0</p>
+                    </div>
+                    <div class="total-icon">$</div>
+                </div>
             </div>
 
             <section class="dashboard-grid centered-grid">

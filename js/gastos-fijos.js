@@ -55,14 +55,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             list.innerHTML = '';
 
+            totalCard.style.display = 'flex';
+
             if (!gastos.length) {
                 emptyState.style.display = 'block';
-                totalCard.style.display  = 'none';
+                totalAmountEl.textContent = '$0';
                 return;
             }
 
             emptyState.style.display = 'none';
-            totalCard.style.display  = 'flex';
 
             const total = gastos.reduce((sum, g) => sum + parseFloat(g.monto), 0);
             totalAmountEl.textContent = '$' + total.toLocaleString('es-CO');

@@ -146,17 +146,17 @@
     text-align: center;
     background: #fff;
     color: var(--text-gray);
-    margin-top: -160px;
     width: 100%;
     max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 2.2rem 1.5rem 2.2rem 1.5rem;
+    margin: 20px auto 0;
+    padding: 2.5rem 2rem;
     border-radius: 22px;
     box-shadow: 0 6px 24px rgba(15,23,42,0.08);
     word-break: break-word;
     box-sizing: border-box;
 }
+.empty-state h3 { margin: 0 0 0.75rem; font-size: 1.25rem; color: #111827; }
+.empty-state p  { margin: 0 0 1.5rem; line-height: 1.6; }
 
 .profile-card {
     background-color: white;
@@ -233,23 +233,26 @@
 .total-card {
     background: linear-gradient(135deg, #7C3AED, #9333EA);
     border-radius: 18px;
-    padding: 1.5rem 1.8rem;
+    padding: 1.2rem 1.8rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.2rem;
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
-.total-label { font-size: 0.9rem; opacity: 0.9; margin: 0 0 0.4rem; }
-.total-amount { font-size: 2rem; font-weight: 700; margin: 0; }
+.total-label { font-size: 0.9rem; opacity: 0.85; margin: 0 0 4px; }
+.total-amount { font-size: 1.8rem; font-weight: 700; margin: 0; }
 .total-icon {
     background: rgba(255,255,255,0.2);
     border-radius: 14px;
-    width: 54px;
-    height: 54px;
+    width: 50px;
+    height: 50px;
     display: grid;
     place-items: center;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
 }
 
@@ -389,23 +392,13 @@
 .dashboard-grid.centered-grid {
     justify-content: center;
     align-items: flex-start;
-    min-height: calc(100vh - 120px);
-    padding-top: 2rem;
 }
 .dashboard-grid.centered-grid .payments-section {
     width: min(680px, 100%);
     margin: 0 auto;
     padding: 1.5rem 0;
-}
-.dashboard-grid.centered-grid .empty-state { padding: 2.2rem; }
-.dashboard-grid.centered-grid .empty-state h3 { margin: 0 0 0.75rem; font-size: 1.35rem; }
-.dashboard-grid.centered-grid .empty-state p { margin: 0 0 1.5rem; line-height: 1.6; }
-.dashboard-grid.centered-grid .btn-primary-dash {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    padding: 0.95rem 1.7rem;
+    background: transparent;
+    box-shadow: none;
 }
 
 /* Migración de estilos inline desde gatos-rapidos.html */
@@ -420,4 +413,25 @@
     border-radius: 14px;
     padding: 13px 28px;
     box-shadow: 0 2px 8px rgba(37,99,235,0.12);
+}
+@media (max-width: 900px) {
+    .btn-add-fijos {
+        padding: 13px 28px !important;
+        font-size: 1rem !important;
+        border-radius: 12px !important;
+    }
+}
+@media (max-width: 600px) {
+    .btn-add-fijos {
+        padding: 13px 28px !important;
+        font-size: 1rem !important;
+        border-radius: 12px !important;
+    }
+}
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .main-content { padding: 16px 12px !important; }
+}
+@media (max-width: 600px) {
+    .main-content { padding: 10px 6px !important; }
 }

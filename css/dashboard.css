@@ -284,6 +284,7 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg-body); color: va
     z-index: 2999;
 }
 .sidebar-overlay.active { display: block; }
+.sidebar-overlay.overlay-visible { display: block; }
 
 /* ════════════════════════════════════════════
    RESPONSIVE — TABLET (≤ 900px)
@@ -305,6 +306,7 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg-body); color: va
         min-width: 240px;
     }
     .sidebar.active { transform: translateX(0); }
+    .sidebar.sidebar-open { transform: translateX(0); }
 
     .main-content {
         padding: 20px 16px;
